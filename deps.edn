@@ -1,0 +1,70 @@
+{:paths ["src" "resources"]
+ :extra-paths ["resources"]
+ :mvn/repos {"central" {:url "https://repo1.maven.org/maven2/"}
+             "clojars" {:url "https://repo.clojars.org/"}}
+
+ :deps  {org.clojure/clojure         {:mvn/version "1.10.1"}
+         org.clojure/java.jdbc       {:mvn/version "0.7.11"}
+         com.zaxxer/HikariCP         {:mvn/version "3.3.1"}
+         org.clojure/tools.logging   {:mvn/version "0.5.0"}
+         org.postgresql/postgresql   {:mvn/version "42.2.9.jre7"}
+         com.health-samurai/jute     {:mvn/version "0.2.0-SNAPSHOT"}
+         clj-yaml                    {:mvn/version "0.4.0"} 
+         http-kit                    {:mvn/version "2.3.0"}
+         ring/ring-json              {:mvn/version "0.5.0"}
+         org.clojure/data.generators {:mvn/version "0.1.2"} 
+         honeysql                    {:mvn/version "0.9.8"}
+         route-map                   {:mvn/version "0.0.7-RC4"}
+         cheshire                    {:mvn/version "5.9.0"}}
+
+ :aliases
+ {:ui
+  {:extra-deps {org.clojure/clojurescript {:mvn/version "1.10.520"}
+                reagent                   {:mvn/version "0.9.1"}
+                re-frame                  {:mvn/version "0.10.6"}
+                reagent-utils             {:mvn/version "0.3.1"}
+                cljs-http                 {:mvn/version "0.1.45"}
+                cljsjs/moment             {:mvn/version "2.17.1-1"}
+                cljsjs/moment-timezone    {:mvn/version "0.5.11-1"}
+                hiccup                    {:mvn/version "1.0.5"}
+                garden                    {:mvn/version "1.3.5"}
+                route-map                 {:mvn/version "0.0.7-RC4"}
+                cider/cider-nrepl {:mvn/version "0.22.3"}
+                cider/piggieback  {:mvn/version "0.4.0"}}}
+  :dev
+  {:extra-paths ["dev"]
+   :extra-deps  {day8.re-frame/re-frame-10x {:mvn/version "0.4.7"} 
+                 day8.re-frame/test         {:mvn/version "0.1.5"}
+                 binaryage/devtools         {:mvn/version "0.9.10"}
+                 com.bhauman/figwheel-main  {:mvn/version "0.2.3"}}}
+  :runner
+  {:extra-deps
+   {com.cognitect/test-runner
+    {:git/url "https://github.com/cognitect-labs/test-runner"
+     :sha     "f7ef16dc3b8332b0d77bc0274578ad5270fbfedd"}}
+   :jvm-opts    ^:replace ["-XX:-OmitStackTraceInFastThrow" ]
+   :main-opts   ["-m" "cognitect.test-runner" "-d" "runner" "-d" "test"]}
+
+  :test
+  {:extra-paths ["test" "test/resources"]
+   :extra-deps  {matcho {:mvn/version "0.1.0-RC6"}}}
+
+  :nrepl
+  {:extra-deps {cider/cider-nrepl             {:mvn/version "0.23.0-SNAPSHOT"}
+                cider/piggieback              {:mvn/version "0.4.2"}
+                refactor-nrepl/refactor-nrepl {:mvn/version "2.5.0-SNAPSHOT"}
+                spyscope                      {:mvn/version "0.1.6"}}
+
+   :main-opts ["-m"           "nrepl.cmdline"
+               "--middleware" "[cider.nrepl/cider-middleware]"
+               "--port"       "31337"]
+   :jvm-opts  ^:replace ["-XX:-OmitStackTraceInFastThrow"]}
+
+  :build
+  {:extra-deps {luchiniatwork/cambada {:mvn/version "1.0.2"}}
+   :main-opts  ["-m" "cambada.uberjar"
+                "-a" "all"
+                "-p" "resources"
+                "--app-artifact-id" "app"
+                "--no-copy-source"]
+   :jvm-opts   ^:replace ["-XX:-OmitStackTraceInFastThrow"]}}}

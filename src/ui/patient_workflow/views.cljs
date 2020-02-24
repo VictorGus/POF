@@ -5,16 +5,19 @@
 
 (def input-style
   (styles/style
-   [:#search-input-wrapper]))
+   [:#search-input-wrapper
+    {:padding-top "15px"
+     :padding-left "30px"}]))
 
 (defn search-input []
   (let [input-cnt (r/atom "")]
     (fn []
       [:div#search-input-wrapper input-style
-       [:div.d-flex.justify-content-center
+       [b/Container
+        {:class "container-md"}
         [b/Row
          [b/Col
-          {:col "12"}
+          {:class "col-md-9"}
           [b/Input
            {:type "text"
             :placeholder "Search..."

@@ -1,6 +1,7 @@
 (ns ^:figwheel-hooks ui.core
-  (:require [reagent.core :as reagent]
-            [re-frame.core :as rf]))
+  (:require [reagent.core :as r]
+            [re-frame.core :as rf]
+            [ui.patient-workflow.views :as upw]))
 
 #_(rf/reg-event-fx
  ::initialize
@@ -26,6 +27,6 @@
 
 (defn mount-root []
   ;; (rf/dispatch-sync [::initialize])
-  (reagent/render [:div [:h1 "Test"]] (.getElementById js/document "app")))
+  (r/render [upw/search-input] (.getElementById js/document "app")))
 
 (defn ^:after-load re-render [] (mount-root))

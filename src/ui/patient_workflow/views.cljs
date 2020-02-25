@@ -7,7 +7,10 @@
   (styles/style
    [:#search-input-wrapper
     {:padding-top "15px"
-     :padding-left "30px"}]))
+     :padding-left "35px"}]))
+
+(def patient-record
+  [])
 
 (defn search-input []
   (let [input-cnt (r/atom "")]
@@ -21,6 +24,6 @@
           [b/Input
            {:type "text"
             :placeholder "Search..."
-            :on-change #(reset! input-cnt (-> % .target .value))}]]
+            :on-change #(reset! input-cnt (-> % .-target .-value))}]]
          [b/Col
           [b/Button {:color "primary"} "+ Create"]]]]])))

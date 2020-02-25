@@ -24,8 +24,13 @@
                 re-frame                  {:mvn/version "0.10.6"}
                 reagent-utils             {:mvn/version "0.3.1"}
                 cljs-http                 {:mvn/version "0.1.45"}
+                cljsjs/react              {:mvn/version "16.3.2-0"}
+                cljsjs/react-dom          {:mvn/version "16.3.2-0"}
+                cljsjs/react-transition-group {:mvn/version "2.3.1-0"}
+                cljsjs/react-popper       {:mvn/version "0.10.4-0"}
                 cljsjs/moment             {:mvn/version "2.17.1-1"}
                 cljsjs/moment-timezone    {:mvn/version "0.5.11-1"}
+                baking-soda               {:mvn/version "0.2.0"}
                 hiccup                    {:mvn/version "1.0.5"}
                 garden                    {:mvn/version "1.3.5"}
                 route-map                 {:mvn/version "0.0.7-RC4"}

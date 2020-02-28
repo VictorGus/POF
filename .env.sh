@@ -1,6 +1,6 @@
-export PGPORT=5441
+export PGPORT=5443
 export PGHOST=localhost
 export PGUSER=postgres
-export PGDATABASE=mainbox
+export PGDATABASE=fhirbase
 export PGPASSWORD=postgres
 

@@ -1,33 +1,73 @@
 (ns app.core
-  (:require [org.httpkit.client :as http]
+  (:require [clojure.java.io :as io]
             [route-map.core :as rm]
-            [clj-yaml.core :as yaml]
-            [app.auth])
-  (:use org.httpkit.server))
+            [cheshire.core :as json]
+            [ring.middleware.cors :refer [wrap-cors]]
+            [ring.middleware.params :refer [wrap-params]]
+            [ring.middleware.json :refer [wrap-json-response]]
+            [org.httpkit.server :as server]
+            [clojure.string :as str])
+  (:import [java.io File]))
+
+(defn request-test []
+  (fn [req]
+    {:status 200
+     :body {:status "ok"}}))
 
 (def routes
-  {:GET #'signup-handler
-   "info" {:GET #'client-info-handler}
-   "diag" {:GET #'get-diagnosis}})
+  {"api" {:GET (request-test)
+          "file" {:GET (request-test)}}})
 
-(defn dispatch [{meth :request-method uri :uri :as req}]
-  (if-let [{handler :match params :params} (rm/match [meth uri] #'routes)]
-    (handler (assoc req :route-params params))))
+(defn handler [{meth :request-method uri :uri :as req}]
+  (if-let [res (rm/match [meth uri] routes)]
+    ((:match res) (update-in req [:params] merge (:params req)))
+    {:status 404 :body {:error  "Not found"}}))
+
+(defn preflight
+  [{meth :request-method hs :headers :as req}]
+  (let [headers (get hs "access-control-request-headers")
+        origin (get hs "origin")
+        meth  (get hs "access-control-request-method")]
+    {:status 200
+     :headers {"Access-Control-Allow-Headers" headers
+               "Access-Control-Allow-Methods" meth
+               "Access-Control-Allow-Origin" origin
+               "Access-Control-Allow-Credentials" "true"
+               "Access-Control-Expose-Headers" "Location, Transaction-Meta, Content-Location, Category, Content-Type, X-total-count"}}))
+
+(defn allow [resp req]
+  (let [origin (get-in req [:headers "origin"])]
+    (update resp :headers merge
+            {"Access-Control-Allow-Origin" origin
+             "Access-Control-Allow-Credentials" "true"
+             "Access-Control-Expose-Headers" "Location, Content-Location, Category, Content-Type, X-total-count"})))
+
+(defn mk-handler [dispatch]
+  (fn [req]
+    (if (= :options (:request-method req))
+      (preflight req)
+      (let [resp (dispatch req)]
+        (-> resp (allow req))))))
+
+(def app
+  (-> handler
+      mk-handler
+      wrap-params
+      wrap-json-response))
+
+(defonce state (atom nil))
+
+(defn stop-server []
+  (when-not (nil? @state)
+    (@state :timeout 100)
+    (reset! state nil)))
+
+(defn start-server []
+  (reset! state (server/run-server app {:port 9090})))
+
+(defn restart-server [] (stop-server) (start-server))
 
 (comment
+  (restart-server)
 
-  (def plain (clojure.string/split-lines (slurp "/home/victor/Documents/Pet-Projects/univs.txt")))
-
-  (spit "/home/victor/Documents/Pet-Projects/univs.yaml" (yaml/generate-string (map
-                                                                                (fn [el]
-                                                                                  (let [m (zipmap [:name :rankingPlace :country :city :coords :site :studyProgramms] el)]
-                                                                                    (-> m
-                                                                                        (assoc :studyProgramms (clojure.string/split (:studyProgramms m) #","))
-                                                                                        (assoc :coords (clojure.string/split (clojure.string/replace (:coords m) " " "") #",")))))
-                                                                                (partition 7 (map #(clojure.string/replace % "\t" "") (filter #(not (clojure.string/blank? %))plain))))))
-  
-  (def ser (run-server #'dispatch {:port 5555}))
-
-  (ser))
-
-
+  )

@@ -1,7 +1,7 @@
 PGPORT=5443
 PGHOST=localhost
 PGUSER=postgres
-PGDATABASE=mainbox
+PGDATABASE=fhirbase
 PGPASSWORD=postgres
 PGIMAGE?=fhirbase/fhirbase
 

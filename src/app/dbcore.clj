@@ -18,4 +18,3 @@
 (defn run-query [query]
   (jdbc/with-db-connection [conn {:datasource @datasource}]
     (jdbc/query conn query)))
-

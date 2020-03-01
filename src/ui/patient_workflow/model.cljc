@@ -10,7 +10,7 @@
 (rf/reg-event-fx
  ::test
  (fn [{db :db} [pid phase params]]
-   {:xhr/fetch {:uri "/api"
+   {:xhr/fetch {:uri "/search/1,2"
                 :req-id "pid"
                 :success {:event ::test-another}}}))
 

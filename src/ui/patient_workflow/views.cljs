@@ -120,7 +120,8 @@
             :placeholder "Search..."
             :on-change #(reset! input-cnt (-> % .-target .-value))}]]
          [b/Button {:id "search-btn"
-                    :color "outline-primary"} "+ Create"]
+                    :color "outline-primary"
+                    :on-click #(rf/dispatch [::model/test 1 2 3])} "+ Create"]
          [b/Dropdown {:isOpen @dropdown-open?
                       :on-mouse-over #(reset! dropdown-open? true)
                       :toggle #(swap! dropdown-open? not)

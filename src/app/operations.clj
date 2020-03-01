@@ -3,9 +3,7 @@
             [clojure.string :as str]
             [app.dbcore :refer [run-query]]))
 
-(defmulti exec-operation (fn [operation _ _] operation))
-
-(defn patient-search [params]
+(defn patient-search-query [params]
   (let [p (map
            #(str % "%")
            (-> params str/trim (str/split #" ")))]
@@ -21,21 +19,17 @@
                             [:and
                              [:like (hsql/raw "resource#>>'{name, 0, family}'") (first p)]
                              [:like (hsql/raw "resource#>>'{name, 0, given, 0}'") (second p)]]
-                            [:and
+                           [:and
                              [:like (hsql/raw "resource#>>'{name, 0, family }'") (second p)]
                              [:like (hsql/raw "resource#>>'{name, 0, given, 0}'") (first p)]]])})))
 
-(defn patient-by-id [params]
+(defn patient-search [req]
+  (run-query (patient-search-query req)))
+
+(defn patient-by-id-query [params]
   (hsql/format {:select [:resource]
                 :from [:patient]
                 :where [:= :patient.id params]}))
 
-(defmethod exec-operation
-  :patient-search
-  [_ t params]
-  (run-query (patient-search params)))
-
-(defmethod exec-operation
-  :patient-by-id
-  [_ t params]
-  (run-query (patient-by-id params)))
+(defn patient-by-id [req]
+  (run-query (patient-by-id-query req)))

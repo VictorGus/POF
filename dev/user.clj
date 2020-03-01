@@ -1,5 +1,6 @@
 (ns user
-  (:require [figwheel.main.api :as repl]))
+  (:require [figwheel.main.api :as repl]
+            [app.core :as server]))
 
 (def figwheel-options
   {:id "app"
@@ -30,11 +31,11 @@
 
 (defn start []
   (run-ui figwheel-options)
-  #_(server/start-server))
+  (server/start-server))
 
 (defn stop []
   (repl/stop "app")
-  ;; (server/stop-server)
+  (server/stop-server)
   (println "\nUI stopped"))
 
 (defonce state

@@ -2,6 +2,7 @@
   (:require [clojure.java.io :as io]
             [route-map.core :as rm]
             [cheshire.core :as json]
+            [app.operations :as ops]
             [ring.middleware.cors :refer [wrap-cors]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.json :refer [wrap-json-response]]
@@ -9,19 +10,13 @@
             [clojure.string :as str])
   (:import [java.io File]))
 
-(defn request-test []
-  (fn [req]
-    {:status 200
-     :body {:status "ok"}}))
-
 (def routes
-  {"api" {:GET (request-test)
-          "file" {:GET (request-test)}}})
+  {"search" {[:params] {:GET ops/patient-search}}})
 
 (defn handler [{meth :request-method uri :uri :as req}]
   (if-let [res (rm/match [meth uri] routes)]
-    ((:match res) (update-in req [:params] merge (:params req)))
-    {:status 404 :body {:error  "Not found"}}))
+    ((:match res) (update-in req [:params] merge (:params res)))
+    {:status 404 :body {:error "Not found"}}))
 
 (defn preflight
   [{meth :request-method hs :headers :as req}]

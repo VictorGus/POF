@@ -1,6 +1,7 @@
 (ns ^:figwheel-hooks ui.core
   (:require [reagent.core :as r]
             [re-frame.core :as rf]
+            [ui.zframes.xhr]
             [route-map.core :as route-map]
             [ui.patient-workflow.views :as upw]))
 
@@ -8,7 +9,7 @@
  ::initialize
  [(rf/inject-cofx :window-location)]
  (fn [{location :location db :db} _]
-   {:db (-> db
+   {:db(-> db
             (assoc-in [:xhr :config :base-url] "http://localhost:9090" )
             #_(assoc :route-map/routes routes/routes)) ;; TODO 
     :route-map/start {}}))

@@ -1,5 +1,6 @@
 (ns ui.patient-workflow.model
-  (:require [re-frame.core :as rf]))
+  (:require [re-frame.core :as rf]
+            [clojure.string :as str]))
 
 (rf/reg-sub
  ::patient-data
@@ -8,13 +9,13 @@
     {:name "Test Test2" :birthDate "12.01.1970" :address "Test2 st." :gender "female"}])) ;;TODO
 
 (rf/reg-event-fx
- ::test
- (fn [{db :db} [pid phase params]]
-   {:xhr/fetch {:uri "/search/1,2"
-                :req-id "pid"
+ ::search
+ (fn [{db :db} [pid params]]
+   {:xhr/fetch {:uri (str "/search/" (str/replace params #" " "%20"))
+                :req-id (or pid "pid")
                 :success {:event ::test-another}}}))
 
 (rf/reg-event-fx
  ::test-another
- (fn [{db :db}]
-   (println "test")))
+ (fn [{db :db} [_ data]]
+   nil))

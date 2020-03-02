@@ -118,10 +118,9 @@
             :styles "height: 48px;"
             :aria-describedby "inputGroup-sizing-sm"
             :placeholder "Search..."
-            :on-change #(reset! input-cnt (-> % .-target .-value))}]]
+            :on-change #(rf/dispatch [::model/search (-> % .-target .-value)])}]]
          [b/Button {:id "search-btn"
-                    :color "outline-primary"
-                    :on-click #(rf/dispatch [::model/test 1 2 3])} "+ Create"]
+                    :color "outline-primary"} "+ Create"]
          [b/Dropdown {:isOpen @dropdown-open?
                       :on-mouse-over #(reset! dropdown-open? true)
                       :toggle #(swap! dropdown-open? not)

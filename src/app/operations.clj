@@ -24,7 +24,9 @@
                              [:like (hsql/raw "resource#>>'{name, 0, given, 0}'") (first p)]]])})))
 
 (defn patient-search [req]
-  (run-query (patient-search-query req)))
+  (let [normalized-req (str/replace (get-in req [:params :params]) #"%20" " ")]
+    {:status 200
+     :body (run-query (patient-search-query normalized-req))}))
 
 (defn patient-by-id-query [params]
   (hsql/format {:select [:resource]

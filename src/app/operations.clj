@@ -1,6 +1,7 @@
 (ns app.operations
   (:require [honeysql.core :as hsql]
             [clojure.string :as str]
+            [cheshire.core :refer [generate-string]]
             [app.dbcore :refer [run-query]]))
 
 (defn patient-search-query [params]
@@ -21,12 +22,16 @@
                              [:like (hsql/raw "resource#>>'{name, 0, given, 0}'") (second p)]]
                            [:and
                              [:like (hsql/raw "resource#>>'{name, 0, family }'") (second p)]
-                             [:like (hsql/raw "resource#>>'{name, 0, given, 0}'") (first p)]]])})))
+                            [:like (hsql/raw "resource#>>'{name, 0, given, 0}'") (first p)]]])})))
 
 (defn patient-search [req]
   (let [normalized-req (str/replace (get-in req [:params :params]) #"%20" " ")]
     {:status 200
-     :body (run-query (patient-search-query normalized-req))}))
+     :body (mapv :resource (-> normalized-req
+                               patient-search-query
+                               run-query))}))
+
+(patient-search {:params {:params "A%20B"}})
 
 (defn patient-by-id-query [params]
   (hsql/format {:select [:resource]

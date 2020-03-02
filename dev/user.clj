@@ -17,6 +17,7 @@
 
              :closure-defines {"re_frame.trace.trace_enabled_QMARK_" true}
              :preloads        ['day8.re-frame-10x.preload]
+             :log-level :off
              :output-to "resources/public/js/app.js"
              :output-dir "resources/public/js/out"}
    :config {:watch-dirs ["src"]

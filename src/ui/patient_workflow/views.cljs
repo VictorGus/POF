@@ -62,6 +62,9 @@
      [:.patient-record:hover
       {:background-color "#fcfdff"}]]]))
 
+(defn pt-name-to-string [name]
+  (str (first (:given (first name))) " " (:family (first name))))
+
 (defn patient-grid []
   (let [pt-data (rf/subscribe [::model/patient-data])] ;;TODO
     (fn []
@@ -77,21 +80,21 @@
                          "female.svg")}]]
           [:div.patient-info
            [:div
-            [:b.patient-name (:name item)]
+            [:b.patient-name (pt-name-to-string (:name item))]
             [:span.text-muted.pl-2 (:birthDate item)]
             [:div ;;TODO
              [:span.text-muted
               "Line:"]
-             [:span.patient-address-value (:address item)]
+             [:span.patient-address-value (first (:line (first (:address item))))]
              [:span.text-muted
               "City:"]
-             [:span.patient-address-value (:address item)]
+             [:span.patient-address-value (:city (first (:address item)))]
              [:span.text-muted
               "State:"]
-             [:span.patient-address-value (:address item)]
+             [:span.patient-address-value (:state (first (:address item)))]
              [:span.text-muted
               "Country:"]
-             [:span.patient-address-value (:address item)]]]]
+             [:span.patient-address-value (:country (first (:address item)))]]]]
           [:div.right-wrapper
            [:div.right-item
             [:span.text-muted
@@ -118,7 +121,10 @@
             :styles "height: 48px;"
             :aria-describedby "inputGroup-sizing-sm"
             :placeholder "Search..."
-            :on-change #(rf/dispatch [::model/search (-> % .-target .-value)])}]]
+            :on-change (fn [e]
+                         (let [v (-> e .-target .-value)]
+                           (when (not (clojure.string/blank? v))
+                             (rf/dispatch [::model/search v]))))}]]
          [b/Button {:id "search-btn"
                     :color "outline-primary"} "+ Create"]
          [b/Dropdown {:isOpen @dropdown-open?

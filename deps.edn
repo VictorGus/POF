@@ -6,6 +6,7 @@
  :deps  {org.clojure/clojure         {:mvn/version "1.10.1"}
          org.clojure/java.jdbc       {:mvn/version "0.7.11"}
          ;; com.zaxxer/HikariCP         {:mvn/version "3.3.1"}
+         clj-postgresql              {:mvn/version "0.7.0"}
          hikari-cp                   {:mvn/version "2.10.0"}
          org.clojure/tools.logging   {:mvn/version "0.5.0"}
          org.postgresql/postgresql   {:mvn/version "42.2.9.jre7"}

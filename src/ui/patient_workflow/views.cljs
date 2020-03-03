@@ -65,46 +65,55 @@
 (defn pt-name-to-string [name]
   (str (first (:given (first name))) " " (:family (first name))))
 
+(defn normalize-patient-data [data]
+  {:name    (pt-name-to-string (:name data))
+   :line    (first (:line (first (:address data))))
+   :city    (:city (first (:address data)))
+   :state   (:state (first (:address data)))
+   :country (:country (first (:address data)))})
+
 (defn patient-grid []
   (let [pt-data (rf/subscribe [::model/patient-data])] ;;TODO
     (fn []
       [:div.patient-grid
-       (for [item @pt-data]
-         [:a.patient-record
-          {:href "#"}
-          [:div.icon
-           [:img {:src (cond
-                         (= (:gender item) "male") ;;TODO
-                         "male.svg"
-                         (= (:gender item) "female")
-                         "female.svg")}]]
-          [:div.patient-info
-           [:div
-            [:b.patient-name (pt-name-to-string (:name item))]
-            [:span.text-muted.pl-2 (:birthDate item)]
-            [:div ;;TODO
-             [:span.text-muted
-              "Line:"]
-             [:span.patient-address-value (first (:line (first (:address item))))]
-             [:span.text-muted
-              "City:"]
-             [:span.patient-address-value (:city (first (:address item)))]
-             [:span.text-muted
-              "State:"]
-             [:span.patient-address-value (:state (first (:address item)))]
-             [:span.text-muted
-              "Country:"]
-             [:span.patient-address-value (:country (first (:address item)))]]]]
-          [:div.right-wrapper
-           [:div.right-item
-            [:span.text-muted
-             "Social Security Number:"]]
-           [:div.right-item
-            [:span.text-muted
-             "Driver License:"]]
-           [:div.right-item
-            [:span.text-muted
-             "Phone:"]]]])])))
+       (when (vector? @pt-data)
+         (for [item @pt-data]
+           (let [normalized-item (normalize-patient-data item)]
+             [:a.patient-record
+              {:href "#"}
+              [:div.icon
+               [:img {:src (cond
+                             (= (:gender item) "male") ;;TODO
+                             "male.svg"
+                             (= (:gender item) "female")
+                             "female.svg")}]]
+              [:div.patient-info
+               [:div
+                [:b.patient-name (:name normalized-item)]
+                [:span.text-muted.pl-2 (:birthDate item)]
+                [:div
+                 [:span.text-muted
+                  "Line:"]
+                 [:span.patient-address-value (:line normalized-item)]
+                 [:span.text-muted
+                  "City:"]
+                 [:span.patient-address-value (:city normalized-item)]
+                 [:span.text-muted
+                  "State:"]
+                 [:span.patient-address-value (:state normalized-item)]
+                 [:span.text-muted
+                  "Country:"]
+                 [:span.patient-address-value (:country normalized-item)]]]]
+              [:div.right-wrapper
+               [:div.right-item
+                [:span.text-muted
+                 "Social Security Number:"]]
+               [:div.right-item
+                [:span.text-muted
+                 "Driver License:"]]
+               [:div.right-item
+                [:span.text-muted
+                 "Phone:"]]]])))])))
 
 (defn search-input []
   (let [input-cnt (r/atom "")

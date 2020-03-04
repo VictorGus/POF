@@ -8,7 +8,7 @@
   (let [p (map
            #(str % "%")
            (-> params str/trim (str/split #" ")))]
-    (hsql/format {:select [:*]
+    (hsql/format {:select [:resource]
                   :from [:patient]
                   :where (cond
                            (= (count p) 1)
@@ -27,11 +27,9 @@
 (defn patient-search [req]
   (let [normalized-req (str/replace (get-in req [:params :params]) #"%20" " ")]
     {:status 200
-     :body (mapv :resource (-> normalized-req
+     :body  (map :resource (-> normalized-req
                                patient-search-query
                                run-query))}))
-
-(patient-search {:params {:params "A%20B"}})
 
 (defn patient-by-id-query [params]
   (hsql/format {:select [:resource]

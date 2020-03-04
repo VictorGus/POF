@@ -73,7 +73,7 @@
    :country (:country (first (:address data)))})
 
 (defn patient-grid []
-  (let [pt-data (rf/subscribe [::model/patient-data])] ;;TODO
+  (let [pt-data (rf/subscribe [::model/patient-data])]
     (fn []
       [:div.patient-grid
        (when (vector? @pt-data)
@@ -83,7 +83,7 @@
               {:href "#"}
               [:div.icon
                [:img {:src (cond
-                             (= (:gender item) "male") ;;TODO
+                             (= (:gender item) "male")
                              "male.svg"
                              (= (:gender item) "female")
                              "female.svg")}]]
@@ -117,6 +117,8 @@
 
 (defn search-input []
   (let [input-cnt (r/atom "")
+        sort-order (r/atom false)
+        data (rf/subscribe [::model/patient-data])
         dropdown-open? (r/atom false)]
     (fn []
       [:div#search-input-wrapper input-style
@@ -143,6 +145,9 @@
           [b/DropdownToggle {:caret true
                              :color "outline-primary"} "Sort"]
           [b/DropdownMenu
-           [b/DropdownItem "by birthDate"]
+           [b/DropdownItem {:on-click #(do
+                                         (swap! sort-order not)
+                                         (rf/dispatch [::model/sort-patients @data @sort-order]))}
+            "by birthDate"]
            [b/DropdownItem "by name"]]]]
         [patient-grid]]])))

@@ -3,7 +3,7 @@ PGHOST=localhost
 PGUSER=postgres
 PGDATABASE=fhirbase
 PGPASSWORD=postgres
-PGIMAGE?=fhirbase/fhirbase
+PGIMAGE?=victor13533/fhirbase-on-postgrespro
 
 .EXPORT_ALL_VARIABLES:
 .PHONY: test build

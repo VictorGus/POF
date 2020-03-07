@@ -24,7 +24,7 @@
                              [:like (hsql/raw "resource#>>'{name, 0, family }'") (second p)]
                             [:like (hsql/raw "resource#>>'{name, 0, given, 0}'") (first p)]]])})))
 
-(defn patient-search [req]
+(defn patients-search [req]
   (let [normalized-req (str/replace (get-in req [:params :params]) #"%20" " ")]
     {:status 200
      :body  (map :resource (-> normalized-req

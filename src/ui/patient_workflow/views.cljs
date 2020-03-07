@@ -1,6 +1,7 @@
 (ns ui.patient-workflow.views
   (:require [reagent.core :as r]
             [re-frame.core :as rf]
+            [ui.basic-components.spinner :refer [spinner]]
             [baking-soda.core :as b]
             [ui.patient-workflow.model :as model]
             [ui.styles :as styles]))
@@ -115,10 +116,13 @@
                 [:span.text-muted
                  "Phone:"]]]])))])))
 
+
+
 (defn search-input []
   (let [input-cnt (r/atom "")
         sort-order (r/atom false)
         data (rf/subscribe [::model/patient-data])
+        loading-status (rf/subscribe [::model/loading-status])
         dropdown-open? (r/atom false)]
     (fn []
       [:div#search-input-wrapper input-style
@@ -135,7 +139,9 @@
             :on-change (fn [e]
                          (let [v (-> e .-target .-value)]
                            (when (not (clojure.string/blank? v))
-                             (rf/dispatch [::model/search v]))))}]]
+                             (js/setTimeout (fn []
+                                              (rf/dispatch [::model/search v]))
+                                            700))))}]]
          [b/Button {:id "search-btn"
                     :color "outline-primary"} "+ Create"]
          [b/Dropdown {:isOpen @dropdown-open?
@@ -150,4 +156,7 @@
                                          (rf/dispatch [::model/sort-patients @data @sort-order]))}
             "by birthDate"]
            [b/DropdownItem "by name"]]]]
-        [patient-grid]]])))
+        (when @loading-status
+          [spinner])
+        (when-not @loading-status
+          [patient-grid])]])))

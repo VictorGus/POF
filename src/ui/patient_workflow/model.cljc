@@ -2,13 +2,25 @@
   (:require [re-frame.core :as rf]
             [clojure.string :as str]))
 
-#_(defn parse-date [date]
-  (.parse (js/Date  date)))
-
 (rf/reg-sub
  ::patient-data
  (fn [db _]
    (::patients db)))
+
+(rf/reg-sub
+ ::loading-status
+ (fn [db _]
+   (::loading db)))
+
+(rf/reg-event-fx
+ ::set-loading-status-false
+ (fn [{db :db} _]
+   {:db (assoc db ::loading false)}))
+
+(rf/reg-event-fx
+ ::set-loading-status-true
+ (fn [{db :db} _]
+   {:db (assoc db ::loading true)}))
 
 (defn sort-by-birthdate [sort-order data]
   (println sort-order)
@@ -29,12 +41,14 @@
 (rf/reg-event-fx
  ::search
  (fn [{db :db} [pid params]]
-   {:xhr/fetch {:uri (str "/search/" (str/replace params #" " "%20"))
+   {:dispatch [::set-loading-status-true]
+    :xhr/fetch {:uri (str "/patients/search/" (str/replace params #" " "%20"))
                 :req-id (or pid "pid")
                 :success {:event ::save-results}}}))
 
 (rf/reg-event-fx
  ::save-results
  (fn [{db :db} [_ {data :data}]]
-   {:db (assoc db ::patients data)}))
+   {:db (assoc db ::patients data)
+    :dispatch [::set-loading-status-false]}))
 

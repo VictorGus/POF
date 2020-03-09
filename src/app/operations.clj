@@ -47,10 +47,12 @@
                patient-search-query
                run-query)}))
 
-(defn patient-by-id-query [params]
+(defn patient-by-id-query [{{params :params} :params}]
+  (println params)
   (hsql/format {:select [:resource]
                 :from [:patient]
                 :where [:= :patient.id params]}))
 
 (defn patient-by-id [req]
-  (run-query (patient-by-id-query req)))
+  {:status 200
+   :body (run-query (patient-by-id-query req))})

@@ -2,6 +2,18 @@
   (:require [re-frame.core :as rf]
             [clojure.string :as str]))
 
+(def index ::index)
+
+(rf/reg-event-fx
+ index
+ (fn [{db :db} [pid phase params]]
+   {:db db}))
+
+(rf/reg-sub
+ index
+ (fn [_ _]
+   {}))
+
 (rf/reg-sub
  ::patient-data
  (fn [db _]
@@ -23,7 +35,6 @@
    {:db (assoc db ::loading true)}))
 
 (defn sort-by-birthdate [sort-order data]
-  (println sort-order)
   (vec (sort (fn [current next]
                (let [c #?(:clj (inst-ms (.parse (java.text.SimpleDateFormat. "yyyy-MM-dd") (:birthDate current)))
                           :cljs (.parse js/Date (:birthDate current)))

@@ -3,6 +3,7 @@
             [route-map.core :as rm]
             [cheshire.core :as json]
             [app.operations :as ops]
+            [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.cors :refer [wrap-cors]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.json :refer [wrap-json-response]]
@@ -11,7 +12,8 @@
   (:import [java.io File]))
 
 (def routes
-  {"patients" {"search" {[:params] {:GET ops/patients-search}}}})
+  {"patients" {"search" {[:params] {:GET ops/patients-search}}}
+   "patient" {[:params] {:GET ops/patient-by-id}}})
 
 (defn handler [{meth :request-method uri :uri :as req}]
   (if-let [res (rm/match [meth uri] routes)]
@@ -48,7 +50,8 @@
   (-> handler
       mk-handler
       wrap-params
-      wrap-json-response))
+      wrap-json-response
+      wrap-reload))
 
 (defonce state (atom nil))
 

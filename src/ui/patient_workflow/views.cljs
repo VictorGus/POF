@@ -2,6 +2,7 @@
   (:require [reagent.core :as r]
             [re-frame.core :as rf]
             [ui.basic-components.spinner :refer [spinner]]
+            [ui.pages :as pages]
             [baking-soda.core :as b]
             [ui.patient-workflow.model :as model]
             [ui.styles :as styles]))
@@ -76,7 +77,7 @@
        (when (vector? @pt-data)
          (for [item @pt-data]
            [:a.patient-record
-            {:href (str "/patient?=" (:id item))}
+            {:href (str "/patient/" (:id item))}
             [:div.icon
              [:img {:src (cond
                            (= (:gender item) "male")
@@ -157,3 +158,8 @@
           [spinner])
         (when-not @loading-status
           [patient-grid])]])))
+
+(pages/reg-subs-page
+ model/index
+ (fn [db params]
+   [search-input]))

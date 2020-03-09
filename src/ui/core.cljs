@@ -2,7 +2,8 @@
   (:require [reagent.core :as r]
             [re-frame.core :as rf]
             [ui.zframes.xhr]
-            [route-map.core :as route-map]
+            [ui.routes :as routes]
+            [ui.pages :as pages]
             [ui.patient-workflow.views :as upw]))
 
 (rf/reg-event-fx
@@ -11,25 +12,24 @@
  (fn [{location :location db :db} _]
    {:db (-> db
             (assoc-in [:xhr :config :base-url] "http://localhost:9090" )
-            #_(assoc :route-map/routes routes/routes)) ;; TODO 
+            (assoc :route-map/routes routes/routes))
     :route-map/start {}}))
 
 (defn not-found-page []
   [:h1 "Not found"])
 
 ;; TODO
-#_(defn current-page []
+(defn current-page []
   (let [route  (rf/subscribe [:route-map/current-route])]
     (fn []
       (let [page (get @pages/pages (:match @route))
             params (:params @route)]
-        [layout/layout
-         (if page
-           [page params]
-           [not-found-page])]))))
+        (if page
+          [page params]
+          [not-found-page])))))
 
 (defn mount-root []
   (rf/dispatch-sync [::initialize])
-  (r/render [upw/search-input] (.getElementById js/document "app")))
+  (r/render [current-page] (.getElementById js/document "app")))
 
 (defn ^:after-load re-render [] (mount-root))

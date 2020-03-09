@@ -1,6 +1,7 @@
 (ns ui.routes)
 
-(def routes {:. :ui.patient-workflow.model/index})
+(def routes {:. :ui.patient-workflow.model/index
+             "patients" {:. :ui.patient-workflow.model/index}})
 
 (defn route-index* [route pth]
   (merge

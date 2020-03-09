@@ -57,21 +57,17 @@
         {:font-size "20px"}]
        ]]
 
-     [:.right-item
-      {:text-align "right"}]
+     [:.right-wrapper
+      [:.right-item
+       {:text-align "right"}
+       [:.patient-right-value
+        {:padding "5px 5px"}]]]
 
      [:.patient-record:hover
       {:background-color "#fcfdff"}]]]))
 
-(defn pt-name-to-string [name]
-  (str (first (:given (first name))) " " (:family (first name))))
-
-(defn normalize-patient-data [data]
-  {:name    (pt-name-to-string (:name data))
-   :line    (first (:line (first (:address data))))
-   :city    (:city (first (:address data)))
-   :state   (:state (first (:address data)))
-   :country (:country (first (:address data)))})
+(defn pt-name-to-string [item]
+  (str (:given item) " " (:family item)))
 
 (defn patient-grid []
   (let [pt-data (rf/subscribe [::model/patient-data])]
@@ -79,48 +75,49 @@
       [:div.patient-grid
        (when (vector? @pt-data)
          (for [item @pt-data]
-           (let [normalized-item (normalize-patient-data item)]
-             [:a.patient-record
-              {:href "#"}
-              [:div.icon
-               [:img {:src (cond
-                             (= (:gender item) "male")
-                             "male.svg"
-                             (= (:gender item) "female")
-                             "female.svg")}]]
-              [:div.patient-info
-               [:div
-                [:b.patient-name (:name normalized-item)]
-                [:span.text-muted.pl-2 (:birthDate item)]
-                [:div
-                 [:span.text-muted
-                  "Line:"]
-                 [:span.patient-address-value (:line normalized-item)]
-                 [:span.text-muted
-                  "City:"]
-                 [:span.patient-address-value (:city normalized-item)]
-                 [:span.text-muted
-                  "State:"]
-                 [:span.patient-address-value (:state normalized-item)]
-                 [:span.text-muted
-                  "Country:"]
-                 [:span.patient-address-value (:country normalized-item)]]]]
-              [:div.right-wrapper
-               [:div.right-item
-                [:span.text-muted
-                 "Social Security Number:"]]
-               [:div.right-item
-                [:span.text-muted
-                 "Driver License:"]]
-               [:div.right-item
-                [:span.text-muted
-                 "Phone:"]]]])))])))
-
-
+           [:a.patient-record
+            {:href (str "/patient?=" (:id item))}
+            [:div.icon
+             [:img {:src (cond
+                           (= (:gender item) "male")
+                           "male.svg"
+                           (= (:gender item) "female")
+                           "female.svg")}]]
+            [:div.patient-info
+             [:div
+              [:b.patient-name (pt-name-to-string item)]
+              [:span.text-muted.pl-2 (:birthDate item)]
+              [:div
+               [:span.text-muted
+                "Line:"]
+               [:span.patient-address-value (:line item)]
+               [:span.text-muted
+                "City:"]
+               [:span.patient-address-value (:city item)]
+               [:span.text-muted
+                "State:"]
+               [:span.patient-address-value (:st item)]
+               [:span.text-muted
+                "Country:"]
+               [:span.patient-address-value (:country item)]]]]
+            [:div.right-wrapper
+             [:div.right-item
+              [:span.text-muted
+               "Social Security Number:"]
+              [:span.patient-right-value (get-in item [:ids :SB])]
+              ]
+             [:div.right-item
+              [:span.text-muted
+               "Driver License:"]
+              [:span.patient-right-value (get-in item [:ids :DL])]
+              ]
+             [:div.right-item
+              [:span.text-muted
+               "Phone:"]
+              [:span.patient-right-value (:phone item)]]]]))])))
 
 (defn search-input []
-  (let [input-cnt (r/atom "")
-        sort-order (r/atom false)
+  (let [sort-order (r/atom false)
         data (rf/subscribe [::model/patient-data])
         loading-status (rf/subscribe [::model/loading-status])
         dropdown-open? (r/atom false)]

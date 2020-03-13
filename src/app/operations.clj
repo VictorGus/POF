@@ -2,6 +2,8 @@
   (:require [honeysql.core :as hsql]
             [clojure.string :as str]
             [cheshire.core :refer [generate-string]]
+            [honeysql.helpers :refer :all]
+            [honeysql-postgres.format :refer :all]
             [app.dbcore :refer [run-query]]))
 
 (defn patient-search-query [params]
@@ -24,16 +26,17 @@
                            :where (cond
                                     (= (count p) 1)
                                     [:or
-                                     [:like (hsql/raw "resource#>>'{name, 0, family}'") (first p)]
-                                     [:like (hsql/raw "resource#>>'{name, 0, given, 0}'") (first p)]]
+                                     [:ilike (hsql/raw "resource#>>'{name, 0, family}'") (first p)]
+                                     [:ilike (hsql/raw "resource#>>'{name, 0, given, 0}'") (first p)]
+                                     (hsql/raw (str "resource#>>'{identifier}' @@ 'value = " (first p) "'"))]
                                     (= (count p) 2)
                                     [:or
                                      [:and
-                                      [:like (hsql/raw "resource#>>'{name, 0, family}'") (first p)]
-                                      [:like (hsql/raw "resource#>>'{name, 0, given, 0}'") (second p)]]
+                                      [:ilike (hsql/raw "resource#>>'{name, 0, family}'") (first p)]
+                                      [:ilike (hsql/raw "resource#>>'{name, 0, given, 0}'") (second p)]]
                                      [:and
-                                      [:like (hsql/raw "resource#>>'{name, 0, family }'") (second p)]
-                                      [:like (hsql/raw "resource#>>'{name, 0, given, 0}'") (first p)]]])} :p]
+                                      [:ilike (hsql/raw "resource#>>'{name, 0, family }'") (second p)]
+                                      [:ilike (hsql/raw "resource#>>'{name, 0, given, 0}'") (first p)]]])} :p]
                          [(hsql/raw "jsonb_array_elements(p.resource->'identifier')") :ids]]
                   :where [:or
                           (hsql/raw "ids #>> '{type, coding, 0, code}' = 'DL'")

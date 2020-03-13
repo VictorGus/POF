@@ -28,6 +28,7 @@
                 cljs-http                 {:mvn/version "0.1.45"}
                 cljsjs/react              {:mvn/version "16.3.2-0"}
                 cljsjs/react-dom          {:mvn/version "16.3.2-0"}
+                nilenso/honeysql-postgres {:mvn/version "0.2.6"}
                 cljsjs/react-transition-group {:mvn/version "2.3.1-0"}
                 cljsjs/react-popper       {:mvn/version "0.10.4-0"}
                 cljsjs/moment             {:mvn/version "2.17.1-1"}

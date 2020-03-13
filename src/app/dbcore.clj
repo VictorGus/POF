@@ -1,6 +1,7 @@
 (ns app.dbcore
   (:require [hikari-cp.core :as hc]
             [honeysql.core :as hsql]
+            [honeysql.types :as hsqltypes]
             [clj-postgresql.core :as pg]
             [clojure.java.jdbc :as jdbc]
             [honeysql.helpers :refer :all]))

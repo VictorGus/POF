@@ -77,7 +77,7 @@
        (when (vector? @pt-data)
          (for [item @pt-data]
            [:a.patient-record
-            {:href (str "/patient/" (:id item))}
+            {:href (str "/#/patient/" (:id item))}
             [:div.icon
              [:img {:src (cond
                            (= (:gender item) "male")
@@ -87,7 +87,7 @@
             [:div.patient-info
              [:div
               [:b.patient-name (pt-name-to-string item)]
-              [:span.text-muted.pl-2 (:birthDate item)]
+              [:span.text-muted.pl-2 (:birthdate item)]
               [:div
                [:span.text-muted
                 "Line:"]

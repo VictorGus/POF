@@ -37,9 +37,9 @@
 (defn sort-by-birthdate [sort-order data]
   (vec (sort (fn [current next]
                (let [c #?(:clj (inst-ms (.parse (java.text.SimpleDateFormat. "yyyy-MM-dd") (:birthDate current)))
-                          :cljs (.parse js/Date (:birthDate current)))
+                          :cljs (.parse js/Date (:birthdate current)))
                      n #?(:clj (inst-ms (.parse (java.text.SimpleDateFormat. "yyyy-MM-dd") (:birthDate next)))
-                          :cljs (.parse js/Date. (:birthDate next)))]
+                          :cljs (.parse js/Date. (:birthdate next)))]
                  (if sort-order
                    (< c n)
                    (> c n)))) data)))

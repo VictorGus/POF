@@ -4,7 +4,8 @@
             [ui.zframes.xhr]
             [ui.routes :as routes]
             [ui.pages :as pages]
-            [ui.patient-workflow.views :as upw]))
+            [ui.patient-workflow.views]
+            [ui.patient-workflow.card.view]))
 
 (rf/reg-event-fx
  ::initialize
@@ -18,10 +19,11 @@
 (defn not-found-page []
   [:h1 "Not found"])
 
-;; TODO
 (defn current-page []
   (let [route  (rf/subscribe [:route-map/current-route])]
     (fn []
+      (println @route)
+      (println @pages/pages)
       (let [page (get @pages/pages (:match @route))
             params (:params @route)]
         (if page

@@ -110,8 +110,7 @@
              [:div.right-item
               [:span.text-muted
                "Driver License:"]
-              [:span.patient-right-value (get-in item [:ids :DL])]
-              ]
+              [:span.patient-right-value (get-in item [:ids :DL])]]
              [:div.right-item
               [:span.text-muted
                "Phone:"]

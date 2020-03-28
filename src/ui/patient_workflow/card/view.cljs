@@ -40,17 +40,22 @@
        :margin-top "10px"
        :padding-right "10px"}
       [:.icon.img
-       {:fill "blue"}]]]]))
+       {:fill "blue"}]]]]
+   [:.info-item {:margin-right "10px"}]
+   [:.info-header {:font-size "22px"
+                   :font-weight "900"
+                   :color "white"
+                   :background-color "#0069d9"}]))
 (defn encounter []
-  [:div.patient-info-item.col-md-12
-   {:style {:margin-bottom "10px"}}
-   [:div
-    [:p.card-title-inner "Encounter for check-up"]
-    [:p.text-muted "Ambulatory"]]
-   [info-input {:title "Reason"
-                :value "Second degree burn"}]
-   [info-input {:title "Status"
-                :value "Finished"}]])
+  [:div.card-body
+   [:h5.card-title "Encounter for check-up"]
+   [:p.text-muted "Ambulatory"]
+   [:span.info-item
+    [:span.text-muted "Reason: "]
+    "Second degree burn"]
+   [:span.info-item
+    [:span.text-muted "Status: "]
+    "Finished"]])
 
 (defn patient-card []
   (let [data "TODO"]
@@ -65,37 +70,53 @@
            [:p.patient-name "Test Test"]
            [:p {:class "text-muted"
                 :style {:margin-bottom "0px"}} "1955-02-13 (65 y.o.)"]]]
-         [:div.patient-info
-          [:div.patient-info-item {:class "col-md-6"}
-           [:p.card-title "Telecom"]
-           [info-input {:title "Use"
-                        :value "home"}]
-           [info-input {:title "Phone number"
-                        :value "88005553555"}]]
-          [:div.patient-info-item {:class "col-md-6"}
-           [:p.card-title "Address"]
-           [info-input {:title "Country"
-                        :value "US"}]
-           [info-input {:title "City"
-                        :value "Brockton"}]
-           [info-input {:title "Postal Code"
-                        :value "02301"}]
-           [info-input {:title "State"
-                        :value "Massachusetts"}]]]
-         [:div.patient-info
-          [:div.patient-info-item {:class "col-md-12"}
-           [:p.card-title "Identifiers"]
-           [info-input {:title "SSN"
-                        :value "999-81-4006"}]
-           [info-input {:title "MRN"
-                        :value "803f5907-5427-4930-a093-1a95190de7fd"}]
-           [info-input {:title "Driver Licence"
-                        :value "999-81-4006"}]]]
-         [:div.patient-info
-          [:div.patient-info-item {:class "col-md-12"}
-           [:p.card-title "Recent encounters"]
-           [encounter]
-           [encounter]]]]]])))
+         [:br]
+         [:div.card
+          [:div.card-header.info-header "Administrative info"]
+          [:div.card-body
+           [:h5.card-title "Telecom"]
+           [:span.info-item
+            [:span.text-muted "Use: "]
+            "Home"]
+           [:span.info-item
+            [:span.text-muted "Type: "]
+            "Mobile"]
+           [:span.info-item
+            [:span.text-muted "Phone nubmer: "]
+            "88005553555"]]
+          [:div.card-body
+           [:h5.card-title "Address"]
+           [:span.info-item
+            [:span.text-muted "Country: "]
+            "USA"]
+           [:span.info-item
+            [:span.text-muted "City: "]
+            "Brockton"]
+           [:span.info-item
+            [:span.text-muted "Postal code: "]
+            "02301"]
+           [:span.info-item
+            [:span.text-muted "State: "]
+            "Massachusetts"]
+           [:div.info-item
+            [:span.text-muted "Line: "]
+            "730 Schoen Center Apt 8"]]
+          [:div.card-body
+           [:h5.card-title "Identifiers"]
+           [:span.info-item
+            [:span.text-muted "SSN: "]
+            "999-81-4006"]
+           [:span.info-item
+            [:span.text-muted "MRN: "]
+            "803f5907-5427-4930-a093-1a95190de7fd"]
+           [:span.info-item
+            [:span.text-muted "Driver Licence: "]
+            "999-81-4006"]]]
+         [:br]
+         [:div.card
+          [:div.card-header.info-header "Recent encounters"]
+          [encounter]
+          [encounter]]]]])))
 
 (pages/reg-subs-page
  model/index-card

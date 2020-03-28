@@ -26,5 +26,9 @@ postgres-up:
 	docker-compose up -d
 postgres-down:
 	docker-compose down
+logs-up:
+	docker-compose -f docker-compose.log.yaml up -d
+logs-down:
+	docker-compose -f docker-compose.log.yaml down
 postgres-fhir-init:
 	pg_restore -d postgres://$(PGUSER):$(PGPASSWOR)@$(PGHOST):$(PGPORT)/$(PGDATABASE) resources/devbox_dump.bak

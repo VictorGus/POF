@@ -65,7 +65,7 @@
         {:padding "5px 5px"}]]]
 
      [:.patient-record:hover
-      {:background-color "#fcfdff"}]]]))
+      {:background-color "#Cardiff"}]]]))
 
 (defn pt-name-to-string [item]
   (str (:given item) " " (:family item)))

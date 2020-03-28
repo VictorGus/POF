@@ -48,7 +48,11 @@
                    :background-color "#0069d9"}]))
 (defn encounter []
   [:div.card-body
-   [:h5.card-title "Encounter for check-up"]
+   [:h5.card-title {:style {:float "left"
+                            :widht "50%"}}
+    "Encounter for check-up"]
+   [:p.text-muted.pl-2 {:style {:text-align "right"}}
+    "2018-07-28 19:42"]
    [:p.text-muted "Ambulatory"]
    [:span.info-item
     [:span.text-muted "Reason: "]
@@ -121,4 +125,11 @@
 (pages/reg-subs-page
  model/index-card
  (fn [db params]
-   [patient-card]))
+   [:div
+    [:nav {:aria-label "breadcrumb"}
+     [:ol.breadcrumb
+      [:li.breadcrumb-item
+       [:a {:href "#"} "Patients"]]
+      [:li.breadcrumb-item.active
+       "8e369267-1e8a-438f-8ae8-a100fe2103fe"]]]
+    [patient-card]]))

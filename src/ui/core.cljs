@@ -22,8 +22,6 @@
 (defn current-page []
   (let [route  (rf/subscribe [:route-map/current-route])]
     (fn []
-      (println @route)
-      (println @pages/pages)
       (let [page (get @pages/pages (:match @route))
             params (:params @route)]
         (if page

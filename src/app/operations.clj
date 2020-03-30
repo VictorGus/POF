@@ -51,10 +51,21 @@
                run-query)}))
 
 (defn patient-by-id-query [{{params :params} :params}]
-  (println params)
-  (hsql/format {:select [:resource]
-                :from [:patient]
-                :where [:= :patient.id params]}))
+  (hsql/format {:select [(hsql/raw "p.resource#>>'{address}' as address")
+                         (hsql/raw "p.resource#>>'{telecom}' as telecom")
+                         (hsql/raw "p.resource#>>'{identifier}' as identifier")
+                         (hsql/raw "p.resource#>>'{name, 0}' as patient_name")
+                         (hsql/raw "e.resource#>>'{class, code}' as code")
+                         (hsql/raw "e.resource#>>'{period, endfd fs}' as period_end")
+                         (hsql/raw "e.resource#>>'{type, 0, text}' as e_type")
+                         (hsql/raw "e.resource#>>'{reason, 0, coding, 0, display}' as reason")]
+                :from [[:patient :p]]
+                :join [[:encounter :e] [:=
+                                        (hsql/raw "e.resource #>> '{subject, id}'")
+                                        :p.id]]
+                :where [:= :p.id params]
+                :order-by [[(hsql/raw "e.resource#>>'{period, end}'") :desc]]
+                :limit 3}))
 
 (defn patient-by-id [req]
   {:status 200

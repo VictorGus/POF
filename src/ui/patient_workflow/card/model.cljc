@@ -3,15 +3,12 @@
 
 (def index-card ::index-card)
 
-index-card
-
 (rf/reg-event-fx
  index-card
  (fn [{db :db} [pid phase params]]
-   {:db db}))
+   {:xhr/fetch {:uri (str "/patient/" (get-in db [:route-map/current-route :params :uid]))}}))
 
 (rf/reg-sub
  index-card
  (fn [_ _]
    {}))
-

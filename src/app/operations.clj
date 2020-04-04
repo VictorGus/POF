@@ -29,7 +29,7 @@
                                      [:ilike (hsql/raw "resource#>>'{name, 0, family}'") (first p)]
                                      [:ilike (hsql/raw "resource#>>'{name, 0, given, 0}'") (first p)]
                                      (hsql/raw (str "resource#>>'{identifier}' @@ 'value = " (first p) "'"))]
-                                    (= (count p) 2)
+                                   (= (count p) 2)
                                     [:or
                                      [:and
                                       [:ilike (hsql/raw "resource#>>'{name, 0, family}'") (first p)]
@@ -50,23 +50,26 @@
                patient-search-query
                run-query)}))
 
-(defn patient-by-id-query [{{params :params} :params}]
-  (hsql/format {:select [(hsql/raw "p.resource#>>'{address}' as address")
-                         (hsql/raw "p.resource#>>'{telecom}' as telecom")
-                         (hsql/raw "p.resource#>>'{identifier}' as identifier")
-                         (hsql/raw "p.resource#>>'{name, 0}' as patient_name")
-                         (hsql/raw "e.resource#>>'{class, code}' as code")
-                         (hsql/raw "e.resource#>>'{period, endfd fs}' as period_end")
-                         (hsql/raw "e.resource#>>'{type, 0, text}' as e_type")
-                         (hsql/raw "e.resource#>>'{reason, 0, coding, 0, display}' as reason")]
-                :from [[:patient :p]]
-                :join [[:encounter :e] [:=
-                                        (hsql/raw "e.resource #>> '{subject, id}'")
-                                        :p.id]]
-                :where [:= :p.id params]
-                :order-by [[(hsql/raw "e.resource#>>'{period, end}'") :desc]]
-                :limit 3}))
+(defn patient-by-id-query [id]
+  (let [patient-query (hsql/format {:select [(hsql/raw "p.resource#>'{address}' as address")
+                                             (hsql/raw "p.resource#>'{telecom}' as telecom")
+                                             (hsql/raw "p.resource#>'{identifier}' as identifier")
+                                             (hsql/raw "p.resource#>'{name, 0}' as patient_name")]
+                                    :from [[:patient :p]]
+                                    :where [:= :p.id id]})
+        encounter-query (hsql/format {:select [(hsql/raw "e.resource#>>'{reason, 0, coding, 0, display}' as reason")
+                                               (hsql/raw "e.resource#>>'{class, code}' as code")
+                                               (hsql/raw "e.resource#>>'{period, end}' as period_end")
+                                               (hsql/raw "e.resource#>>'{type, 0, text}' as e_type")]
+                                      :from [[:encounter :e]]
+                                      :where [:= (hsql/raw "resource#>>'{subject, id}'") id]
+                                      :limit 3})]
+    [patient-query encounter-query]))
 
-(defn patient-by-id [req]
-  {:status 200
-   :body (run-query (patient-by-id-query req))})
+(defn patient-by-id [{{params :params} :params}]
+  (let [query (patient-by-id-query params)
+        patient-info (run-query (first query))
+        encounter-info (run-query (second query))]
+    {:status 200
+     :body {:patient patient-info
+            :encounter encounter-info}}))

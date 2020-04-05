@@ -16,8 +16,7 @@
     [:#search-btn
      {:margin-right "16px"}]
 
-    [:.patient-grid
-
+    [:.patient-grid 
      [:.icon
       {:height "65px"
        :width "65px"
@@ -27,7 +26,7 @@
       [:.icon.img
        {:fill "blue"}]]
 
-     [:.patient-record
+     [:.patient-record 
       {:display "flex"
        :text-decoration "none"
        :color "black"
@@ -35,6 +34,7 @@
        :margin-top "12px"
        :border-radius ".25rem"
        :border "1px solid rgba(51, 51, 51, 0.1)"}
+
 
       [:.patient-info
        {:display "flex"
@@ -63,9 +63,8 @@
        {:text-align "right"}
        [:.patient-right-value
         {:padding "5px 5px"}]]]
-
      [:.patient-record:hover
-      {:background-color "#Cardiff"}]]]))
+      {:background-color "#e6f2ff"}]]]))
 
 (defn pt-name-to-string [item]
   (str (:given item) " " (:family item)))

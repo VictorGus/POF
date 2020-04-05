@@ -1,12 +1,12 @@
 version: '3.1'
 services:
   db:
-    image: ${PGIMAGE} 
+    image: "${PGIMAGE}"   
     container_name: pof 
     ports:
       - "${PGPORT}:5432"
     volumes:
-      - "./pgdata:/data"
+      - "./pgdata:/var/lib/postgresql/data"
     environment:
       POSTGRES_USER:     "${PGUSER}"
       POSTGRES_PASSWORD: "${PGPASSWORD}"

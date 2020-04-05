@@ -17,6 +17,7 @@
          org.clojure/data.generators {:mvn/version "0.1.2"} 
          honeysql                    {:mvn/version "0.9.8"}
          route-map                   {:mvn/version "0.0.7-RC4"}
+         chrono                      {:local/root "ui/chrono"}
          cheshire                    {:mvn/version "5.9.0"}}
 
  :aliases

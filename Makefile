@@ -21,6 +21,11 @@ run-jar:
 test:
 	clj -A:test:runner
 
+data-set:
+	wget https://github.com/fhirbase/fhirbase/raw/master/demo/bundle.ndjson.gzip
+	./tools/fhirbase --host localhost -p 5443 -d fhirbase -U postgres -W postgres --fhir=3.3.0 load -m insert ./bundle.ndjson.gzip 
+	rm bundle.ndjson.gzip
+
 # Postgres
 postgres-up:
 	docker-compose up -d

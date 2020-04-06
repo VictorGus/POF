@@ -1,8 +1,11 @@
 (ns ui.patient-workflow.card.view
   (:require [reagent.core :as r]
+            [re-frame.core :as rf]
             [ui.pages :as pages]
-            [ui.helpers :as helpers]
             [ui.styles :as styles]
+            [ui.helper :as helper]
+            [clojure.string :as str]
+            [ui.zframes.redirect :as redirect]
             [ui.basic-components.info-input :refer [info-input]]
             [ui.patient-workflow.card.model :as model]))
 
@@ -75,7 +78,9 @@
                             (str (first (:given name)) " " (:family name)))]
          [:p {:class "text-muted"
               :style {:margin-bottom "0px"}} (:birthdate (first (:patient data)))]]
-        [:p.edit-button.mt-2.mr-2 [:i.fas.fa-edit {:style {:color "#0069d9"}}]]]
+        [:p.edit-button.mt-2.mr-2 [:i.fas.fa-edit {:style {:color "#0069d9"}
+                                                   :on-click #(rf/dispatch [::redirect/redirect
+                                                                            {:uri (helper/make-href (.-href (.-location js/window)) "edit")}])}]]]
        [:br]
        [:div.card
         [:div.card-header.info-header "Administrative info"]
@@ -118,13 +123,13 @@
            [:h5.card-title "Identifiers"]
            [:span.info-item
             [:span.text-muted "SSN: "]
-            (:value (helpers/vec-search "SB" (:identifier (first (:patient data)))))]
+            (:value (helper/vec-search "SB" (:identifier (first (:patient data)))))]
            [:span.info-item
             [:span.text-muted "MRN: "]
-            (:value (helpers/vec-search "MR" (:identifier (first (:patient data)))))]
+            (:value (helper/vec-search "MR" (:identifier (first (:patient data)))))]
            [:span.info-item
             [:span.text-muted "Driver Licence: "]
-            (:value (helpers/vec-search "DL" (:identifier (first (:patient data)))))]])]
+            (:value (helper/vec-search "DL" (:identifier (first (:patient data)))))]])]
        [:br]
        [:div.card
         [:div.card-header.info-header "Recent encounters"]

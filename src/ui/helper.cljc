@@ -23,3 +23,13 @@
                  :cljs (first (.fromCharCode js/String 47)))
         slashes (get (frequencies uri) slash)]
     (str "/" (str/join "/" (take-last (- slashes 3) (str/split uri (re-pattern (str slash))))) "/" item)))
+
+(defn flatten-map [m & [path]]
+  (reduce-kv
+   (fn [acc k v]
+     (let [path (conj (or path []) k)]
+       (if (coll? v)
+         (concat acc (flatten-map v path))
+         (conj acc path))))
+   []
+   m))

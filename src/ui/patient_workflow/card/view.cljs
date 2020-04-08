@@ -151,38 +151,55 @@
   [:div#patient-card-wrapper card-style
      [:div.row
       [:div#patient-card {:class "col-md-6 offset-md-3"}
-       [:div.patient-title-wrapper
-        [:form
-         [:div.form-group
-          (let [name  (get-in data [:patient 0 :patient_name])]
-            [:div.row
-             [:div.col-sm
-              [:label {:for "family-input"} "Family"]
-              [:input.form-control {:type "text"
-                                    :id "family-input"
-                                    :placeholder "Enter family name"
-                                    :value (:family name)}]]
-             [:div.col-sm
-              [:label {:for "Given-input"} "Given"]
-              [:input.form-control {:type "text"
-                                    :id "given-input"
-                                    :placeholder "Enter given name"
-                                    :value (get-in name [:given 0])}]]
-             (when-let [middle (get-in name [:given 1])]
-               [:div.col-sm
-                [:label {:for "Middle-input"} "Middle"]
-                [:input.form-control {:type "text"
-                                      :id "middle-input"
-                                      :placeholder "Enter middle name"
-                                      :value middle}]])])
-          [:br]
-          [:div.row
-           [:div.col-sm
-            [:label {:for "bd-input"} "Birth date"]
-            [:input.form-control {:type "text"
-                                  :id "bd-input"
-                                  :placeholder "Enter birth date"
-                                  :value (:birthdate (first (:patient data)))}]]]]]]
+       [:div.card
+        [:div.card-header.info-header "Patient personal info"]
+        [:div.patient-title-wrapper
+         [:form
+          [:div.form-group.p-3
+           (let [name  (get-in data [:patient 0 :patient_name])]
+             [:div.row.mb-3
+              [:div.col-sm
+               [:label.text-muted {:for "family-input"} "Family"]
+               [:input.form-control {:type "text"
+                                     :id "family-input"
+                                     :placeholder "Enter family name"
+                                     :value (:family name)}]]
+              [:div.col-sm
+               [:label.text-muted {:for "Given-input"} "Given"]
+               [:input.form-control {:type "text"
+                                     :id "given-input"
+                                     :placeholder "Enter given name"
+                                     :value (get-in name [:given 0])}]]
+              (when-let [middle (get-in name [:given 1])]
+                [:div.col-sm
+                 [:label.text-muted {:for "Middle-input"} "Middle"]
+                 [:input.form-control {:type "text"
+                                       :id "middle-input"
+                                       :placeholder "Enter middle name"
+                                       :value middle}]])
+              [:div.col-sm
+               [:label.text-muted {:for "bd-input"} "Birth date"]
+               [:input.form-control {:type "text"
+                                     :id "bd-input"
+                                     :placeholder "Enter birth date"
+                                     :value (:birthdate (first (:patient data)))}]]])
+           [:div.row
+            [:div.col-sm-8
+             [:label.text-muted {:for "gender-input"} "Gender"]
+             [:select.form-control {:type "text"
+                                    :id "bd-input"}
+              [:option (cond-> {:value "male"}
+                         (= "male" (:gender (first (:patient data))))
+                         (assoc :selected "selected")) "Male"]
+              [:option (cond-> {:value "female"}
+                         (= "female" (:gender (first (:patient data))))
+                         (assoc :selected "selected")) "Female"]
+              [:option (cond-> {:value "other"}
+                         (= "other" (:gender (first (:patient data))))
+                         (assoc :selected "selected")) "Other"]
+              [:option (cond-> {:value "unknown"}
+                         (= "unknown" (:gender (first (:patient data))))
+                         (assoc :selected "selected")) "Unknown"]]]]]]]]
        [:br]
        [:div.card
         [:div.card-header.info-header "Administrative info"]

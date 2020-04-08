@@ -102,8 +102,7 @@
           [:div.card-body
            [:h5.card-title "Address"]
            (for [item (:address (first (:patient data)))]
-             [:<>
-              [:span.info-item
+             [:<> [:span.info-item
                [:span.text-muted "Country: "]
                (:country item)]
               [:span.info-item
@@ -147,3 +146,94 @@
       [:li.breadcrumb-item.active
        "8e369267-1e8a-438f-8ae8-a100fe2103fe"]]]
     [patient-card data]]))
+
+(defn patient-edit-workflow [data]
+  [:div#patient-card-wrapper card-style
+     [:div.row
+      [:div#patient-card {:class "col-md-6 offset-md-3"}
+       [:div.patient-title-wrapper
+        [:form
+         [:div.form-group
+          (let [name  (get-in data [:patient 0 :patient_name])]
+            [:div.row
+             [:div.col-sm
+              [:label {:for "family-input"} "Family"]
+              [:input.form-control {:type "text"
+                                    :id "family-input"
+                                    :placeholder "Enter family name"
+                                    :value (:family name)}]]
+             [:div.col-sm
+              [:label {:for "Given-input"} "Given"]
+              [:input.form-control {:type "text"
+                                    :id "given-input"
+                                    :placeholder "Enter given name"
+                                    :value (get-in name [:given 0])}]]
+             (when-let [middle (get-in name [:given 1])]
+               [:div.col-sm
+                [:label {:for "Middle-input"} "Middle"]
+                [:input.form-control {:type "text"
+                                      :id "middle-input"
+                                      :placeholder "Enter middle name"
+                                      :value middle}]])])
+          [:br]
+          [:div.row
+           [:div.col-sm
+            [:label {:for "bd-input"} "Birth date"]
+            [:input.form-control {:type "text"
+                                  :id "bd-input"
+                                  :placeholder "Enter birth date"
+                                  :value (:birthdate (first (:patient data)))}]]]]]]
+       [:br]
+       [:div.card
+        [:div.card-header.info-header "Administrative info"]
+        (when (:telecom (first (:patient data)))
+          [:div.card-body
+           [:h5.card-title "Telecom"]
+           (for [item (:telecom (first (:patient data)))]
+             [:<>
+              [:span.info-item
+               [:span.text-muted "Use: "]
+               (:use item)]
+              [:span.info-item
+               [:span.text-muted "Type: "]
+               (:system item)]
+              [:span.info-item
+               [:span.text-muted "Phone nubmer: "]
+               (:value item)]])])
+        (when (:address (first (:patient data)))
+          [:div.card-body
+           [:h5.card-title "Address"]
+           (for [item (:address (first (:patient data)))]
+             [:<> [:span.info-item
+               [:span.text-muted "Country: "]
+               (:country item)]
+              [:span.info-item
+               [:span.text-muted "City: "]
+               (:city item)]
+              [:span.info-item
+               [:span.text-muted "Postal code: "]
+               (:postalCode item)]
+              [:span.info-item
+               [:span.text-muted "State: "]
+               (:state item)]
+              [:div.info-item
+               [:span.text-muted "Line: "]
+               (first (:line item))]])])
+        (when (:identifier (first (:patient data)))
+          [:div.card-body
+           [:h5.card-title "Identifiers"]
+           [:span.info-item
+            [:span.text-muted "SSN: "]
+            (:value (helper/vec-search "SB" (:identifier (first (:patient data)))))]
+           [:span.info-item
+            [:span.text-muted "MRN: "]
+            (:value (helper/vec-search "MR" (:identifier (first (:patient data)))))]
+           [:span.info-item
+            [:span.text-muted "Driver Licence: "]
+            (:value (helper/vec-search "DL" (:identifier (first (:patient data)))))]])]]]])
+
+(pages/reg-subs-page
+ model/edit
+ (fn [{:keys [data] :as page} params]
+   [patient-edit-workflow data]))
+

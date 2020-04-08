@@ -2,7 +2,8 @@
 
 (def routes {:. :ui.patient-workflow.model/index
              "patients" {:. :ui.patient-workflow.model/index}
-             "patient" {[:uid] {:. :ui.patient-workflow.card.model/index-card}}})
+             "patient" {[:uid] {:. :ui.patient-workflow.card.model/index-card
+                                "edit" {:. :ui.patient-workflow.card.model/edit}}}})
 
 (defn route-index* [route pth]
   (merge

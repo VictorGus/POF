@@ -7,6 +7,7 @@
             [clojure.string :as str]
             [ui.zframes.redirect :as redirect]
             [ui.basic-components.info-input :refer [info-input]]
+            [ui.basic-components.form.view :as form]
             [ui.patient-workflow.card.model :as model]))
 
 (def card-style
@@ -152,189 +153,151 @@
 
 (defn patient-edit-workflow [data]
   [:div#patient-card-wrapper card-style
-     [:div.row
-      [:div#patient-card {:class "col-md-6 offset-md-3"}
-       [:div.card
-        [:div.card-header.info-header "Patient personal info"]
-        [:div.patient-title-wrapper
-         [:form
-          [:div.form-group.p-3
-           (let [name  (get-in data [:patient 0 :patient_name])]
-             [:div.row.mb-3
+   [:div.row
+    [:div#patient-card {:class "col-md-6 offset-md-3"}
+     [:div.card
+      [:div.card-header.info-header "Patient personal info"]
+      [:div.patient-title-wrapper
+       [:form
+        [:div.form-group.p-3
+         (let [name  (get-in data [:patient 0 :patient_name])]
+           [:div.row.mb-3
+            [:div.col-sm
+             [:label.text-muted {:for "family-input"} "Family"]
+             [:input.form-control {:type "text"
+                                   :id "family-input"
+                                   :placeholder "Enter family name"
+                                   :value (:family name)}]]
+            [:div.col-sm
+             [:label.text-muted {:for "Given-input"} "Given"]
+             [:input.form-control {:type "text"
+                                   :id "given-input"
+                                   :placeholder "Enter given name"
+                                   :value (get-in name [:given 0])}]]
+            (when-let [middle (get-in name [:given 1])]
               [:div.col-sm
-               [:label.text-muted {:for "family-input"} "Family"]
+               [:label.text-muted {:for "Middle-input"} "Middle"]
                [:input.form-control {:type "text"
-                                     :id "family-input"
-                                     :placeholder "Enter family name"
-                                     :value (:family name)}]]
-              [:div.col-sm
-               [:label.text-muted {:for "Given-input"} "Given"]
-               [:input.form-control {:type "text"
-                                     :id "given-input"
-                                     :placeholder "Enter given name"
-                                     :value (get-in name [:given 0])}]]
-              (when-let [middle (get-in name [:given 1])]
-                [:div.col-sm
-                 [:label.text-muted {:for "Middle-input"} "Middle"]
-                 [:input.form-control {:type "text"
-                                       :id "middle-input"
-                                       :placeholder "Enter middle name"
-                                       :value middle}]])
-              [:div.col-sm
-               [:label.text-muted {:for "bd-input"} "Birth date"]
-               [:input.form-control {:type "text"
-                                     :id "bd-input"
-                                     :placeholder "Enter birth date"
-                                     :value (:birthdate (first (:patient data)))}]]])
+                                     :id "middle-input"
+                                     :placeholder "Enter middle name"
+                                     :value middle}]])
+            [:div.col-sm
+             [:label.text-muted {:for "bd-input"} "Birth date"]
+             [:input.form-control {:type "text"
+                                   :id "bd-input"
+                                   :placeholder "Enter birth date"
+                                   :value (:birthdate (first (:patient data)))}]]])
+         [:div.row
+          [:div.col-sm-8
+           [:label.text-muted {:for "gender-input"} "Gender"]
+           [form/form-select [{:value "male"    :display "Male"}
+                              {:value "female"  :display "Female"}
+                              {:value "other"   :display "Other"}
+                              {:value "unknown" :display "Unknown"}] (:gender (first (:patient data)))]]]]]]]
+     [:br]
+     [:div.card
+      [:div.card-header.info-header "Administrative info"]
+      (when (:telecom (first (:patient data)))
+        [:div.card-body.border-bottom
+         [:h5.card-title "Telecom"]
+         (for [item (:telecom (first (:patient data)))]
            [:div.row
-            [:div.col-sm-8
-             [:label.text-muted {:for "gender-input"} "Gender"]
-             [:select.form-control.selector {:type "text"
-                                             :id "gender-input"}
-              [:option.selector-item (cond-> {:value "male"}
-                                       (= "male" (:gender (first (:patient data))))
-                                       (assoc :selected "selected")) "Male"]
-              [:option.selector-item (cond-> {:value "female"}
-                         (= "female" (:gender (first (:patient data))))
-                         (assoc :selected "selected")) "Female"]
-              [:option.selector-item (cond-> {:value "other"}
-                         (= "other" (:gender (first (:patient data))))
-                         (assoc :selected "selected")) "Other"]
-              [:option.selector-item (cond-> {:value "unknown"}
-                         (= "unknown" (:gender (first (:patient data))))
-                         (assoc :selected "selected")) "Unknown"]]]]]]]]
-       [:br]
-       [:div.card
-        [:div.card-header.info-header "Administrative info"]
-        (when (:telecom (first (:patient data)))
-          [:div.card-body.border-bottom
-           [:h5.card-title "Telecom"]
-           (for [item (:telecom (first (:patient data)))]
-             [:div.row
-              [:div.col-sm
-               [:label.text-muted {:for "use-input"} "Use"]
-               [:select.form-control.selector {:type "text"
-                                               :id "use-input"}
-                [:option.selector-item (cond-> {:value "home"}
-                                         (= "home" (:use item))
-                                         (assoc :selected "selected")) "Home"]
-                [:option.selector-item (cond-> {:value "work"}
-                                         (= "work" (:use item))
-                                         (assoc :selected "selected")) "Work"]
-                [:option.selector-item (cond-> {:value "mobile"}
-                                         (= "mobile" (:use item))
-                                         (assoc :selected "selected")) "Mobile"]
-                [:option.selector-item (cond-> {:use "temp"}
-                                         (= "temp" (:use item))
-                                         (assoc :selected "selected")) "Temp"]
-                [:option.selector-item (cond-> {:use "old"}
-                                         (= "old" (:use item))
-                                         (assoc :selected "selected")) "Old"]]]
-              [:div.col-sm
-               [:label.text-muted {:for "system-input"} "Type"]
-               [:select.form-control.selector {:type "text"
-                                               :id "system-input"}
-                [:option.selector-item (cond-> {:value "phone"}
-                                         (= "phone" (:system item))
-                                         (assoc :selected "selected")) "Phone"]
-                [:option.selector-item (cond-> {:value "fax"}
-                                         (= "fax" (:system item))
-                                         (assoc :selected "selected")) "Fax"]
-                [:option.selector-item (cond-> {:value "email"}
-                                         (= "email" (:system item))
-                                         (assoc :selected "selected")) "Email"]
-                [:option.selector-item (cond-> {:value "url"}
-                                         (= "url" (:system item))
-                                         (assoc :selected "selected")) "URL"]
-                [:option.selector-item (cond-> {:value "sms"}
-                                         (= "sms" (:system item))
-                                         (assoc :selected "selected")) "SMS"]
-                [:option.selector-item (cond-> {:value "pager"}
-                                         (= "pager" (:system item))
-                                         (assoc :selected "selected")) "Pager"]
-                [:option.selector-item (cond-> {:value "other"}
-                                         (= "other" (:system item))
-                                         (assoc :selected "selected")) "Other"]]]
-              [:div.col-sm
-               [:label.text-muted {:for "value-input"} (cond
-                                                         (#{"phone" "fax" "sms" "pager"} (:system item))
-                                                         "Phone number"
-                                                         (#{"url"} (:system item))
-                                                         "Contact url"
-                                                         (#{"email"} (:system item))
-                                                         "Email"
-                                                         (#{"other"} (:system item))
-                                                         "Telecom value")]
-               [:input.form-control {:type "text"
-                                     :id "value-input"
-                                     :placeholder "Enter telecom value"
-                                     :value (:value item)}]]])])
-        (when (:address (first (:patient data)))
-          [:div.card-body.border-bottom
-           [:h5.card-title "Address"]
-           (for [item (:address (first (:patient data)))]
-             [:div
-              [:div.row.mb-3
-               [:div.col
-                [:label.text-muted {:for "country-input"} "Country"]
-                [:input.form-control {:type "text"
-                                      :id "country-input"
-                                      :placeholder "Enter country"
-                                      :value (:country item)}]]
-               [:div.col
-                [:label.text-muted {:for "city-input"} "City"]
-                [:input.form-control {:type "text"
-                                      :id "city-input"
-                                      :placeholder "Enter city"
-                                      :value (:city item)}]]
-               [:div.col
-                [:label.text-muted {:for "postal-input"} "Postal code"]
-                [:input.form-control {:type "text"
-                                      :id "postal-input"
-                                      :placeholder "Enter postal code"
-                                      :value (:postalCode item)}]]
-               [:div.col
-                [:label.text-muted {:for "state-input"} "State"]
-                [:input.form-control {:type "text"
-                                      :id "state-input"
-                                      :placeholder "Enter state"
-                                      :value (:state item)}]]]
-              [:div.row
-               [:div.col-sm-6
-                [:label.text-muted {:for "line-input"} "Line"]
-                [:input.form-control {:type "text"
-                                      :id "line-input"
-                                      :placeholder "Enter line"
-                                      :value (:line item)}]]]])])
-        (when (:identifier (first (:patient data)))
-          [:div.card-body
-           [:h5.card-title "Identifiers"]
+            [:div.col-sm
+             [:label.text-muted {:for "use-input"} "Use"]
+             [form/form-select [{:value "work" :display "Work"}
+                                {:value "home" :display "Home"}
+                                {:value "mobile" :display "Mobile"}
+                                {:value "temp" :display "Temp"}
+                                {:value "old" :display "Old"}] (:use item)]]
+            [:div.col-sm
+             [:label.text-muted {:for "system-input"} "Type"]
+             [form/form-select [{:value "phone" :display "Phone"}
+                                {:value "fax" :display "Fax"}
+                                {:value "email" :display "Email"}
+                                {:value "url" :display "URL"}
+                                {:value "pager" :display "Pager"}
+                                {:value "sms" :display "SMS"}
+                                {:value "other" :display "Other"}] (:system item)]]
+            [:div.col-sm
+             [:label.text-muted {:for "value-input"} (cond
+                                                       (#{"phone" "fax" "sms" "pager"} (:system item))
+                                                       "Phone number"
+                                                       (#{"url"} (:system item))
+                                                       "Contact url"
+                                                       (#{"email"} (:system item))
+                                                       "Email"
+                                                       (#{"other"} (:system item))
+                                                       "Telecom value")]
+             [:input.form-control {:type "text"
+                                   :id "value-input"
+                                   :placeholder "Enter telecom value"
+                                   :value (:value item)}]]])])
+      (when (:address (first (:patient data)))
+        [:div.card-body.border-bottom
+         [:h5.card-title "Address"]
+         (for [item (:address (first (:patient data)))]
            [:div
             [:div.row.mb-3
              [:div.col
-              [:label.text-muted {:for "ssn-input"} "Social security number"]
+              [:label.text-muted {:for "country-input"} "Country"]
               [:input.form-control {:type "text"
-                                    :id "ssn-input"
-                                    :placeholder "Enter SSN"
-                                    :value (:value (helper/vec-search "SB" (:identifier (first (:patient data)))))}]]
+                                    :id "country-input"
+                                    :placeholder "Enter country"
+                                    :value (:country item)}]]
              [:div.col
-              [:label.text-muted {:for "dl-input"} "Driver license"]
+              [:label.text-muted {:for "city-input"} "City"]
               [:input.form-control {:type "text"
-                                    :id "dl-input"
-                                    :placeholder "Enter DL"
-                                    :value (:value (helper/vec-search "DL" (:identifier (first (:patient data)))))}]]]
+                                    :id "city-input"
+                                    :placeholder "Enter city"
+                                    :value (:city item)}]]
+             [:div.col
+              [:label.text-muted {:for "postal-input"} "Postal code"]
+              [:input.form-control {:type "text"
+                                    :id "postal-input"
+                                    :placeholder "Enter postal code"
+                                    :value (:postalCode item)}]]
+             [:div.col
+              [:label.text-muted {:for "state-input"} "State"]
+              [:input.form-control {:type "text"
+                                    :id "state-input"
+                                    :placeholder "Enter state"
+                                    :value (:state item)}]]]
             [:div.row
              [:div.col-sm-6
-              [:label.text-muted {:for "mrn-input"} "Medical record number"]
+              [:label.text-muted {:for "line-input"} "Line"]
               [:input.form-control {:type "text"
-                                    :id "mrn-input"
-                                    :placeholder "Enter MRN"
-                                    :value (:value (helper/vec-search "MR" (:identifier (first (:patient data)))))}]]]]])]
-       [:button.btn.btn-outline-primary.mt-3.mb-2.mr-2 "Save"]
-       [:button.btn.btn-outline-danger.mt-3.mb-2
-        {:on-click #(rf/dispatch [::redirect/redirect
-                                  {:uri (helper/make-back-href (.-href (.-location js/window)))}])}
-        "Cancel"]]]])
+                                    :id "line-input"
+                                    :placeholder "Enter line"
+                                    :value (:line item)}]]]])])
+      (when (:identifier (first (:patient data)))
+        [:div.card-body
+         [:h5.card-title "Identifiers"]
+         [:div
+          [:div.row.mb-3
+           [:div.col
+            [:label.text-muted {:for "ssn-input"} "Social security number"]
+            [:input.form-control {:type "text"
+                                  :id "ssn-input"
+                                  :placeholder "Enter SSN"
+                                  :value (:value (helper/vec-search "SB" (:identifier (first (:patient data)))))}]]
+           [:div.col
+            [:label.text-muted {:for "dl-input"} "Driver license"]
+            [:input.form-control {:type "text"
+                                  :id "dl-input"
+                                  :placeholder "Enter DL"
+                                  :value (:value (helper/vec-search "DL" (:identifier (first (:patient data)))))}]]]
+          [:div.row
+           [:div.col-sm-6
+            [:label.text-muted {:for "mrn-input"} "Medical record number"]
+            [:input.form-control {:type "text"
+                                  :id "mrn-input"
+                                  :placeholder "Enter MRN"
+                                  :value (:value (helper/vec-search "MR" (:identifier (first (:patient data)))))}]]]]])]
+     [:button.btn.btn-outline-primary.mt-3.mb-2.mr-2 "Save"]
+     [:button.btn.btn-outline-danger.mt-3.mb-2
+      {:on-click #(rf/dispatch [::redirect/redirect
+                                {:uri (helper/make-back-href (.-href (.-location js/window)))}])}
+      "Cancel"]]]])
 
 (pages/reg-subs-page
  model/edit

@@ -18,11 +18,17 @@
                      target?))
                  (cond-> coll (map? coll) vals))))
 
-(defn make-href [uri item]
+(defn href-without-domain [uri]
   (let [slash #?(:clj (char 47)
                  :cljs (first (.fromCharCode js/String 47)))
         slashes (get (frequencies uri) slash)]
-    (str "/" (str/join "/" (take-last (- slashes 3) (str/split uri (re-pattern (str slash))))) "/" item)))
+    (str "/" (str/join "/" (take-last (- slashes 3) (str/split uri (re-pattern (str slash))))))))
+
+(defn make-href [uri item]
+  (str (href-without-domain uri) "/" item))
+
+(defn make-back-href [uri]
+  (as-> (href-without-domain uri) uri (str/split uri (re-pattern "/")) (butlast uri) (str/join "/" uri)))
 
 (defn flatten-map [m & [path]]
   (reduce-kv

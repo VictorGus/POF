@@ -12,6 +12,7 @@
 (def card-style
   (styles/style
    [:#patient-card-wrapper
+    {:margin-bottom "5px"}
     [:#patient-card
      {:border-radius "8px"
       :border "1px solid rgba(51, 51, 51, 0.1)"}
@@ -146,7 +147,7 @@
       [:li.breadcrumb-item
        [:a {:href "#"} "Patients"]]
       [:li.breadcrumb-item.active
-       "8e369267-1e8a-438f-8ae8-a100fe2103fe"]]]
+       (:uid params)]]]
     [patient-card data]]))
 
 (defn patient-edit-workflow [data]
@@ -328,10 +329,25 @@
               [:input.form-control {:type "text"
                                     :id "mrn-input"
                                     :placeholder "Enter MRN"
-                                    :value (:value (helper/vec-search "MR" (:identifier (first (:patient data)))))}]]]]])]]]])
+                                    :value (:value (helper/vec-search "MR" (:identifier (first (:patient data)))))}]]]]])]
+       [:button.btn.btn-outline-primary.mt-3.mb-2.mr-2 "Save"]
+       [:button.btn.btn-outline-danger.mt-3.mb-2
+        {:on-click #(rf/dispatch [::redirect/redirect
+                                  {:uri (helper/make-back-href (.-href (.-location js/window)))}])}
+        "Cancel"]]]])
 
 (pages/reg-subs-page
  model/edit
  (fn [{:keys [data] :as page} params]
-   [patient-edit-workflow data]))
+   [:div
+    [:nav {:aria-label "breadcrumb"}
+     [:ol.breadcrumb
+      [:li.breadcrumb-item
+       [:a {:href "#"} "Patients"]]
+      [:li.breadcrumb-item
+       [:a {:href (str "#" (helper/make-back-href (.-href (.-location js/window))))}
+        (:uid params)]]
+      [:li.breadcrumb-item.active
+       "edit"]]]
+    [patient-edit-workflow data]]))
 

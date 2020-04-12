@@ -7,7 +7,8 @@
             [clojure.string :as str]
             [ui.zframes.redirect :as redirect]
             [ui.basic-components.info-input :refer [info-input]]
-            [ui.basic-components.form.view :as form]
+            [ui.basic-components.form.view :as basic-form]
+            [ui.patient-workflow.card.form :as form]
             [ui.patient-workflow.card.model :as model]))
 
 (def card-style
@@ -166,28 +167,28 @@
            [:div.row.mb-3
             [:div.col-sm
              [:label.text-muted {:for "family-input"} "Family"]
-             [form/form-input [::model/edit :name :family]
+             [basic-form/form-input [form/form-path :name 0 :family]
               "Enter family name" (:family name)]]
             [:div.col-sm
              [:label.text-muted {:for "Given-input"} "Given"]
-             [form/form-input [::model/edit :name :given 0]
+             [basic-form/form-input [form/form-path :name 0 :given 0]
               "Enter given name" (get-in name [:given 0])]]
             (when-let [middle (get-in name [:given 1])]
               [:div.col-sm
                [:label.text-muted {:for "Middle-input"} "Middle"]
-               [form/form-input [::model/edit :name :given 1]
+               [basic-form/form-input [form/form-path :name 0 :given 1]
                 "Enter middle name" middle]])
             [:div.col-sm
              [:label.text-muted {:for "bd-input"} "Birth date"]
-             [form/form-input [::model/edit :birthdate]
+             [basic-form/form-input [form/form-path :birthdate]
               "Enter birth date" (:birthdate (first (:patient data)))]]])
          [:div.row
           [:div.col-sm-8
            [:label.text-muted {:for "gender-input"} "Gender"]
-           [form/form-select [{:value "male"    :display "Male"}
+           [basic-form/form-select [{:value "male"    :display "Male"}
                               {:value "female"  :display "Female"}
                               {:value "other"   :display "Other"}
-                              {:value "unknown" :display "Unknown"}] [::model/edit :gender] (:gender (first (:patient data)))]]]]]]]
+                              {:value "unknown" :display "Unknown"}] [form/form-path :gender] (:gender (first (:patient data)))]]]]]]]
      [:br]
      [:div.card
       [:div.card-header.info-header "Administrative info"]
@@ -198,20 +199,20 @@
            [:div.row
             [:div.col-sm
              [:label.text-muted {:for "use-input"} "Use"]
-             [form/form-select [{:value "work" :display "Work"}
+             [basic-form/form-select [{:value "work" :display "Work"}
                                 {:value "home" :display "Home"}
                                 {:value "mobile" :display "Mobile"}
                                 {:value "temp" :display "Temp"}
-                                {:value "old" :display "Old"}] [::model/edit :telecom :use] (:use item)]]
+                                {:value "old" :display "Old"}] [form/form-path :telecom 0 :use] (:use item)]]
             [:div.col-sm
              [:label.text-muted {:for "system-input"} "Type"]
-             [form/form-select [{:value "phone" :display "Phone"}
+             [basic-form/form-select [{:value "phone" :display "Phone"}
                                 {:value "fax" :display "Fax"}
                                 {:value "email" :display "Email"}
                                 {:value "url" :display "URL"}
                                 {:value "pager" :display "Pager"}
                                 {:value "sms" :display "SMS"}
-                                {:value "other" :display "Other"}] [::model/edit :telecom :system] (:system item)]]
+                                {:value "other" :display "Other"}] [form/form-path :telecom 0 :system] (:system item)]]
             [:div.col-sm
              [:label.text-muted {:for "value-input"} (cond
                                                        (#{"phone" "fax" "sms" "pager"} (:system item))
@@ -222,7 +223,7 @@
                                                        "Email"
                                                        (#{"other"} (:system item))
                                                        "Telecom value")]
-             [form/form-input [::model/edit :telecom :value]
+             [basic-form/form-input [::form/form-path :telecom 0 :value]
               "Enter telecom value" (:value  item)]]])])
       (when (:address (first (:patient data)))
         [:div.card-body.border-bottom
@@ -232,27 +233,25 @@
             [:div.row.mb-3
              [:div.col
               [:label.text-muted {:for "country-input"} "Country"]
-              [form/form-input [::model/edit :address :country]
+              [basic-form/form-input [form/form-path :address 0 :country]
                "Enter country" (:country item)]]
              [:div.col
               [:label.text-muted {:for "city-input"} "City"]
-              [form/form-input [::model/edit :address :city]
+              [basic-form/form-input [form/form-path :address 0 :city]
                "Enter city" (:city item)]]
              [:div.col
               [:label.text-muted {:for "postal-input"} "Postal code"]
-              [form/form-input [::model/edit :address :postalCode]
+              [basic-form/form-input [form/form-path :address 0 :postalCode]
                "Enter postal code" (:postalCode  item)]]
              [:div.col
               [:label.text-muted {:for "state-input"} "State"]
-              [form/form-input [::model/edit :address :state]
+              [basic-form/form-input [form/form-path :address 0 :state]
                "Enter state" (:state  item)]]]
             [:div.row
              [:div.col-sm-6
-              [:label.text-muted {:for "line-input"} "Line"]
-              [:div.col
-               [:label.text-muted {:for "state-input"} "State"]
-               [form/form-input [::model/edit :address :line]
-                "Enter line" (:line  item)]]]]])])
+              [:label.text-muted {:for "state-input"} "Line"]
+              [basic-form/form-input [::form/form-path :address 0 :line]
+               "Enter line" (:line  item)]]]])])
       (when (:identifier (first (:patient data)))
         [:div.card-body
          [:h5.card-title "Identifiers"]
@@ -260,20 +259,20 @@
           [:div.row.mb-3
            [:div.col
             [:label.text-muted {:for "ssn-input"} "Social security number"]
-            [form/form-input [::model/edit :identifier 0]
+            [basic-form/form-input [form/form-path :identifier 0]
              "Enter SSN"
-             (helper/vec-search "SB" (:identifier (first (:patient data))))]]
+             (:value  (helper/vec-search "SB" (:identifier (first (:patient data)))))]]
            [:div.col
             [:label.text-muted {:for "dl-input"} "Driver license"]
-            [form/form-input [::model/edit :identifier 1]
+            [basic-form/form-input [:form/form-path :identifier 1]
              "Enter DL"
-             (helper/vec-search "DL" (:identifier (first (:patient data))))]]]
+             (:value (helper/vec-search "DL" (:identifier (first (:patient data)))))]]]
           [:div.row
            [:div.col-sm-6
             [:label.text-muted {:for "mrn-input"} "Medical record number"]
-            [form/form-input [::model/edit :identifier 2]
+            [basic-form/form-input [:form/form-path :identifier 2]
              "Enter MRN"
-             (helper/vec-search "MR" (:identifier (first (:patient data))))]]]]])]
+             (:value (helper/vec-search "MR" (:identifier (first (:patient data)))))]]]]])]
      [:button.btn.btn-outline-primary.mt-3.mb-2.mr-2 "Save"]
      [:button.btn.btn-outline-danger.mt-3.mb-2
       {:on-click #(rf/dispatch [::redirect/redirect

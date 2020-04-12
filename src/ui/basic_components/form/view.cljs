@@ -1,5 +1,5 @@
 (ns ui.basic-components.form.view
-  (:require [reagent.core]
+  (:require [reagent.core :as r]
             [re-frame.core :as rf]
             [ui.basic-components.form.model :as model]))
 
@@ -15,8 +15,12 @@
       display])])
 
 (defn form-input [path & [placeholder value]]
-  [:input.form-control {:type "text"
-                        :placeholder placeholder
-                        :value value
-                        :on-change #(rf/dispatch [::model/form-set-value {:path path
-                                                                          :value (.-value (.-target %))}])}])
+  (let [v (r/atom value)]
+    (fn [_ _]
+      [:input.form-control {:type "text"
+                            :placeholder placeholder
+                            :value @v
+                            :on-change #(do
+                                          (reset! v (.-value (.-target %)))
+                                          (rf/dispatch [::model/form-set-value {:path path
+                                                                                :value (.-value (.-target %))}]))}])))

@@ -53,7 +53,7 @@
  ::search
  (fn [{db :db} [pid params]]
    {:dispatch [::set-loading-status-true]
-    :xhr/fetch {:uri (str "/patients/search/" (str/replace params #" " "%20"))
+    :xhr/fetch {:uri (str "/Patient/search/" (str/replace params #" " "%20"))
                 :req-id (or pid "pid")
                 :success {:event ::save-results}}}))
 

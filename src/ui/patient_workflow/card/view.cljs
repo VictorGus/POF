@@ -48,6 +48,14 @@
        :padding-right "10px"}
       [:.icon.img
        {:fill "blue"}]]]]
+   [:.remove-icon {:display "none"}]
+   [:.form-row:hover [:.remove-icon {:display "block"
+                                     :position "absolute"
+                                     :z-index "10"
+                                     :cursor "pointer"
+                                     :right "16px"
+                                     :width "15px"
+                                     :height "15px"}]]
    [:.info-item {:margin-right "10px"}]
    [:.info-header {:font-size "22px"
                    :font-weight "900"
@@ -163,7 +171,7 @@
       [:div.patient-title-wrapper
        [:form
         [:div.form-group.p-3
-         (let [name  (get-in data [:patient 0 :patient_name])]
+         (let [name (get-in data [:patient 0 :patient_name])]
            [:div.row.mb-3
             [:div.col-sm
              [:label.text-muted {:for "family-input"} "Family"]
@@ -199,7 +207,7 @@
            (for [item (:telecom (first (:patient data)))]
              (do
                (swap! counter inc)
-               [:div.row
+               [:div.row.form-row
                 [:div.col-sm.mb-2
                  [:label.text-muted {:for "use-input"} "Use"]
                  [basic-form/form-select [{:value "work" :display "Work"}
@@ -227,7 +235,9 @@
                                                            :else
                                                            "Telecom value")]
                  [basic-form/form-input [::form/form-path :telecom @counter :value]
-                  "Enter telecom value" (:value  item)]]]))
+                  "Enter telecom value" (:value  item)]]
+                [:i.fas.fa-trash-alt.remove-icon
+                 {:on-click #(rf/dispatch [::model/remove-item [:telecom @counter]])}]]))
            [:button.btn.btn-link.mt-2
             {:on-click #(do
                           (rf/dispatch [::model/add-item :telecom]))}

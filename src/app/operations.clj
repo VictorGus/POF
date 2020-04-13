@@ -50,6 +50,34 @@
                patient-search-query
                run-query)}))
 
+(defn patient-ehr-query [id]
+  (let [patient-query (hsql/format {:select [(hsql/raw "p.resource#>'{address}' as address")
+                                             (hsql/raw "p.resource#>'{telecom}' as telecom")
+                                             (hsql/raw "p.resource#>'{gender}' as gender")
+                                             (hsql/raw "p.resource#>'{birthDate}' as birthDate")
+                                             (hsql/raw "p.resource#>'{identifier}' as identifier")
+                                             (hsql/raw "p.resource#>'{name, 0}' as patient_name")]
+                                    :from [[:patient :p]]
+                                    :where [:= :p.id id]})
+        encounter-query (hsql/format {:select [(hsql/raw "e.resource#>>'{reason, 0, coding, 0, display}' as reason")
+                                               (hsql/raw "e.resource#>>'{class, code}' as code")
+                                               (hsql/raw "e.resource#>>'{period, end}' as period_end")
+                                               (hsql/raw "e.resource#>>'{status}' as status")
+                                               (hsql/raw "e.resource#>>'{type, 0, text}' as e_type")]
+                                      :from [[:encounter :e]]
+                                      :where [:= (hsql/raw "resource#>>'{subject, id}'") id]
+                                      :order-by [[(hsql/raw "resource#>>'{period, end}'") :desc]]
+                                      :limit 3})]
+    [patient-query encounter-query]))
+
+(defn patient-ehr [{{params :params} :params}]
+  (let [query (patient-ehr-query params)
+        patient-info (run-query (first query))
+        encounter-info (run-query (second query))]
+    {:status 200
+     :body {:patient patient-info
+            :encounter encounter-info}}))
+
 (defn patient-by-id-query [id]
   (let [patient-query (hsql/format {:select [(hsql/raw "p.resource#>'{address}' as address")
                                              (hsql/raw "p.resource#>'{telecom}' as telecom")
@@ -71,9 +99,12 @@
     [patient-query encounter-query]))
 
 (defn patient-by-id [{{params :params} :params}]
-  (let [query (patient-by-id-query params)
-        patient-info (run-query (first query))
-        encounter-info (run-query (second query))]
+  {:status 200
+   :body {:entry (run-query (hsql/format {:select [:resource]
+                                          :from [:patient]
+                                          :where [:= :id params]}))}})
+
+(defn resource-create [{{params :params} :params}]
+  (let [query {:select (hsql/call :fhirbase_create (generate-string params))}]
     {:status 200
-     :body {:patient patient-info
-            :encounter encounter-info}}))
+     :body "ok"}))

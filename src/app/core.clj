@@ -12,8 +12,10 @@
   (:import [java.io File]))
 
 (def routes
-  {"patients" {"search" {[:params] {:GET ops/patients-search}}}
-   "patient" {[:params] {:GET ops/patient-by-id}}})
+  {"Patient" {"search" {[:params] {:GET ops/patients-search}}
+              [:params] {:GET ops/patient-by-id
+                         "ehr" {:GET ops/patient-ehr}
+                         "edit" {:PUT ops/resource-create}}}})
 
 (defn handler [{meth :request-method uri :uri :as req}]
   (if-let [res (rm/match [meth uri] routes)]

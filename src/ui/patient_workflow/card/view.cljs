@@ -193,65 +193,78 @@
      [:div.card
       [:div.card-header.info-header "Administrative info"]
       (when (:telecom (first (:patient data)))
-        [:div.card-body.border-bottom
-         [:h5.card-title "Telecom"]
-         (for [item (:telecom (first (:patient data)))]
-           [:div.row
-            [:div.col-sm
-             [:label.text-muted {:for "use-input"} "Use"]
-             [basic-form/form-select [{:value "work" :display "Work"}
-                                {:value "home" :display "Home"}
-                                {:value "mobile" :display "Mobile"}
-                                {:value "temp" :display "Temp"}
-                                {:value "old" :display "Old"}] [form/form-path :telecom 0 :use] (:use item)]]
-            [:div.col-sm
-             [:label.text-muted {:for "system-input"} "Type"]
-             [basic-form/form-select [{:value "phone" :display "Phone"}
-                                {:value "fax" :display "Fax"}
-                                {:value "email" :display "Email"}
-                                {:value "url" :display "URL"}
-                                {:value "pager" :display "Pager"}
-                                {:value "sms" :display "SMS"}
-                                {:value "other" :display "Other"}] [form/form-path :telecom 0 :system] (:system item)]]
-            [:div.col-sm
-             [:label.text-muted {:for "value-input"} (cond
-                                                       (#{"phone" "fax" "sms" "pager"} (:system item))
-                                                       "Phone number"
-                                                       (#{"url"} (:system item))
-                                                       "Contact url"
-                                                       (#{"email"} (:system item))
-                                                       "Email"
-                                                       (#{"other"} (:system item))
-                                                       "Telecom value")]
-             [basic-form/form-input [::form/form-path :telecom 0 :value]
-              "Enter telecom value" (:value  item)]]])])
+        (let [counter (atom -1)]
+          [:div.card-body.border-bottom
+           [:h5.card-title "Telecom"]
+           (for [item (:telecom (first (:patient data)))]
+             (do
+               (swap! counter inc)
+               [:div.row
+                [:div.col-sm.mb-2
+                 [:label.text-muted {:for "use-input"} "Use"]
+                 [basic-form/form-select [{:value "work" :display "Work"}
+                                          {:value "home" :display "Home"}
+                                          {:value "mobile" :display "Mobile"}
+                                          {:value "temp" :display "Temp"}
+                                          {:value "old" :display "Old"}] [form/form-path :telecom @counter :use] (:use item)]]
+                [:div.col-sm
+                 [:label.text-muted {:for "system-input"} "Type"]
+                 [basic-form/form-select [{:value "phone" :display "Phone"}
+                                          {:value "fax" :display "Fax"}
+                                          {:value "email" :display "Email"}
+                                          {:value "url" :display "URL"}
+                                          {:value "pager" :display "Pager"}
+                                          {:value "sms" :display "SMS"}
+                                          {:value "other" :display "Other"}] [form/form-path :telecom @counter :system] (:system item)]]
+                [:div.col-sm
+                 [:label.text-muted {:for "value-input"} (cond
+                                                           (#{"phone" "fax" "sms" "pager"} (:system item))
+                                                           "Phone number"
+                                                           (#{"url"} (:system item))
+                                                           "Contact url"
+                                                           (#{"email"} (:system item))
+                                                           "Email"
+                                                           :else
+                                                           "Telecom value")]
+                 [basic-form/form-input [::form/form-path :telecom @counter :value]
+                  "Enter telecom value" (:value  item)]]]))
+           [:button.btn.btn-link.mt-2
+            {:on-click #(do
+                          (rf/dispatch [::model/add-item :telecom]))}
+            "+ Add telecom"]]))
       (when (:address (first (:patient data)))
-        [:div.card-body.border-bottom
-         [:h5.card-title "Address"]
-         (for [item (:address (first (:patient data)))]
-           [:div
-            [:div.row.mb-3
-             [:div.col
-              [:label.text-muted {:for "country-input"} "Country"]
-              [basic-form/form-input [form/form-path :address 0 :country]
-               "Enter country" (:country item)]]
-             [:div.col
-              [:label.text-muted {:for "city-input"} "City"]
-              [basic-form/form-input [form/form-path :address 0 :city]
-               "Enter city" (:city item)]]
-             [:div.col
-              [:label.text-muted {:for "postal-input"} "Postal code"]
-              [basic-form/form-input [form/form-path :address 0 :postalCode]
-               "Enter postal code" (:postalCode  item)]]
-             [:div.col
-              [:label.text-muted {:for "state-input"} "State"]
-              [basic-form/form-input [form/form-path :address 0 :state]
-               "Enter state" (:state  item)]]]
-            [:div.row
-             [:div.col-sm-6
-              [:label.text-muted {:for "state-input"} "Line"]
-              [basic-form/form-input [::form/form-path :address 0 :line]
-               "Enter line" (:line  item)]]]])])
+        (let [counter (r/atom 0)]
+          [:div.card-body.border-bottom
+           [:h5.card-title "Address"]
+           (for [item (:address (first (:patient data)))]
+             [:div
+              [:div.row.mb-3
+               [:div.col
+                [:label.text-muted {:for "country-input"} "Country"]
+                [basic-form/form-input [form/form-path :address @counter :country]
+                 "Enter country" (:country item)]]
+               [:div.col
+                [:label.text-muted {:for "city-input"} "City"]
+                [basic-form/form-input [form/form-path :address @counter :city]
+                 "Enter city" (:city item)]]
+               [:div.col
+                [:label.text-muted {:for "postal-input"} "Postal code"]
+                [basic-form/form-input [form/form-path :address @counter :postalCode]
+                 "Enter postal code" (:postalCode  item)]]
+               [:div.col
+                [:label.text-muted {:for "state-input"} "State"]
+                [basic-form/form-input [form/form-path :address @counter :state]
+                 "Enter state" (:state  item)]]]
+              [:div.row
+               [:div.col-sm-6
+                [:label.text-muted {:for "state-input"} "Line"]
+                [basic-form/form-input [::form/form-path :address @counter :line]
+                 "Enter line" (:line  item)]]]])
+           [:button.btn.btn-link.mt-2
+            {:on-click #(do
+                          (swap! counter inc)
+                          (rf/dispatch [::model/add-item :address]))}
+            "+ Add address"]]))
       (when (:identifier (first (:patient data)))
         [:div.card-body
          [:h5.card-title "Identifiers"]

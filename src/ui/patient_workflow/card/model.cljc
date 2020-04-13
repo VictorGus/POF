@@ -18,6 +18,11 @@
  (fn [[page {resp :data}] [pid]]
    (merge page {:data resp})))
 
+(rf/reg-event-fx
+ ::add-item
+ (fn [{db :db} [_ path]]
+   {:db (update-in db [:xhr :req index-card :data :patient 0 path] conj {})}))
+
 
 (rf/reg-event-fx
  edit

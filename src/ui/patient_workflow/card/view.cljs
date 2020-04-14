@@ -234,7 +234,7 @@
                                                            "Email"
                                                            :else
                                                            "Telecom value")]
-                 [basic-form/form-input [::form/form-path :telecom @counter :value]
+                 [basic-form/form-input [form/form-path :telecom @counter :value]
                   "Enter telecom value" (:value  item)]]
                 [:i.fas.fa-trash-alt.remove-icon
                  {:on-click #(rf/dispatch [::model/remove-item [:telecom @counter]])}]]))
@@ -243,33 +243,38 @@
                           (rf/dispatch [::model/add-item :telecom]))}
             "+ Add telecom"]]))
       (when (:address (first (:patient data)))
-        (let [counter (r/atom 0)]
+        (let [counter (r/atom -1)]
           [:div.card-body.border-bottom
            [:h5.card-title "Address"]
            (for [item (:address (first (:patient data)))]
-             [:div
-              [:div.row.mb-3
-               [:div.col
-                [:label.text-muted {:for "country-input"} "Country"]
-                [basic-form/form-input [form/form-path :address @counter :country]
-                 "Enter country" (:country item)]]
-               [:div.col
-                [:label.text-muted {:for "city-input"} "City"]
-                [basic-form/form-input [form/form-path :address @counter :city]
-                 "Enter city" (:city item)]]
-               [:div.col
-                [:label.text-muted {:for "postal-input"} "Postal code"]
-                [basic-form/form-input [form/form-path :address @counter :postalCode]
-                 "Enter postal code" (:postalCode  item)]]
-               [:div.col
-                [:label.text-muted {:for "state-input"} "State"]
-                [basic-form/form-input [form/form-path :address @counter :state]
-                 "Enter state" (:state  item)]]]
-              [:div.row
-               [:div.col-sm-6
-                [:label.text-muted {:for "state-input"} "Line"]
-                [basic-form/form-input [::form/form-path :address @counter :line]
-                 "Enter line" (:line  item)]]]])
+             (do
+               (swap! counter inc)
+               [:div
+                [:div.row.mb-3.form-row
+                 [:div.col
+                  [:label.text-muted {:for "country-input"} "Country"]
+                  [basic-form/form-input [form/form-path :address @counter :country]
+                   "Enter country" (:country item)]]
+                 [:div.col
+                  [:label.text-muted {:for "city-input"} "City"]
+                  [basic-form/form-input [form/form-path :address @counter :city]
+                   "Enter city" (:city item)]]
+                 [:div.col
+                  [:label.text-muted {:for "postal-input"} "Postal code"]
+                  [basic-form/form-input [form/form-path :address @counter :postalCode]
+                   "Enter postal code" (:postalCode  item)]]
+                 [:div.col
+                  [:label.text-muted {:for "state-input"} "State"]
+                  [basic-form/form-input [form/form-path :address @counter :state]
+                   "Enter state" (:state  item)]]
+                 [:i.fas.fa-trash-alt.remove-icon
+                  {:on-click #(rf/dispatch [::model/remove-item [:address @counter]])}]]
+                [:div.row
+                 [:div.col-sm-6
+                  [:label.text-muted {:for "state-input"} "Line"]
+                  [basic-form/form-input [::form/form-path :address @counter :line]
+                   "Enter line" (:line item)]]]
+                [:br]]))
            [:button.btn.btn-link.mt-2
             {:on-click #(do
                           (swap! counter inc)

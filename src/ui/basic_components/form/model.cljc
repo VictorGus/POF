@@ -12,23 +12,15 @@
    (let [form-schema (get-in db [(first path) :schema])
          butlast-value (get-in db (butlast path))
          typo (get-in form-schema [(last (butlast path)) :type])]
-     {:db (assoc-in db path value)}
-     #_(cond
-       (and (= "array" typo) (nil? butlast-value))
-       {:db (assoc-in db (butlast path) [{(last path) value}])}
-       (and (= "array" typo) (empty? (filter
-                                      #(nil? (get % (last path)))
-                                      butlast-value)))
-       {:db (update-in db (butlast path) conj {(last path) value})}
-       (= "array" typo)
-       {:db (assoc-in db (conj (butlast path)
-                               #?(:clj (.indexOf butlast-value (->> butlast-value
-                                                                    (filter #(nil? (get % (last path))))
-                                                                    last))
-                                  :cljs (.indexOf (to-array butlast-value) (->> butlast-value
-                                                                                (filter #(nil? (get % (last path))))
-                                                                                last)))
-                               (last path))
-                      value)}
-       :else
-       {:db (assoc-in db path value)}))))
+     {:db (assoc-in db path value)})))
+
+(rf/reg-event-fx
+ ::remove-item
+ (fn [{db :db} [_ path]]
+   {:db (update-in db (butlast path) dissoc (last path))}))
+
+(rf/reg-event-fx
+ ::eval-form
+ (fn [{db :db} [_ path]]
+   (let [form-schema (get-in db [path :schema])
+         form-values (dissoc (get db path) :schema)])))

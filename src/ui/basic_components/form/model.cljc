@@ -23,4 +23,11 @@
  ::eval-form
  (fn [{db :db} [_ path]]
    (let [form-schema (get-in db [path :schema])
-         form-values (dissoc (get db path) :schema)])))
+         form-values (dissoc (get db path) :schema)]
+     (reduce-kv
+      (fn [acc k v]
+        (if (= "array" (get-in form-schema [k :type]))
+          (assoc acc k (vals v))
+          (assoc acc k v)))
+      {}
+      form-values))))

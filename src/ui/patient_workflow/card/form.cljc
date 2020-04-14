@@ -1,6 +1,6 @@
 (ns ui.patient-workflow.card.form
   (:require [re-frame.core :as rf]
-             [ui.basic-components.form.model :as basic-form]))
+            [ui.basic-components.form.model :as basic-form]))
 
 (def form-path ::edit)
 

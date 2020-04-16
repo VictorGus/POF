@@ -4,7 +4,9 @@
 (rf/reg-event-fx
  ::init-form
  (fn [{db :db} [_ path form-schema]]
-   {:db (assoc-in db [path :schema] form-schema)}))
+   {:db (-> db
+         (assoc path {})
+         (assoc-in [path :schema] form-schema))}))
 
 (rf/reg-event-fx
  ::form-set-value
@@ -24,10 +26,10 @@
  (fn [{db :db} [_ path]]
    (let [form-schema (get-in db [path :schema])
          form-values (dissoc (get db path) :schema)]
-     (reduce-kv
-      (fn [acc k v]
-        (if (= "array" (get-in form-schema [k :type]))
-          (assoc acc k (vals v))
-          (assoc acc k v)))
-      {}
-      form-values))))
+     {:db (assoc db path (reduce-kv
+                          (fn [acc k v]
+                            (if (= "array" (get-in form-schema [k :type]))
+                              (assoc acc k (vals v))
+                              (assoc acc k v)))
+                          {}
+                          form-values))})))

@@ -24,3 +24,8 @@
  ::init
  (fn [{db :db} _]
    {:dispatch [::basic-form/init-form form-path form-schema]}))
+
+(rf/reg-event-fx
+ ::eval
+ (fn [{db :db} _]
+   {:dispatch [::basic-form/eval-form form-path]}))

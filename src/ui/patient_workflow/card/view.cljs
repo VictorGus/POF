@@ -301,7 +301,9 @@
             [basic-form/form-input [:form/form-path :identifier 2]
              "Enter MRN"
              (:value (helper/vec-search "MR" (:identifier (first (:patient data)))))]]]]])]
-     [:button.btn.btn-outline-primary.mt-3.mb-2.mr-2 "Save"]
+     [:button.btn.btn-outline-primary.mt-3.mb-2.mr-2
+      {:on-click #(rf/dispatch [::model/apply-changes])}
+      "Save"]
      [:button.btn.btn-outline-danger.mt-3.mb-2
       {:on-click #(rf/dispatch [::redirect/redirect
                                 {:uri (helper/make-back-href (.-href (.-location js/window)))}])}

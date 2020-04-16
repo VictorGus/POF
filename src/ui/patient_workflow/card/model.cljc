@@ -24,23 +24,36 @@
  edit
  (fn [{db :db} [pid phase params]]
    {:xhr/fetch {:uri (str "/Patient/" (get-in db [:route-map/current-route :params :uid]) "/ehr")
-                :req-id index-card}}))
+                :req-id edit
+                :success {:event ::form/init}}}))
 
 (rf/reg-event-fx
  ::add-item
  (fn [{db :db} [_ path]]
-   {:db (update-in db [:xhr :req index-card :data :patient 0 path] conj {})}))
+   {:db (update-in db [:xhr :req edit :data :patient 0 path] conj {})}))
 
 (rf/reg-event-fx
  ::remove-item
  (fn [{db :db} [_ path]]
    {:dispatch [::basic-form/remove-item (concat [form/form-path] path)]
-    :db (update-in db [:xhr :req index-card :data :patient 0 (first path)] helper/vec-remove (second path))}))
+    :db (update-in db [:xhr :req edit :data :patient 0 (first path)] helper/vec-remove (second path))}))
+
+(rf/reg-event-fx
+ ::apply-changes
+ (fn [{db :db} _]
+   {:dispatch-later [{:ms 0 :dispatch [::form/eval]}
+                     {:ms 300   :dispatch [::send-data]}]}))
+
+(rf/reg-event-fx
+ ::send-data
+ (fn [{db :db} _]
+   {:xhr/fetch {:uri    (str "/Patient/" (get-in db [:route-map/current-route :params :uid]))
+                :method "PUT"
+                :params (get db form/form-path)}}))
 
 (rf/reg-sub
  edit
  :<- [:pages/data   edit]
- :<- [:xhr/response index-card]
+ :<- [:xhr/response edit]
  (fn [[page {resp :data}] [pid]]
-   (rf/dispatch [::form/init])
    (merge page {:data resp})))

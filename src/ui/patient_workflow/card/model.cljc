@@ -49,7 +49,7 @@
  (fn [{db :db} _]
    {:xhr/fetch {:uri    (str "/Patient/" (get-in db [:route-map/current-route :params :uid]))
                 :method "PUT"
-                :params (get db form/form-path)}}))
+                :body (get db form/form-path)}}))
 
 (rf/reg-sub
  edit

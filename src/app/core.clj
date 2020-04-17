@@ -14,6 +14,7 @@
 (def routes
   {"Patient" {"search" {[:params] {:GET ops/patients-search}}
               [:params] {:GET ops/patient-by-id
+                         :PUT ops/patient-update
                          "ehr" {:GET ops/patient-ehr}
                          "edit" {:PUT ops/resource-create}}}})
 
@@ -69,5 +70,5 @@
 
 (comment
   (restart-server)
-
+s
   )

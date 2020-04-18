@@ -16,7 +16,7 @@
               [:params] {:GET ops/patient-by-id
                          :PUT ops/patient-update
                          "ehr" {:GET ops/patient-ehr}
-                         "edit" {:PUT ops/resource-create}}}})
+                         "edit" {:PUT ops/patient-create}}}})
 
 (defn handler [{meth :request-method uri :uri :as req}]
   (if-let [res (rm/match [meth uri] routes)]

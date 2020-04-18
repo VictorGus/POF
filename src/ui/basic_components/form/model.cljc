@@ -9,10 +9,7 @@
 (rf/reg-event-fx
  ::form-set-value
  (fn [{db :db} [_ {:keys [path value]}]]
-   (let [form-schema (get-in db [(first path) :schema])
-         butlast-value (get-in db (butlast path))
-         typo (get-in form-schema [(last (butlast path)) :type])]
-     {:db (assoc-in db path value)})))
+   {:db (assoc-in db path value)}))
 
 (rf/reg-event-fx
  ::remove-item

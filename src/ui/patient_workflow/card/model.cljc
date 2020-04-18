@@ -2,6 +2,7 @@
   (:require [re-frame.core :as rf]
             [ui.helper :as helper]
             [ui.basic-components.form.model :as basic-form]
+            [ui.zframes.flash :as flash]
             [ui.patient-workflow.card.form :as form]))
 
 (def index-card ::index-card)
@@ -23,9 +24,9 @@
 (rf/reg-event-fx
  edit
  (fn [{db :db} [pid phase params]]
+   (rf/dispatch [::form/init])
    {:xhr/fetch {:uri (str "/Patient/" (get-in db [:route-map/current-route :params :uid]) "/ehr")
-                :req-id edit
-                :success {:event ::form/init}}}))
+                :req-id edit}}))
 
 (rf/reg-event-fx
  ::add-item
@@ -49,7 +50,8 @@
  (fn [{db :db} _]
    {:xhr/fetch {:uri    (str "/Patient/" (get-in db [:route-map/current-route :params :uid]))
                 :method "PUT"
-                :body (get db form/form-path)}}))
+                :body (get db form/form-path)}
+    :dispatch [:flash/success {:msg "Successfully saved"}]}))
 
 (rf/reg-sub
  edit

@@ -46,7 +46,7 @@
                   :group-by [:resource :id]})))
 
 (defn patients-search [req]
-  (let [normalized-req (str/replace (get-in req [:params :params]) #"%20" " ")]
+  (let [normalized-req (str/replace (get-in req [:params :q]) #"%20" " ")]
     {:status 200
      :body (-> normalized-req
                patient-search-query
@@ -80,8 +80,10 @@
      :body {:patient patient-info
             :encounter encounter-info}}))
 
-(defn patient-by-id [params]
-  (let [id (if (map? params)
+(defn patient-by-id []
+  {:status 200
+   :body nil}
+  #_(let [id (if (map? params)
              (get-in params [:params :params])
              params)]
     {:status 200

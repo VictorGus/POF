@@ -3,6 +3,7 @@
             [re-frame.core :as rf]
             [ui.basic-components.spinner :refer [spinner]]
             [ui.pages :as pages]
+            [ui.zframes.redirect]
             [baking-soda.core :as b]
             [ui.patient-workflow.model :as model]
             [ui.styles :as styles]))
@@ -70,11 +71,11 @@
   (str (:given item) " " (:family item)))
 
 (defn patient-grid []
-  (let [pt-data (rf/subscribe [::model/patient-data])]
+  (let [page-data (rf/subscribe [:patients/index])]
     (fn []
       [:div.patient-grid
-       (when (vector? @pt-data)
-         (for [item @pt-data]
+       (when (vector? (:data @page-data))
+         (for [item (:data @page-data)]
            [:a.patient-record
             {:href (str "/#/patient/" (:id item))}
             [:div.icon
@@ -117,7 +118,7 @@
 
 (defn search-input []
   (let [sort-order (r/atom false)
-        data (rf/subscribe [::model/patient-data])
+        page-data (rf/subscribe [:patients/index])
         loading-status (rf/subscribe [::model/loading-status])
         dropdown-open? (r/atom false)]
     (fn []
@@ -134,10 +135,10 @@
             :placeholder "Search..."
             :on-change (fn [e]
                          (let [v (-> e .-target .-value)]
-                           (when (not (clojure.string/blank? v))
-                             (js/setTimeout (fn []
-                                              (rf/dispatch [::model/search v]))
-                                            700))))}]]
+                           (js/setTimeout (fn []
+                                            (rf/dispatch [:ui.zframes.redirect/set-params {:q v}])
+                                            #_(rf/dispatch [::model/search v]))
+                                          700)))}]]
          [b/Button {:id "search-btn"
                     :color "outline-primary"} "+ Create"]
          [b/Dropdown {:isOpen @dropdown-open?
@@ -149,7 +150,7 @@
           [b/DropdownMenu
            [b/DropdownItem {:on-click #(do
                                          (swap! sort-order not)
-                                         (rf/dispatch [::model/sort-patients @data @sort-order]))}
+                                         (rf/dispatch [::model/sort-patients (:data @page-data) @sort-order]))}
             "by birthDate"]
            [b/DropdownItem "by name"]]]]
         (when @loading-status

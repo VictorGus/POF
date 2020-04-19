@@ -12,15 +12,22 @@
   (:import [java.io File]))
 
 (def routes
-  {"Patient" {"search" {[:params] {:GET ops/patients-search}}
+  {"Patient" {"search" {:GET ops/patients-search}
+              #_{[:q*] {:GET ops/patients-search}}
               [:params] {:GET ops/patient-by-id
                          :PUT ops/patient-update
                          "ehr" {:GET ops/patient-ehr}
                          "edit" {:PUT ops/patient-create}}}})
 
+(defn params-to-keyword [params]
+  (reduce-kv (fn [acc k v]
+               (assoc acc (keyword k) v))
+             {} params))
+
 (defn handler [{meth :request-method uri :uri :as req}]
   (if-let [res (rm/match [meth uri] routes)]
-    ((:match res) (update-in req [:params] merge (:params res)))
+    ((:match res) (-> (assoc req :params (params-to-keyword (:params req)))
+                      (update-in [:params] merge (:params res))))
     {:status 404 :body {:error "Not found"}}))
 
 (defn preflight
@@ -70,5 +77,5 @@
 
 (comment
   (restart-server)
-s
+
   )

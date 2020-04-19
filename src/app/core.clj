@@ -13,7 +13,6 @@
 
 (def routes
   {"Patient" {"search" {:GET ops/patients-search}
-              #_{[:q*] {:GET ops/patients-search}}
               [:params] {:GET ops/patient-by-id
                          :PUT ops/patient-update
                          "ehr" {:GET ops/patient-ehr}

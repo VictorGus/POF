@@ -80,10 +80,8 @@
      :body {:patient patient-info
             :encounter encounter-info}}))
 
-(defn patient-by-id []
-  {:status 200
-   :body nil}
-  #_(let [id (if (map? params)
+(defn patient-by-id [params]
+  (let [id (if (map? params)
              (get-in params [:params :params])
              params)]
     {:status 200

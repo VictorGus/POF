@@ -79,7 +79,8 @@
      {:xhr/fetch {:uri    (str "/Patient/" (get-in db [:route-map/current-route :params :uid]))
                   :method "PUT"
                   :body (update form-values :identifier normalize-identifiers)}
-      :dispatch [:flash/success {:msg "Successfully saved"}]})))
+      :dispatch-n [[:flash/success {:msg "Successfully saved"}]
+                   [::form/init]]})))
 
 (rf/reg-sub
  edit

@@ -163,7 +163,8 @@
        [:a {:href "#"} "Patients"]]
       [:li.breadcrumb-item.active
        (:uid params)]]]
-    [patient-card data]]))
+    [patient-card data]
+    [flash/flashes]]))
 
 (defn patient-edit-workflow [data]
   [:div#patient-card-wrapper card-style
@@ -191,7 +192,7 @@
                 "Enter middle name" middle]])
             [:div.col-sm
              [:label.text-muted {:for "bd-input"} "Birth date"]
-             [basic-form/form-input [form/form-path :birthdate]
+             [basic-form/form-input [form/form-path :birthDate]
               "Enter birth date" (:birthdate (first (:patient data)))]]])
          [:div.row
           [:div.col-sm-8
@@ -305,7 +306,11 @@
              "Enter MRN"
              (:value (helper/vec-search "MR" (:identifier (first (:patient data)))))]]]]])]
      [:button.btn.btn-outline-primary.mt-3.mb-2.mr-2
-      {:on-click #(rf/dispatch [::model/apply-changes])}
+      {:on-click #(do
+                    (rf/dispatch [::model/apply-changes])
+                    (js/setTimeout (fn []
+                                     (rf/dispatch [::redirect/redirect
+                                                   {:uri (helper/make-back-href (.-href (.-location js/window)))}])) 1000))}
       "Save"]
      [:button.btn.btn-outline-danger.mt-3.mb-2
       {:on-click #(rf/dispatch [::redirect/redirect
@@ -325,6 +330,5 @@
         (:uid params)]]
       [:li.breadcrumb-item.active
        "edit"]]]
-    [patient-edit-workflow data]
-    [flash/flashes]]))
+    [patient-edit-workflow data]]))
 

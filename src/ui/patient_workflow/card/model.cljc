@@ -45,13 +45,41 @@
    {:dispatch-later [{:ms 0 :dispatch [::form/eval]}
                      {:ms 300   :dispatch [::send-data]}]}))
 
+(defn normalize-identifiers [identifiers]
+  (reduce-kv (fn [acc k v]
+               (case k
+                 :MR
+                 (conj acc {:type {:text "Medical Record Number"
+                                   :coding [{:code "MR"
+                                             :system "http://hl7.org/fhir/v2/0203"
+                                             :display "Medical Record Number"}]}
+                            :value v
+                            :system "http://hospital.smarthealthit.org"})
+                 :SB
+                 (conj acc {:type {:text "Social Security Number"
+                                   :coding [{:code "SB"
+                                             :system "http://hl7.org/fhir/identifier-type"
+                                             :display "Social Security Number"}]}
+                            :value v
+                            :system "http://hl7.org/fhir/sid/us-ssn"})
+                 :DL
+                 (conj acc {:type {:text "Driver's License"
+                                   :coding [{:code "DL"
+                                             :system "http://hl7.org/fhir/v2/0203"
+                                             :display "Driver's License"}]}
+                            :value v
+                            :system "urn:oid:2.16.840.1.113883.4.3.25"})))
+             [] identifiers))
+
 (rf/reg-event-fx
  ::send-data
  (fn [{db :db} _]
-   {:xhr/fetch {:uri    (str "/Patient/" (get-in db [:route-map/current-route :params :uid]))
-                :method "PUT"
-                :body (get db form/form-path)}
-    :dispatch [:flash/success {:msg "Successfully saved"}]}))
+   (let [form-values (get db form/form-path)]
+     (println form-values)
+     {:xhr/fetch {:uri    (str "/Patient/" (get-in db [:route-map/current-route :params :uid]))
+                  :method "PUT"
+                  :body (update form-values :identifier normalize-identifiers)}
+      :dispatch [:flash/success {:msg "Successfully saved"}]})))
 
 (rf/reg-sub
  edit

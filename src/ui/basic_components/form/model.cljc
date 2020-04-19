@@ -24,7 +24,7 @@
      {:db (assoc db path (reduce-kv
                           (fn [acc k v]
                             (if (= "array" (get-in form-schema [k :type]))
-                              (assoc acc k (vals v))
+                              (assoc acc k (vec (vals v)))
                               (assoc acc k v)))
                           {}
                           form-values))})))

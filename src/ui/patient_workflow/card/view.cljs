@@ -276,8 +276,8 @@
                 [:div.row
                  [:div.col-sm-6
                   [:label.text-muted {:for "state-input"} "Line"]
-                  [basic-form/form-input [::form/form-path :address @counter :line]
-                   "Enter line" (:line item)]]]
+                  [basic-form/form-input [form/form-path :address @counter :line 0]
+                   "Enter line" (first (:line item))]]]
                 [:br]]))
            [:button.btn.btn-link.mt-2
             {:on-click #(do
@@ -310,7 +310,7 @@
                     (rf/dispatch [::model/apply-changes])
                     (js/setTimeout (fn []
                                      (rf/dispatch [::redirect/redirect
-                                                   {:uri (helper/make-back-href (.-href (.-location js/window)))}])) 1000))}
+                                                   {:uri (helper/make-back-href (.-href (.-location js/window)))}])) 600))}
       "Save"]
      [:button.btn.btn-outline-danger.mt-3.mb-2
       {:on-click #(rf/dispatch [::redirect/redirect

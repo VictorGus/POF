@@ -75,10 +75,13 @@
  ::send-data
  (fn [{db :db} _]
    (let [form-values (get db form/form-path)]
-     (println form-values)
+     (println (update-in form-values [:address 0 :line] vals))
      {:xhr/fetch {:uri    (str "/Patient/" (get-in db [:route-map/current-route :params :uid]))
                   :method "PUT"
-                  :body (update form-values :identifier normalize-identifiers)}
+                  :body (-> form-values
+                            (update :identifier normalize-identifiers)
+                            (update-in [:name 0 :given]   (comp vec vals))
+                            (update-in [:address 0 :line] (comp vec vals)))}
       :dispatch-n [[:flash/success {:msg "Successfully saved"}]
                    [::form/init]]})))
 

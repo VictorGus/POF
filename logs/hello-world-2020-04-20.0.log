@@ -1,6 +1,0 @@
-19:45:24.667 [main] INFO  org.eclipse.jetty.util.log - Logging initialized @7599ms to org.eclipse.jetty.util.log.Slf4jLog
-19:45:38.245 [clojure-agent-send-off-pool-0] INFO  org.eclipse.jetty.server.Server - jetty-9.4.12.v20180830; built: 2018-08-30T13:59:14.071Z; git: 27208684755d94a92186989f695db2d7b21ebc51; jvm 12.0.2+10
-19:45:38.355 [clojure-agent-send-off-pool-0] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.h.ContextHandler@67e7f656{/figwheel-connect,null,AVAILABLE}
-19:45:38.356 [clojure-agent-send-off-pool-0] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.h.ContextHandler@3aaf645e{/figwheel-connect,null,AVAILABLE}
-19:45:38.377 [clojure-agent-send-off-pool-0] INFO  o.e.jetty.server.AbstractConnector - Started ServerConnector@7f4b9796{HTTP/1.1,[http/1.1]}{0.0.0.0:3449}
-19:45:38.378 [clojure-agent-send-off-pool-0] INFO  org.eclipse.jetty.server.Server - Started @21314ms

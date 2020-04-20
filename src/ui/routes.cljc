@@ -1,7 +1,7 @@
 (ns ui.routes)
 
-(def routes {:. :ui.patient-workflow.model/index
-             "patients" {:. :ui.patient-workflow.model/index
+(def routes {:. :patients/index
+             "patients" {:. :patients/index
                          "create" {:. :ui.patient-workflow.card.model/create}}
              "patient" {[:uid] {:. :ui.patient-workflow.card.model/index-card
                                 "edit" {:. :ui.patient-workflow.card.model/edit}}}})

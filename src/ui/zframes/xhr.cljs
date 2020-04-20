@@ -12,7 +12,7 @@
 
 (defn to-query [params]
   (->> params
-       (reduce-kv (fn [acc k v]
+       #_(reduce-kv (fn [acc k v]
                     (if (or (nil? v) (str/blank? v))
                       acc
                       (assoc acc k v)))

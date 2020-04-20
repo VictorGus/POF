@@ -46,7 +46,7 @@
                   :group-by [:resource :id]})))
 
 (defn patients-search [req]
-  (let [normalized-req (str/replace (get-in req [:params :params]) #"%20" " ")]
+  (let [normalized-req (str/replace (get-in req [:params :q]) #"%20" " ")]
     {:status 200
      :body (-> normalized-req
                patient-search-query

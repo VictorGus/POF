@@ -12,8 +12,13 @@
 (rf/reg-event-fx
  index-card
  (fn [{db :db} [pid phase params]]
-   {:xhr/fetch {:uri (str "/Patient/" (get-in db [:route-map/current-route :params :uid]) "/ehr")
-                :req-id index-card}}))
+   (cond
+     (= :deinit phase)
+     {}
+
+     (or (= :params phase) (= :init phase))
+     {:xhr/fetch {:uri (str "/Patient/" (get-in db [:route-map/current-route :params :uid]) "/ehr")
+                  :req-id index-card}})))
 
 (rf/reg-sub
  index-card

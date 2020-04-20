@@ -3,6 +3,9 @@
             [re-frame.core :as rf]
             [ui.basic-components.spinner :refer [spinner]]
             [ui.pages :as pages]
+            [ui.helper :as helper]
+            [ui.zframes.redirect :as redirect]
+            [clojure.string :as str]
             [baking-soda.core :as b]
             [ui.patient-workflow.model :as model]
             [ui.styles :as styles]))
@@ -139,7 +142,9 @@
                                               (rf/dispatch [::model/search v]))
                                             700))))}]]
          [b/Button {:id "search-btn"
-                    :color "outline-primary"} "+ Create"]
+                    :color "outline-primary"
+                    :on-click #(rf/dispatch [::redirect/redirect
+                                            {:uri (helper/make-href (.-href (.-location js/window)) "patients/create")}])} "+ Create"]
          [b/Dropdown {:isOpen @dropdown-open?
                       :on-mouse-over #(reset! dropdown-open? true)
                       :toggle #(swap! dropdown-open? not)

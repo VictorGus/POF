@@ -7,6 +7,7 @@
 
 (def index-card ::index-card)
 (def edit ::edit)
+(def create ::create)
 
 (rf/reg-event-fx
  index-card
@@ -27,6 +28,33 @@
    (rf/dispatch [::form/init])
    {:xhr/fetch {:uri (str "/Patient/" (get-in db [:route-map/current-route :params :uid]) "/ehr")
                 :req-id edit}}))
+
+(rf/reg-event-fx
+ create
+ (fn [{db :db} _]
+   {:db (-> db
+            (assoc-in [create :create-items :address] [{}])
+            (assoc-in [create :create-items :telecom] [{}]))}))
+
+(rf/reg-sub
+ create
+ (fn [_]
+   {}))
+
+(rf/reg-sub
+ ::create-items
+ (fn [db _]
+   (get-in db [create :create-items])))
+
+(rf/reg-event-fx
+ ::add-create-item
+ (fn [{db :db} [_ path]]
+   {:db (update-in db [create :create-items path] conj {})}))
+
+(rf/reg-event-fx
+ ::remove-create-item
+ (fn [{db :db} [_ path]]
+   {:db (update-in db [create :create-items (first path)] helper/vec-remove (second path))}))
 
 (rf/reg-event-fx
  ::add-item
@@ -81,7 +109,7 @@
                   :body (-> form-values
                             (update :identifier normalize-identifiers)
                             (update-in [:name 0 :given]   (comp vec vals))
-                            (update-in [:address 0 :line] (comp vec vals)))}
+                            (update-in [:address] (partial map #(update % :line (comp vec vals)))))}
       :dispatch-n [[:flash/success {:msg "Successfully saved"}]
                    [::form/init]]})))
 

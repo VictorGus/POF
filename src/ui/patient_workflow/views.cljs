@@ -138,7 +138,7 @@
             :on-change (fn [e]
                          (let [v (-> e .-target .-value)]
                            (js/setTimeout (fn []
-                                            (rf/dispatch [redirect/set-params {:q v}])
+                                            (rf/dispatch [::redirect/set-params {:q v}])
                                             #_(rf/dispatch [::model/search v]))
                                           700)))}]]
          [b/Button {:id "search-btn"

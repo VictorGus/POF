@@ -89,10 +89,10 @@
                                             :from [:patient]
                                             :where [:= :id id]}))}}))
 
-(defn patient-create [{{params :params} :params}]
-  (let [query {:select (hsql/call :fhirbase_create (json/generate-string params))}]
+(defn patient-create [{body :body :as request}]
+  (let [query {:select (hsql/call :fhirbase_create (slurp body))}]
     {:status 200
-     :body "ok"}))
+     :body (run-query query)}))
 
 (defn deep-merge [v & vs]
   (letfn [(rec-merge [v1 v2]

@@ -30,16 +30,28 @@
 (rf/reg-event-fx
  edit
  (fn [{db :db} [pid phase params]]
-   (rf/dispatch [::form/init])
-   {:xhr/fetch {:uri (str "/Patient/" (get-in db [:route-map/current-route :params :uid]) "/ehr")
-                :req-id edit}}))
+   (cond
+    (= :deinit phase)
+    (do
+      {:db (dissoc db form/form-path)})
+
+    (or (= :params phase) (= :init phase))
+    (do
+      (rf/dispatch [::form/init])
+      {:xhr/fetch {:uri (str "/Patient/" (get-in db [:route-map/current-route :params :uid]) "/ehr")
+                   :req-id edit}}))))
 
 (rf/reg-event-fx
  create
- (fn [{db :db} _]
-   {:db (-> db
-            (assoc-in [create :create-items :address] [{}])
-            (assoc-in [create :create-items :telecom] [{}]))}))
+ (fn [{db :db} [pid phase params]]
+   (cond
+     (= :deinit phase)
+     {}
+
+     (or (= :params phase) (= :init phase))
+     {:db (-> db
+              (assoc-in [create :create-items :address] [{}])
+              (assoc-in [create :create-items :telecom] [{}]))})))
 
 (rf/reg-sub
  create

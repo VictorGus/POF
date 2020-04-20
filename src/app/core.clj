@@ -12,9 +12,10 @@
   (:import [java.io File]))
 
 (def routes
-  {"Patient" {"search" {:GET ops/patients-search}
-              [:params] {:GET ops/patient-by-id
-                         :PUT ops/patient-update
+  {"Patient" {"search" {:GET   ops/patients-search}
+              [:params] {:GET  ops/patient-by-id
+                         :PUT  ops/patient-update
+                         :POST ops/patient-create
                          "ehr" {:GET ops/patient-ehr}
                          "edit" {:PUT ops/patient-create}}}})
 

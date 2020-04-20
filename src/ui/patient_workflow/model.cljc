@@ -10,7 +10,6 @@
    (cond
      (= :deinit phase)
      {}
-
      (or (= :params phase) (= :init phase))
      {:dispatch [::set-loading-status-true]
       :xhr/fetch {:uri "/Patient/search"

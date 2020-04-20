@@ -33,11 +33,11 @@
    (cond
     (= :deinit phase)
     (do
-      {:db (dissoc db form/form-path)})
+      (rf/dispatch [::form/init])
+      {:db (dissoc db [:xhr :req edit])})
 
     (or (= :params phase) (= :init phase))
     (do
-      (rf/dispatch [::form/init])
       {:xhr/fetch {:uri (str "/Patient/" (get-in db [:route-map/current-route :params :uid]) "/ehr")
                    :req-id edit}}))))
 

@@ -1,9 +1,9 @@
 (ns app.dbcore
-  (:require [hikari-cp.core :as hc]
-            [honeysql.core :as hsql]
+  (:require [honeysql.core :as hsql]
             [honeysql.types :as hsqltypes]
             [clj-postgresql.core :as pg]
             [clojure.java.jdbc :as jdbc]
+            [app.manifest :as m]
             [honeysql.helpers :refer :all]))
 
 (def pool-configuration (delay (pg/pool :host (or (System/getenv "PGHOST") "localhost")

@@ -9,7 +9,6 @@
     (fn [this]
       (let [path  (last (butlast (aget (.-props this) "argv")))
             value (last (aget (.-props this) "argv"))]
-        (println path value)
         (rf/dispatch [::model/form-set-value {:path path
                                               :value value}])))
     :reagent-render
@@ -29,10 +28,9 @@
     (r/create-class
      {:component-did-mount
       (fn [this]
-        (let [path  (second (aget (.-props this) "argv"))
-              value (last (aget (.-props this) "argv"))]
-          (rf/dispatch [::model/form-set-value {:path path
-                                                :value value}])))
+        (rf/dispatch [::model/form-set-value {:path path
+                                              :value (or value
+                                                         (last (aget (.-props this) "argv")))}]))
       :reagent-render
       (fn [_ _]
         [:input.form-control {:type "text"

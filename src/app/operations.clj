@@ -91,10 +91,12 @@
                                             :where [:= :id id]}))}}))
 
 (defn patient-create [{body :body :as request}]
-  (let [body (-> body slurp
-                 json/parse-string
+  (let [parsed-body (json/parse-string (slurp body))
+        body (-> parsed-body
                  (assoc :resourceType "Patient")
-                 (assoc :id (str (java.util.UUID/randomUUID)))
+                 (cond->
+                   (not (:id parsed-body))
+                   (assoc :id (str (java.util.UUID/randomUUID))))
                  json/generate-string
                  u/remove-nils)
         query {:select [(hsql/call :fhirbase_create (hsql/raw (str "'" (str/replace body #"'" "") "'")))]}]

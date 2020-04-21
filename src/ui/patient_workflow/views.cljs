@@ -144,7 +144,7 @@
          [b/Button {:id "search-btn"
                     :color "outline-primary"
                     :on-click #(rf/dispatch [::redirect/redirect
-                                            {:uri (helper/make-href (.-href (.-location js/window)) "patients/create")}])} "+ Create"]
+                                            {:uri (helper/make-href (.-host (.-location js/window)) "patients/create")}])} "+ Create"]
          [b/Dropdown {:isOpen @dropdown-open?
                       :on-mouse-over #(reset! dropdown-open? true)
                       :toggle #(swap! dropdown-open? not)

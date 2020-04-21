@@ -4,6 +4,7 @@
 (rf/reg-event-fx
  ::init-form
  (fn [{db :db} [_ path form-schema]]
+   (println form-schema)
    {:db (assoc db path {:schema form-schema})}))
 
 (rf/reg-event-fx

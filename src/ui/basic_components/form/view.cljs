@@ -29,8 +29,7 @@
      {:component-did-mount
       (fn [this]
         (rf/dispatch [::model/form-set-value {:path path
-                                              :value (or value
-                                                         (last (aget (.-props this) "argv")))}]))
+                                              :value value}]))
       :reagent-render
       (fn [_ _]
         [:input.form-control {:type "text"

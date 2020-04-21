@@ -49,9 +49,11 @@
      {}
 
      (or (= :params phase) (= :init phase))
-     {:db (-> db
-              (assoc-in [create :create-items :address] [{}])
-              (assoc-in [create :create-items :telecom] [{}]))})))
+     (do
+       (rf/dispatch [::form/init])
+       {:db (-> db
+                (assoc-in [create :create-items :address] [{}])
+                (assoc-in [create :create-items :telecom] [{}]))}))))
 
 (rf/reg-sub
  create
@@ -86,9 +88,9 @@
 
 (rf/reg-event-fx
  ::apply-changes
- (fn [{db :db} _]
-   {:dispatch-later [{:ms 0 :dispatch [::form/eval]}
-                     {:ms 300   :dispatch [::send-data]}]}))
+ (fn [{db :db} [_ method uri]]
+   {:dispatch-later [{:ms 0   :dispatch [::form/eval]}
+                     {:ms 300 :dispatch [::send-data (or method "PUT") uri]}]}))
 
 (defn normalize-identifiers [identifiers]
   (reduce-kv (fn [acc k v]
@@ -118,14 +120,13 @@
 
 (rf/reg-event-fx
  ::send-data
- (fn [{db :db} _]
+ (fn [{db :db} [_ method uri]]
    (let [form-values (get db form/form-path)]
-     (println (update-in form-values [:address 0 :line] vals))
-     {:xhr/fetch {:uri    (str "/Patient/" (get-in db [:route-map/current-route :params :uid]))
-                  :method "PUT"
+     {:xhr/fetch {:uri    (or uri (str "/Patient/" (get-in db [:route-map/current-route :params :uid])))
+                  :method method
                   :body (-> form-values
                             (update :identifier normalize-identifiers)
-                            (update-in [:name 0 :given]   (comp vec vals))
+                            (update-in [:name 0 :given] (comp vec vals))
                             (update-in [:address] (partial map #(update % :line (comp vec vals)))))}
       :dispatch-n [[:flash/success {:msg "Successfully saved"}]
                    [::form/init]]})))

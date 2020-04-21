@@ -6,6 +6,7 @@
             [clojure.string :as str]
             [honeysql.helpers :refer :all]
             [honeysql-postgres.format :refer :all]
+            [app.utils :as u]
             [app.dbcore :refer [run-query]]))
 
 (defn patient-search-query [params]
@@ -90,23 +91,21 @@
                                             :where [:= :id id]}))}}))
 
 (defn patient-create [{body :body :as request}]
-  (let [query {:select (hsql/call :fhirbase_create (slurp body))}]
+  (let [body (-> body slurp
+                 json/parse-string
+                 (assoc :resourceType "Patient")
+                 (assoc :id (str (java.util.UUID/randomUUID)))
+                 json/generate-string
+                 u/remove-nils)
+        query {:select [(hsql/call :fhirbase_create (hsql/raw (str "'" (str/replace body #"'" "") "'")))]}]
     {:status 200
-     :body (run-query query)}))
-
-(defn deep-merge [v & vs]
-  (letfn [(rec-merge [v1 v2]
-            (if (and (map? v1) (map? v2))
-              (merge-with deep-merge v1 v2)
-              v2))]
-    (if (some identity vs)
-      (reduce #(rec-merge %1 %2) v vs)
-      v)))
-
+     :body (-> query
+               hsql/format
+               run-query)}))
 
 (defn patient-update [{body :body {params :params} :params :as request}]
   (let [body (walk/keywordize-keys (json/parse-string (slurp body)))
-        resource (assoc (deep-merge (:resource (first (get-in (walk/keywordize-keys (patient-by-id params)) [:body :entry]))) body) :id params)
+        resource (assoc (u/deep-merge (:resource (first (get-in (walk/keywordize-keys (patient-by-id params)) [:body :entry]))) body) :id params)
         query-result (run-query (hsql/format {:select [(hsql/call :fhirbase_create
                                                                   (hsql/raw (str "'" (str/replace (json/generate-string resource) #"'" "") "'")))]}))]
     {:status 200 :body query-result}))

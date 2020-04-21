@@ -135,25 +135,24 @@
                (:state item)]
               [:div.info-item
                [:span.text-muted "Line: "]
-               (first (:line item))]
-              [:br]])])
+               (first (:line item))]])])
         (when (:identifier (first (:patient data)))
           [:div.card-body
            [:h5.card-title "Identifiers"]
            [:span.info-item
             [:span.text-muted "SSN: "]
-            (:value (helper/vec-search "SB" (:identifier (first (:patient data)))))]
-           [:span.info-item
+            (:value (helper/vec-search "SB" (:identifier (first (:patient data)))))] [:span.info-item
             [:span.text-muted "MRN: "]
             (:value (helper/vec-search "MR" (:identifier (first (:patient data)))))]
            [:span.info-item
             [:span.text-muted "Driver Licence: "]
             (:value (helper/vec-search "DL" (:identifier (first (:patient data)))))]])]
        [:br]
-       [:div.card
-        [:div.card-header.info-header "Recent encounters"]
-        (for [item (:encounter data)]
-          [encounter item])]]]]))
+       (when (seq (:encounter data))
+         [:div.card
+          [:div.card-header.info-header "Recent encounters"]
+          (for [item (:encounter data)]
+            [encounter item])])]]]))
 
 (pages/reg-subs-page
  model/index-card
@@ -206,106 +205,103 @@
      [:br]
      [:div.card
       [:div.card-header.info-header "Administrative info"]
-      (when (:telecom (first (:patient data)))
-        (let [counter (atom -1)]
-          [:div.card-body.border-bottom
-           [:h5.card-title "Telecom"]
-           (for [item (:telecom (first (:patient data)))]
-             (do
-               (swap! counter inc)
-               [:div.row.form-row
-                [:div.col-sm.mb-2
-                 [:label.text-muted {:for "use-input"} "Use"]
-                 [basic-form/form-select [{:value "work" :display "Work"}
-                                          {:value "home" :display "Home"}
-                                          {:value "mobile" :display "Mobile"}
-                                          {:value "temp" :display "Temp"}
-                                          {:value "old" :display "Old"}] [form/form-path :telecom @counter :use] (:use item)]]
-                [:div.col-sm
-                 [:label.text-muted {:for "system-input"} "Type"]
-                 [basic-form/form-select [{:value "phone" :display "Phone"}
-                                          {:value "fax" :display "Fax"}
-                                          {:value "email" :display "Email"}
-                                          {:value "url" :display "URL"}
-                                          {:value "pager" :display "Pager"}
-                                          {:value "sms" :display "SMS"}
-                                          {:value "other" :display "Other"}] [form/form-path :telecom @counter :system] (:system item)]]
-                [:div.col-sm
-                 [:label.text-muted {:for "value-input"} (cond
-                                                           (#{"phone" "fax" "sms" "pager"} (:system item))
-                                                           "Phone number"
-                                                           (#{"url"} (:system item))
-                                                           "Contact url"
-                                                           (#{"email"} (:system item))
-                                                           "Email"
-                                                           :else
-                                                           "Telecom value")]
-                 [basic-form/form-input [form/form-path :telecom @counter :value]
-                  "Enter telecom value" (:value  item)]]
-                [:i.fas.fa-trash-alt.remove-icon
-                 {:on-click #(rf/dispatch [::model/remove-item [:telecom @counter]])}]]))
-           [:button.btn.btn-link.mt-2
-            {:on-click #(do
-                          (rf/dispatch [::model/add-item :telecom]))}
-            "+ Add telecom"]]))
-      (when (:address (first (:patient data)))
-        (let [counter (r/atom -1)]
-          [:div.card-body.border-bottom
-           [:h5.card-title "Address"]
-           (for [item (:address (first (:patient data)))]
-             (do
-               (swap! counter inc)
-               [:div
-                [:div.row.mb-3.form-row
-                 [:div.col
-                  [:label.text-muted {:for "country-input"} "Country"]
-                  [basic-form/form-input [form/form-path :address @counter :country]
-                   "Enter country" (:country item)]]
-                 [:div.col
-                  [:label.text-muted {:for "city-input"} "City"]
-                  [basic-form/form-input [form/form-path :address @counter :city]
-                   "Enter city" (:city item)]]
-                 [:div.col
-                  [:label.text-muted {:for "postal-input"} "Postal code"]
-                  [basic-form/form-input [form/form-path :address @counter :postalCode]
-                   "Enter postal code" (:postalCode  item)]]
-                 [:div.col
-                  [:label.text-muted {:for "state-input"} "State"]
-                  [basic-form/form-input [form/form-path :address @counter :state]
-                   "Enter state" (:state  item)]]
-                 [:i.fas.fa-trash-alt.remove-icon
-                  {:on-click #(rf/dispatch [::model/remove-item [:address @counter]])}]]
-                [:div.row
-                 [:div.col-sm-6
-                  [:label.text-muted {:for "state-input"} "Line"]
-                  [basic-form/form-input [form/form-path :address @counter :line 0]
-                   "Enter line" (first (:line item))]]]
-                [:br]]))
-           [:button.btn.btn-link.mt-2
-            {:on-click #(do
-                          (rf/dispatch [::model/add-item :address]))}
-            "+ Add address"]]))
-      (when (:identifier (first (:patient data)))
-        [:div.card-body
-         [:h5.card-title "Identifiers"]
-         [:div
-          [:div.row.mb-3
-           [:div.col
-            [:label.text-muted {:for "ssn-input"} "Social security number"]
-            [basic-form/form-input [form/form-path :identifier :SB]
-             "Enter SSN"
-             (:value  (helper/vec-search "SB" (:identifier (first (:patient data)))))]]
-           [:div.col
-            [:label.text-muted {:for "dl-input"} "Driver license"]
-            [basic-form/form-input [form/form-path :identifier :DL]
-             "Enter DL"
-             (:value (helper/vec-search "DL" (:identifier (first (:patient data)))))]]]
-          [:div.row
-           [:div.col-sm-6
-            [:label.text-muted {:for "mrn-input"} "Medical record number"]
-            [basic-form/form-input [form/form-path :identifier :MR]
-             "Enter MRN"
-             (:value (helper/vec-search "MR" (:identifier (first (:patient data)))))]]]]])]
+      (let [counter (atom -1)]
+        [:div.card-body.border-bottom
+         [:h5.card-title "Telecom"]
+         (for [item (:telecom (first (:patient data)))]
+           (do
+             (swap! counter inc)
+             [:div.row.form-row
+              [:div.col-sm.mb-2
+               [:label.text-muted {:for "use-input"} "Use"]
+               [basic-form/form-select [{:value "work" :display "Work"}
+                                        {:value "home" :display "Home"}
+                                        {:value "mobile" :display "Mobile"}
+                                        {:value "temp" :display "Temp"}
+                                        {:value "old" :display "Old"}] [form/form-path :telecom @counter :use] (:use item)]]
+              [:div.col-sm
+               [:label.text-muted {:for "system-input"} "Type"]
+               [basic-form/form-select [{:value "phone" :display "Phone"}
+                                        {:value "fax" :display "Fax"}
+                                        {:value "email" :display "Email"}
+                                        {:value "url" :display "URL"}
+                                        {:value "pager" :display "Pager"}
+                                        {:value "sms" :display "SMS"}
+                                        {:value "other" :display "Other"}] [form/form-path :telecom @counter :system] (:system item)]]
+              [:div.col-sm
+               [:label.text-muted {:for "value-input"} (cond
+                                                         (#{"phone" "fax" "sms" "pager"} (:system item))
+                                                         "Phone number"
+                                                         (#{"url"} (:system item))
+                                                         "Contact url"
+                                                         (#{"email"} (:system item))
+                                                         "Email"
+                                                         :else
+                                                         "Telecom value")]
+               [basic-form/form-input [form/form-path :telecom @counter :value]
+                "Enter telecom value" (:value  item)]]
+              [:i.fas.fa-trash-alt.remove-icon
+               {:on-click #(rf/dispatch [::model/remove-item [:telecom @counter]])}]]))
+         [:button.btn.btn-link.mt-2
+          {:on-click #(do
+                        (rf/dispatch [::model/add-item :telecom]))}
+          "+ Add telecom"]])
+      (let [counter (r/atom -1)]
+        [:div.card-body.border-bottom
+         [:h5.card-title "Address"]
+         (for [item (:address (first (:patient data)))]
+           (do
+             (swap! counter inc)
+             [:div
+              [:div.row.mb-3.form-row
+               [:div.col
+                [:label.text-muted {:for "country-input"} "Country"]
+                [basic-form/form-input [form/form-path :address @counter :country]
+                 "Enter country" (:country item)]]
+               [:div.col
+                [:label.text-muted {:for "city-input"} "City"]
+                [basic-form/form-input [form/form-path :address @counter :city]
+                 "Enter city" (:city item)]]
+               [:div.col
+                [:label.text-muted {:for "postal-input"} "Postal code"]
+                [basic-form/form-input [form/form-path :address @counter :postalCode]
+                 "Enter postal code" (:postalCode  item)]]
+               [:div.col
+                [:label.text-muted {:for "state-input"} "State"]
+                [basic-form/form-input [form/form-path :address @counter :state]
+                 "Enter state" (:state  item)]]
+               [:i.fas.fa-trash-alt.remove-icon
+                {:on-click #(rf/dispatch [::model/remove-item [:address @counter]])}]]
+              [:div.row
+               [:div.col-sm-6
+                [:label.text-muted {:for "state-input"} "Line"]
+                [basic-form/form-input [form/form-path :address @counter :line 0]
+                 "Enter line" (first (:line item))]]]
+              [:br]]))
+         [:button.btn.btn-link.mt-2
+          {:on-click #(do
+                        (rf/dispatch [::model/add-item :address]))}
+          "+ Add address"]])
+      [:div.card-body
+       [:h5.card-title "Identifiers"]
+       [:div
+        [:div.row.mb-3
+         [:div.col
+          [:label.text-muted {:for "ssn-input"} "Social security number"]
+          [basic-form/form-input [form/form-path :identifier :SB]
+           "Enter SSN"
+           (:value  (helper/vec-search "SB" (:identifier (first (:patient data)))))]]
+         [:div.col
+          [:label.text-muted {:for "dl-input"} "Driver license"]
+          [basic-form/form-input [form/form-path :identifier :DL]
+           "Enter DL"
+           (:value (helper/vec-search "DL" (:identifier (first (:patient data)))))]]]
+        [:div.row
+         [:div.col-sm-6
+          [:label.text-muted {:for "mrn-input"} "Medical record number"]
+          [basic-form/form-input [form/form-path :identifier :MR]
+           "Enter MRN"
+           (:value (helper/vec-search "MR" (:identifier (first (:patient data)))))]]]]]]
      [:button.btn.btn-outline-primary.mt-3.mb-2.mr-2
       {:on-click #(do
                     (rf/dispatch [::model/apply-changes])
@@ -458,8 +454,8 @@
              (:value (helper/vec-search "MR" []))]]]]]]
        [:button.btn.btn-outline-primary.mt-3.mb-2.mr-2
         {:on-click #(do
-                      (rf/dispatch [::model/apply-changes])
-                      (js/setTimeout (fn []
+                      (rf/dispatch [::model/apply-changes "POST" "/Patient"])
+                      #_(js/setTimeout (fn []
                                        (rf/dispatch [::redirect/redirect
                                                      {:uri (helper/make-back-href (.-href (.-location js/window)))}])) 600))}
         "Create"]

@@ -2,7 +2,7 @@
   (:require [re-frame.core :as rf]
             [ui.basic-components.form.model :as basic-form]))
 
-(def form-path ::edit)
+(def form-path ::form)
 
 (def form-schema
   {:gender     {:type "string"}

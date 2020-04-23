@@ -3,7 +3,10 @@
             [chrono.now :as now]
             [chrono.core :as ch]))
 
-(def iso-fmt [:year "-" :month "-" :day "T" :hour ":" :min ":" :sec])
+(def fmt (let [tz (java.util.TimeZone/getTimeZone "UTC")
+               df (java.text.SimpleDateFormat. "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")]
+           (.setTimeZone df tz)
+           df))
 
 (defonce logs (agent {}))
 (defonce appenders (atom {}))
@@ -18,12 +21,12 @@
   (async/thread
     (send logs assoc :request req :response resp :duration duration-mills)))
 
-(defn mk-log-msg [{:keys [uri params body
-                          request-method query-params] :as req}
-                  {:keys [status] :as resp} duration-mills]
+(defn mk-log-msg [{{:keys [uri params body
+                           request-method query-params]} :request
+                   {:keys [status]} :response duration-mills :duration}]
   {:st status
    :d duration-mills
-   :ts (ch/format (now/local) iso-fmt)
+   :ts (.format fmt (java.util.Date.))
    :l_uri uri
    :l_m request-method
    :l_q_params query-params

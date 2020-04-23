@@ -4,6 +4,8 @@
             [cheshire.core :as json]
             [app.operations :as ops]
             [app.p-log.core :as plog]
+            [app.p-log.es-appender :as es]
+            [app.manifest :as m]
             [clojure.core.async :refer [go]]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.cors :refer [wrap-cors]]
@@ -81,5 +83,7 @@
 
 (comment
   (restart-server)
+  (es/es-appender {:es-url (get-in m/manifest [:config :elastic :host])
+                   :batch-size 2})
 
   )

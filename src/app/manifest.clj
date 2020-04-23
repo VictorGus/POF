@@ -5,4 +5,4 @@
                       :user (or (System/getenv "PGUSER") "postgres")
                       :password (or (System/getenv "PGPASSWORD") "postgres")
                       :dbname (or (System/getenv "PGDATABASE") "fhirbase")}
-            :elastic {}}})
+            :elastic {:host (or (System/getenv "ELASTICSEARCH_URL") "http://localhost:9200")}}})

@@ -1,19 +1,36 @@
 version: '3.1'
 services:
-  elasticsearch: 
-    image: nshou/elasticsearch-kibana   
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.5.0
     volumes:
       - ./esdata:/usr/share/elasticsearch/data
-    ports:
-      - "9200:9200"
-      - "5601:5601"
     environment:
       - bootstrap.memory_lock=true
-      - cluster.name=alkona
+      - cluster.name=pof
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - discovery.type=single-node
+      #- xpack.security.enabled=true
+      #- ELASTIC_PASSWORD=secret
     ulimits:
       memlock:
         soft: -1
         hard: -1
+    ports:
+      - "9200:9200"
+
+  grafana:
+    links:
+      - "elasticsearch:elasticsearch"
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+
+  kibana:
+    links:
+      - "elasticsearch:elasticsearch"
+    image: docker.elastic.co/kibana/kibana:7.0.0
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
  

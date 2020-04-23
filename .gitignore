@@ -8,6 +8,7 @@ build.dev
 /classes/
 /target/
 /checkouts/
+/esdata/
 .lein-deps-sum
 .lein-repl-history
 .lein-plugins/

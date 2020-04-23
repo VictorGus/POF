@@ -3,6 +3,8 @@
             [route-map.core :as rm]
             [cheshire.core :as json]
             [app.operations :as ops]
+            [app.p-log.core :as plog]
+            [clojure.core.async :refer [go]]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.cors :refer [wrap-cors]]
             [ring.middleware.params :refer [wrap-params]]
@@ -12,11 +14,11 @@
   (:import [java.io File]))
 
 (def routes
-  {"Patient" {"search" {:GET   ops/patients-search}
-              :POST            ops/patient-create
-              [:params] {:GET  ops/patient-by-id
-                         :PUT  ops/patient-update
-                         "ehr" {:GET ops/patient-ehr}
+  {"Patient" {"search"  {:GET   ops/patients-search}
+              :POST             ops/patient-create
+              [:params] {:GET   ops/patient-by-id
+                         :PUT   ops/patient-update
+                         "ehr"  {:GET ops/patient-ehr}
                          "edit" {:PUT ops/patient-create}}}})
 
 (defn params-to-keyword [params]
@@ -51,10 +53,12 @@
 
 (defn mk-handler [dispatch]
   (fn [req]
-    (if (= :options (:request-method req))
-      (preflight req)
-      (let [resp (dispatch req)]
-        (-> resp (allow req))))))
+    (let [req-time (System/currentTimeMillis)]
+      (if (= :options (:request-method req))
+        (preflight req)
+        (let [resp (dispatch req)]
+          (go (plog/log req resp (- (System/currentTimeMillis) req-time)))
+          (-> resp (allow req)))))))
 
 (def app
   (-> handler

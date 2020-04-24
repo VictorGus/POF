@@ -67,7 +67,8 @@
        [:.patient-right-value
         {:padding "5px 5px"}]]]
      [:.patient-record:hover
-      {:background-color "#e6f2ff"}]]]))
+      {:background-color "#e6f2ff"}]]]
+   [:.not-found {:font-size "22px"}]))
 
 (defn pt-name-to-string [item]
   (str (:given item) " " (:family item)))
@@ -76,6 +77,11 @@
   (let [page-data (rf/subscribe [:patients/index])]
     (fn []
       [:div.patient-grid
+       (when (empty? (:data @page-data))
+         [:div.container.text-center.pt-3
+          [:span
+           [:i.fa.fa-frown-o.fa-2x {:aria-hidden "true"}]
+           [:span.not-found " Nothing is found"]]])
        (when (vector? (:data @page-data))
          (for [item (:data @page-data)]
            [:a.patient-record

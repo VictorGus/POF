@@ -2,6 +2,7 @@
   (:require [clojure.java.io :as io]
             [route-map.core :as rm]
             [cheshire.core :as json]
+            [app.p-log.search :as l]
             [app.operations :as ops]
             [app.p-log.core :as plog]
             [app.p-log.es-appender :as es]
@@ -21,7 +22,8 @@
               [:params] {:GET   ops/patient-by-id
                          :PUT   ops/patient-update
                          "ehr"  {:GET ops/patient-ehr}
-                         "edit" {:PUT ops/patient-create}}}})
+                         "edit" {:PUT ops/patient-create}}}
+   "Logs"    {:GET l/logs-search}})
 
 (defn params-to-keyword [params]
   (reduce-kv (fn [acc k v]

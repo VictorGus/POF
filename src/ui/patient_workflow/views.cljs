@@ -19,7 +19,7 @@
     [:#search-btn
      {:margin-right "16px"}]
 
-    [:.patient-grid 
+    [:.patient-grid
      [:.icon
       {:height "65px"
        :width "65px"
@@ -29,7 +29,7 @@
       [:.icon.img
        {:fill "blue"}]]
 
-     [:.patient-record 
+     [:.patient-record
       {:display "flex"
        :text-decoration "none"
        :color "black"

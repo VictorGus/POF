@@ -100,7 +100,7 @@
                  json/generate-string
                  u/remove-nils)
         query {:select [(hsql/call :fhirbase_create (hsql/raw (str "'" (str/replace body #"'" "") "'")))]}]
-    {:status 200
+    {:status 201
      :body (-> query
                hsql/format
                run-query)}))

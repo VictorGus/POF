@@ -4,7 +4,8 @@
              "patients" {:. :patients/index
                          "create" {:. :ui.patient-workflow.card.model/create}}
              "patient" {[:uid] {:. :ui.patient-workflow.card.model/index-card
-                                "edit" {:. :ui.patient-workflow.card.model/edit}}}})
+                                "edit" {:. :ui.patient-workflow.card.model/edit}}}
+             "audit"   {"logs" {:. :ui.audit.logs.model/logs}}})
 
 (defn route-index* [route pth]
   (merge

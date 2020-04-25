@@ -5,7 +5,8 @@
             [ui.routes :as routes]
             [ui.pages :as pages]
             [ui.patient-workflow.views]
-            [ui.patient-workflow.card.view]))
+            [ui.patient-workflow.card.view]
+            [ui.audit.logs.view]))
 
 (rf/reg-event-fx
  ::initialize

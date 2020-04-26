@@ -4,6 +4,7 @@ PGUSER=postgres
 PGDATABASE=fhirbase
 PGPASSWORD=postgres
 PGIMAGE?=victor13533/fhirbase-on-postgrespro
+GF_SECURITY_ALLOW_EMBEDDING=true
 
 .EXPORT_ALL_VARIABLES:
 .PHONY: test build

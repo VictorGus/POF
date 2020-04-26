@@ -74,12 +74,12 @@
   (fn []
     [:div#search-input-wrapper input-style
      [:div.container
-      [:iframe {:src "http://localhost:3000/d-solo/XQwJOsqWz/requests-per-ts?orgId=1&from=1587887315537&to=1587908915537&theme=light&panelId=2"
-                :height "200"
+      [:iframe {:src "http://localhost:3000/d-solo/2xYT333Wk/requests?tab=advanced&orgId=1&panelId=2&from=1587918034275&to=1587939634275&refresh=1m&theme=light"
+                :height "250"
                 :width "100%"
-                :frameborder "0"}]
+                :frameBorder "0"}]
       [input-form]
-      [:table.table.table-hover
+      [:table.table.table-hover.mt-3
        [:thead
         [:tr
          [:th {:scope "col"} [:span "Status"

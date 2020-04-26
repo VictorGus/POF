@@ -74,12 +74,22 @@
   (fn []
     [:div#search-input-wrapper input-style
      [:div.container
+      [:iframe {:src "http://localhost:3000/d-solo/XQwJOsqWz/requests-per-ts?orgId=1&from=1587887315537&to=1587908915537&theme=light&panelId=2"
+                :height "200"
+                :width "100%"
+                :frameborder "0"}]
       [input-form]
       [:table.table.table-hover
        [:thead
         [:tr
-         [:th {:scope "col"} "Status"]
-         [:th {:scope "col"} "TS"]
+         [:th {:scope "col"} [:span "Status"
+                              [:i.fa.fa-sort.ml-1 {:aria-hidden "true"
+                                                   :style {:cursor "pointer"}
+                                                   :on-click #(println "TODO")}]]]
+         [:th {:scope "col"} [:span "TS"
+                              [:i.fa.fa-sort.ml-1 {:aria-hidden "true"
+                                                   :style {:cursor "pointer"}
+                                                   :on-click #(println "TODO")}]]]
          [:th {:scope "col"} "Display"]
          [:th {:scope "col"} [:span "Duration"
                               [:i.fa.fa-sort.ml-1 {:aria-hidden "true"

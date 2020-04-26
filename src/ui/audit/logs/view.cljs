@@ -14,56 +14,66 @@
    [:#search-input-wrapper
     {:padding-top "15px"
      :padding-left "35px"}]
-   [:.not-found {:font-size "22px"}]))
+   [:.not-found {:font-size "22px"}]
+   [:.filter-form {:z-index "999"}]))
 
-(defn logs-grid []
-  (fn []
-    [:div#search-input-wrapper input-style
-       [b/Container
-        [b/Row
+(defn filter-form [close-fn]
+  [:div.container.border.border-top-0.rounded.filter-form
+   [:div.row.p-3
+    [:div.col-md-2
+     [:label.text-muted "Action"]
+     [basic-form/form-select [{:display "View"
+                               :value "get"}
+                              {:display "Create"
+                               :value "post"}
+                              {:display "Update"
+                               :value "put"}
+                              {:display "Delete"
+                               :value "delete"}] [form/form-path :action]]]
+    [:div.col-md-2
+     [:label.text-muted "User"]
+     [basic-form/form-input [form/form-path :user]]]
+    [:div.cold-md-3.mr-2
+     [:label.text-muted "From"]
+     [:input.form-control {:type "datetime-local"
+                           :on-change #(println (-> % .-target .-value))}]]
+    [:div.cold-md-3.mr-3
+     [:label.text-muted "To"]
+     [:input.form-control {:type "datetime-local"
+                           :on-change #(println (-> % .-target .-value))}]]
+
+    [:div.cold-md-3
+     [:div
+      [:label.text-muted "Enable auto update"]]
+     [toggle/check-toggle]]]])
+
+(defn input-form []
+  (let [show-form? (r/atom false)
+        close-fn #(reset! show-form? false)]
+    (fn []
+      [:div#search-input-wrapper input-style
+       [:div.container
+        [:div.row
          {:styles "height: 48px;"}
-         [b/Col
-          {:class "col-md-12"}
+         [:div.subform.col-md-12
+          {:tab-index 0
+           :on-focus #(reset! show-form? true)
+           :on-blur close-fn}
           [b/Input
            {:type "text"
             :styles "height: 48px;"
-            :aria-describedby "inputGroup-sizing-sm"
             :placeholder "Search..."
             :on-change (fn [e]
                          (let [v (-> e .-target .-value)]
                            (js/setTimeout (fn []
                                             (println v))
-                                          700)))}]]
-         [b/Col
-          {:class "col-md-3"}
-          [:label.text-muted "Action"]
-          [basic-form/form-select [{:display "View"
-                                    :value "get"}
-                                   {:display "Create"
-                                    :value "post"}
-                                   {:display "Update"
-                                    :value "put"}
-                                   {:display "Delete"
-                                    :value "delete"}] [form/form-path :identifier :MR]]]
-         [b/Col
-          {:class "col-md-3"}
-          [:label.text-muted "From"]
-          [:input.form-control {:type "datetime-local"
-                                :on-change #(println (-> % .-target .-value))}]]
-         [b/Col
-          {:class "col-md-3"}
-          [:label.text-muted "To"]
-          [:input.form-control {:type "datetime-local"
-                                :on-change #(println (-> % .-target .-value))}]]
+                                          700)))}]
+          (when @show-form?
+            [filter-form close-fn])]]]])))
 
-         [b/Col
-          {:class "col-md-3"}
-          [:label.text-muted "Govno"]
-          [toggle/check-toggle]]
-
-         [b/Col
-          {:class "col-md-3"}
-          [:button.btn.btn-outline-primary "Refresh"]]]]]))
+(defn logs-grid []
+  (fn []
+    [input-form]))
 
 (pages/reg-subs-page
  model/logs

@@ -32,9 +32,10 @@
      :-ms-transform "translateX(26px)"
      :transform "translateX(26px)"}]
 
-   (defn check-toggle []
+   (defn check-toggle [f]
      [:label.switch
       toggle
-      [:input {:type "checkbox"}]
+      [:input {:type "checkbox"
+               :on-change f}]
       [:span.slider]])))
 

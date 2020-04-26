@@ -12,8 +12,9 @@
          com.health-samurai/jute     {:mvn/version "0.2.0-SNAPSHOT"}
          clj-yaml                    {:mvn/version "0.4.0"}
          http-kit                    {:mvn/version "2.3.0"}
+         clj-http                    {:mvn/version "3.10.1"}
          ring/ring-json              {:mvn/version "0.5.0"}
-         org.clojure/data.generators {:mvn/version "0.1.2"} 
+         org.clojure/data.generators {:mvn/version "0.1.2"}
          honeysql                    {:mvn/version "0.9.8"}
          nilenso/honeysql-postgres   {:mvn/version "0.2.6"}
          route-map                   {:mvn/version "0.0.7-RC4"}

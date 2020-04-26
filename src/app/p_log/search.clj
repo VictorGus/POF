@@ -1,16 +1,16 @@
 (ns app.p-log.search
-  (:require [org.httpkit.client :as http]
+  (:require [clj-http.client :as http]
             [honeysql.core :as hsql]
             [chrono.core :as ch]
             [app.manifest :as m]
             [cheshire.core :as json]))
 
 (defn time-range [{:keys [gte lte]}]
-  (let [iso-fmt [:year "-" :month "-" :day "T" :hour ":" :min ":" :sec]
+  (let [iso-fmt [:year "-" :month "-" :day "T"]
         gte (when gte
-              (ch/format (ch/- (select-keys (ch/parse gte) iso-fmt) {:hour 3}) iso-fmt))
+              (ch/format (ch/- (select-keys (ch/parse gte) iso-fmt) {:day 1}) iso-fmt))
         lte (when lte
-              (ch/format (ch/- (select-keys (ch/parse lte) iso-fmt) {:hour 3}) iso-fmt))]
+              (ch/format (ch/+ (select-keys (ch/parse lte) iso-fmt) {:day 1}) iso-fmt))]
     {:range {:ts {:format "strict_date_optional_time"
                   :gte (or gte "now-1d/d")
                   :lte (or lte "now")}}}))

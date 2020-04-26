@@ -109,6 +109,8 @@
   (let [body (walk/keywordize-keys (json/parse-string (slurp body)))
         resource (assoc (u/deep-merge (:resource (first (get-in (walk/keywordize-keys (patient-by-id params)) [:body :entry]))) body) :id params)
         query-result (run-query (hsql/format {:select [(hsql/call :fhirbase_create
-                                                                  (hsql/raw (str "'" (str/replace (json/generate-string resource) #"'" "") "'")))]}))]
+                                                                  (hsql/raw (str "'" (-> resource
+                                                                                         json/generate-string
+                                                                                         (str/replace #"'" "")) "'")))]}))]
     {:status 200 :body query-result}))
 

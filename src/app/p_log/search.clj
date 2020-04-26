@@ -22,14 +22,17 @@
                     :default_operator "AND"}}))
 
 (defn method [{:keys [action]}]
-  {:term {:l_m action}})
+  (when action
+    {:term {:l_m action}}))
 
 (defn mk-es-request [params]
   (let [tr (time-range params)
         qs (query-string params)
         act (method params)]
     {:bool
-     {:must [tr qs act]}}))
+     {:must (remove nil? [tr qs act])}}))
+
+(mk-es-request {})
 
 (defn logs-search [{{{:keys [params]} :body params :params headers :headers} :request}]
   (if-let [host (get-in m/manifest [:config :elastic :host])]

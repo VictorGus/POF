@@ -30,9 +30,8 @@
         qs (query-string params)
         act (method params)]
     {:bool
-     {:must (remove nil? [tr qs act])}}))
-
-(mk-es-request {})
+     {:must (remove nil? [tr qs act])
+      :must_not [{:match_phrase {:l_uri "/Logs/"}}]}}))
 
 (defn logs-search [{{{:keys [params]} :body params :params headers :headers} :request}]
   (if-let [host (get-in m/manifest [:config :elastic :host])]

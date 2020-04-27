@@ -16,7 +16,15 @@
      :padding-left "35px"}]
    [:.not-found {:font-size "22px"}]
    [:.filter-form {:z-index "999"
-                   :background-color "white"}]))
+                   :background-color "white"}]
+   [:.grid-table
+    [:th {:padding "4px 16px"
+          :font-weight "900 !important"}]
+    [:td {:white-space "nowrap"
+          :overflow "hidden"
+          :text-overflow "ellipsis"
+          :padding "8px 16px"
+          :max-width "310px"}]]))
 
 (defn filter-form [close-fn]
   [:div.container.border.border-top-0.rounded.filter-form
@@ -70,16 +78,16 @@
         (when @show-form?
           [filter-form close-fn])]])))
 
-(defn logs-grid []
-  (fn []
+(defn logs-grid [data]
+  (fn [data]
     [:div#search-input-wrapper input-style
      [:div.container
-      [:iframe {:src "http://localhost:3000/d-solo/2xYT333Wk/requests?tab=advanced&orgId=1&panelId=2&from=1587918034275&to=1587939634275&refresh=1m&theme=light"
+      [:iframe {:src "http://localhost:3000/d-solo/gOEtOzeZz/requests?orgId=1&theme=light&panelId=2&refresh=1m"
                 :height "250"
                 :width "100%"
                 :frameBorder "0"}]
       [input-form]
-      [:table.table.table-hover.mt-3
+      [:table.table.table-hover.mt-3.grid-table
        [:thead
         [:tr
          [:th {:scope "col"} [:span "Status"
@@ -96,13 +104,16 @@
                                                    :style {:cursor "pointer"}
                                                    :on-click #(println "TODO")}]]]]]
        [:tbody
-        [:tr
-         [:td [:span.badge.badge-success "200"]]
-         [:td "2019-02-13"]
-         [:td "Viewing patient Anna13 Marina14 (DL:88080)"]
-         [:td "145 ms"]]]]]]))
+        (for [item data]
+          [:tr
+           [:td (if (#{200 201} (:st item))
+                  [:span.badge.badge-success (:st item)]
+                  [:span.badge.badge-danger (:st item)])]
+           [:td (:ts item)]
+           [:td (str (:l_m item) " " "patient " (:l_body item))]
+           [:td (str (:d item) " ms")]])]]]]))
 
 (pages/reg-subs-page
  model/logs
- (fn [_ _]
-   [logs-grid]))
+ (fn [{:keys [data] :as page} params]
+   [logs-grid data]))

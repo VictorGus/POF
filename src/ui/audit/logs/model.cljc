@@ -9,15 +9,17 @@
 (ch/format (ch/parse "2020-04-27T18:48:26.465Z") almost-iso-fmt)
 
 (defn humanize-action [req]
-  (let [action-map {"get"    "Viewing"
-                    "post"   "Creating"
-                    "delete" "Deleting"
-                    "patch"  "Updating"
-                    "put"    "Updating"}]
-    (assoc req :l_m (get action-map (:l_m req)))))
+  (let [action-map {"get"    "Viewing "
+                    "post"   "Creating "
+                    "delete" "Deleting "
+                    "patch"  "Updating "
+                    "put"    "Updating "}]
+    (cond-> (assoc req :l_m (get action-map (:l_m req)))
+      (= "/Patient/search" (:l_uri req))
+      (assoc :l_m "Search "))))
 
 (defn humanize-ts [req]
-  (update req :ts #(-> % ch/parse (ch/format almost-iso-fmt))))
+  (update req :ts #(-> % ch/parse (ch/+ {:hour 3}) (ch/format almost-iso-fmt))))
 
 (rf/reg-event-fx
  logs

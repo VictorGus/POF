@@ -110,7 +110,7 @@
                   [:span.badge.badge-success (:st item)]
                   [:span.badge.badge-danger (:st item)])]
            [:td (:ts item)]
-           [:td (str (:l_m item) " " "patient " (:l_body item))]
+           [:td (str (:l_m item) "patient " (:l_body item))]
            [:td (str (:d item) " ms")]])]]]]))
 
 (pages/reg-subs-page

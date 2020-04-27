@@ -19,3 +19,7 @@ Run repl
 ```bash
 make repl
 ```
+For logs
+```bash
+make logs-up
+```

@@ -2,7 +2,7 @@
   (:require [re-frame.core :as rf]
             [chrono.core :as ch]))
 
-(def almost-iso-fmt [:year "-" :month "-" :day " " :hour ":" :min ":" :sec])
+(def almost-iso-fmt [:year "-" :month "-" :day "T" :hour ":" :min ":" :sec])
 
 (def logs ::logs)
 

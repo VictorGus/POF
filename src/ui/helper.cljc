@@ -1,6 +1,7 @@
 (ns ui.helper
   (:require [re-frame.core :as rf]
             [route-map.core :as route-map]
+            [chrono.core :as ch]
             [clojure.string :as str]
             [ui.routes :as routes]))
 
@@ -42,3 +43,7 @@
 
 (defn vec-remove [coll pos]
   (vec (concat (subvec coll 0 pos) (subvec coll (inc pos)))))
+
+(defn convert-to-iso [date]
+  (let [iso [:year "-" :month "-" :day "T" :hour ":" :min ":" :sec]]
+    (ch/format (ch/parse date) iso)))

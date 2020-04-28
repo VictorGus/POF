@@ -193,8 +193,8 @@
                 "Enter middle name" middle]])
             [:div.col-sm
              [:label.text-muted {:for "bd-input"} "Birth date"]
-             [basic-form/form-input [form/form-path :birthDate]
-              "Enter birth date" (:birthdate (first (:patient data)))]]])
+             [basic-form/form-date-input [form/form-path :birthDate]
+              (:birthdate (first (:patient data)))]]])
          [:div.row
           [:div.col-sm-8
            [:label.text-muted {:for "gender-input"} "Gender"]
@@ -351,8 +351,7 @@
               "Enter given name"]]
             [:div.col-sm
              [:label.text-muted {:for "bd-input"} "Birth date"]
-             [basic-form/form-input [form/form-path :birthDate]
-              "Enter birth date"]]]
+             [basic-form/form-date-input [form/form-path :birthDate]]]]
            [:div.row
             [:div.col-sm-8
              [:label.text-muted {:for "gender-input"} "Gender"]

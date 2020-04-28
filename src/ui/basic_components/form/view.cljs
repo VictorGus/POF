@@ -39,3 +39,20 @@
                                             (reset! v (.-value (.-target %)))
                                             (rf/dispatch [::model/form-set-value {:path path
                                                                                   :value (.-value (.-target %))}]))}])})))
+
+(defn form-date-input [path & [value]]
+  (let [v (r/atom value)]
+    (r/create-class
+     {:component-did-mount
+      (fn [this]
+        (rf/dispatch [::model/form-set-value {:path path
+                                              :value value}]))
+      :reagent-render
+      (fn [_ _]
+        (println @v)
+        [:input.form-control {:type "date"
+                              :value @v
+                              :on-change #(do
+                                            (reset! v (.-value (.-target %)))
+                                            (rf/dispatch [::model/form-set-value {:path path
+                                                                                  :value (.-value (.-target %))}]))}])})))

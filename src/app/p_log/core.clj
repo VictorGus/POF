@@ -23,11 +23,14 @@
   (async/thread
     (send logs assoc :request req :response resp :duration duration-mills)))
 
-(defn shape-display [{[patient] :patient :as body}]
-  (let [patient (walk/keywordize-keys patient)
-        name    (get-in patient [:patient_name])
-        id      (:value (u/vec-search "SB" (get-in patient [:identifier])))]
-    (str (:family name) " " (first (:given name)) " (SSN: "id")")))
+(defn shape-display [body]
+  (let [patient (walk/keywordize-keys (or (first (:patient body))
+                                          body))
+        name    (or (get patient :patient_name)
+                    (first (get patient :name)))
+        id      (:value (u/vec-search "SB" (get patient :identifier)))]
+    (when (or name id)
+      (str (:family name) " " (first (:given name)) " (SSN: "id")"))))
 
 (defn mk-log-msg [{{:keys [uri params request-method query-params]} :request
                    {:keys [status body]} :response duration-mills :duration}]

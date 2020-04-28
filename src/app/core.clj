@@ -21,8 +21,7 @@
               :POST             ops/patient-create
               [:params] {:GET   ops/patient-by-id
                          :PUT   ops/patient-update
-                         "ehr"  {:GET ops/patient-ehr}
-                         "edit" {:PUT ops/patient-create}}}
+                         "ehr"  {:GET ops/patient-ehr}}}
    "Logs"    {:GET l/logs-search}})
 
 (defn params-to-keyword [params]

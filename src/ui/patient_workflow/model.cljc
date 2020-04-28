@@ -59,18 +59,10 @@
  (fn [{db :db} [_ params sort-order]]
    {:db (update-in db [:patients/index :data] (partial sort-by-birthdate sort-order))}))
 
-;; (rf/reg-event-fx
-;;  ::search
-;;  (fn [{db :db} [pid params]]
-;;    {:dispatch [::set-loading-status-true]
-;;     :xhr/fetch {:uri (str "/Patient/search")
-;;                 :params {:q (str/replace params #" " "%20")}
-;;                 :req-id (or pid "pid")
-;;                 :success {:event ::save-results}}}))
-
 (rf/reg-event-fx
  ::save-results
- (fn [{db :db} [_ {data :data}]]
-   {:db (assoc-in db [:patients/index :data] data)
+ (fn [{db :db} [_ {data :data req :request}]]
+   {:db (-> (assoc-in db [:patients/index :data] data)
+            (assoc-in [:patients/index :q] (get-in req [:params :q])))
     :dispatch [::set-loading-status-false]}))
 

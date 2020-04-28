@@ -59,4 +59,6 @@
   (start)
   (stop)
 
-  (repl/cljs-repl "app"))
+  (repl/cljs-repl "app")
+
+  )

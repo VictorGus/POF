@@ -68,15 +68,36 @@
         {:padding "5px 5px"}]]]
      [:.patient-record:hover
       {:background-color "#e6f2ff"}]]]
-   [:.not-found {:font-size "22px"}]))
+   [:.not-found {:font-size "22px"}]
+   [:.marker {:background-color "#bff"}]))
 
 (defn pt-name-to-string [item]
   (str (:given item) " " (:family item)))
+
+(defn highlight [q]
+  (let [sel (into [] (array-seq (.querySelectorAll js/document ".patient-name, .pl-2, .patient-right-value")))
+        q (into [] (remove str/blank? (-> q
+                                          (str/replace #"(%20)" " ")
+                                          (str/replace #"[`~!@#$%^&*()_|\=?;:'\".<>\{\}\[\]\\\/]" "")
+                                          (str/trim)
+                                          (str/split #"\s*,| |[+]\s*"))))]
+    (mapv (fn [w]
+            (print "word: " w)
+            (mapv (fn [el]
+                    (aset el
+                          "innerHTML"
+                          (str/replace (aget el "innerHTML")
+                                       (re-pattern (str "(?i)(" w ")(?!([^<]+)?>)(?!([^&]+)?;)"))
+                                       #(str "<span class=\"marker\">" (first %) "</span>"))))
+                  sel))
+         q)))
+
 
 (defn patient-grid []
   (let [page-data (rf/subscribe [:patients/index])]
     (fn []
       [:div.patient-grid
+       {:on-mouse-move #(highlight (:q @page-data))}
        (when (empty? (:data @page-data))
          [:div.container.text-center.pt-3
           [:span
@@ -122,7 +143,8 @@
              [:div.right-item
               [:span.text-muted
                "Phone:"]
-              [:span.patient-right-value (:phone item)]]]]))])))
+              [:span.patient-right-value (:phone item)]]]])
+         )])))
 
 (defn search-input []
   (let [sort-order (r/atom false)
@@ -144,8 +166,7 @@
             :on-change (fn [e]
                          (let [v (-> e .-target .-value)]
                            (js/setTimeout (fn []
-                                            (rf/dispatch [::redirect/set-params {:q v}])
-                                            #_(rf/dispatch [::model/search v]))
+                                            (rf/dispatch [::redirect/set-params {:q v}]))
                                           700)))}]]
          [b/Button {:id "search-btn"
                     :color "outline-primary"

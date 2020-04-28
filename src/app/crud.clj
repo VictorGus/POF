@@ -30,12 +30,14 @@
      :body "ok"}))
 
 (defn r-update [{body :body {params :params} :params :as request}]
-  (let [body (walk/keywordize-keys (json/parse-string (slurp body)))
+  (let [body  (cond-> body
+                (not (map? body))
+                (-> slurp json/parse-string walk/keywordize-keys))
         resource (assoc (u/deep-merge (-> (r-read params)
                                           walk/keywordize-keys
                                           (get-in [:body :entry])
                                           first
-                                          :resource) body) :id params)
+                                          :resource) body) :id (or params (:id body)))
         [{query-result :fhirbase_create}] (-> {:select [(hsql/call :fhirbase_create
                                                                    (hsql/raw (str "'" (-> resource
                                                                                           json/generate-string
@@ -44,17 +46,20 @@
                                               run-query)]
     {:status 200 :body query-result}))
 
-(defn r-create [{body :body :as request}]
-  (let [parsed-body (json/parse-string (slurp body))
+(defn r-create [{body :body :as request} & [id]]
+  (let [parsed-body  (cond-> body
+                       (not (map? body))
+                       (-> slurp json/parse-string))
         body (-> parsed-body
                  (assoc :resourceType "Patient")
                  (cond->
                      (not (:id parsed-body))
-                   (assoc :id (str (java.util.UUID/randomUUID))))
+                   (assoc :id (or id (str (java.util.UUID/randomUUID)))))
                  json/generate-string
                  u/remove-nils)
-        query {:select [(hsql/call :fhirbase_create (hsql/raw (str "'" (str/replace body #"'" "") "'")))]}]
+        query {:select [(hsql/call :fhirbase_create (hsql/raw (str "'" (str/replace body #"'" "") "'")))]}
+        [{result :fhirbase_create}] (-> query
+                                        hsql/format
+                                        run-query)]
     {:status 201
-     :body (-> query
-               hsql/format
-               run-query)}))
+     :body result}))

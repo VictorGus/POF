@@ -43,3 +43,18 @@
                                               hsql/format
                                               run-query)]
     {:status 200 :body query-result}))
+
+(defn r-create [{body :body :as request}]
+  (let [parsed-body (json/parse-string (slurp body))
+        body (-> parsed-body
+                 (assoc :resourceType "Patient")
+                 (cond->
+                     (not (:id parsed-body))
+                   (assoc :id (str (java.util.UUID/randomUUID))))
+                 json/generate-string
+                 u/remove-nils)
+        query {:select [(hsql/call :fhirbase_create (hsql/raw (str "'" (str/replace body #"'" "") "'")))]}]
+    {:status 201
+     :body (-> query
+               hsql/format
+               run-query)}))

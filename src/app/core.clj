@@ -19,7 +19,7 @@
 
 (def routes
   {"Patient" {"search"  {:GET    ops/patients-search}
-              :POST              ops/patient-create
+              :POST              crud/r-create
               [:params] {:GET    crud/r-read
                          :PUT    crud/r-update
                          :DELETE crud/r-delete

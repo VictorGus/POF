@@ -4,6 +4,7 @@
             [cheshire.core :as json]
             [app.p-log.search :as l]
             [app.operations :as ops]
+            [app.crud :as crud]
             [app.p-log.core :as plog]
             [app.p-log.es-appender :as es]
             [app.manifest :as m]
@@ -17,11 +18,12 @@
   (:import [java.io File]))
 
 (def routes
-  {"Patient" {"search"  {:GET   ops/patients-search}
-              :POST             ops/patient-create
-              [:params] {:GET   ops/patient-by-id
-                         :PUT   ops/patient-update
-                         "ehr"  {:GET ops/patient-ehr}}}
+  {"Patient" {"search"  {:GET    ops/patients-search}
+              :POST              ops/patient-create
+              [:params] {:GET    crud/r-read
+                         :PUT    crud/r-update
+                         :DELETE crud/r-delete
+                         "ehr"   {:GET ops/patient-ehr}}}
    "Logs"    {:GET l/logs-search}})
 
 (defn params-to-keyword [params]

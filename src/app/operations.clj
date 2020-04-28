@@ -3,7 +3,6 @@
             [clojure.string :as str]
             [cheshire.core :as json]
             [clojure.walk :as walk]
-            [clojure.string :as str]
             [honeysql.helpers :refer :all]
             [honeysql-postgres.format :refer :all]
             [app.utils :as u]
@@ -80,37 +79,3 @@
     {:status 200
      :body {:patient patient-info
             :encounter encounter-info}}))
-
-(defn patient-by-id [params]
-  (let [id (if (map? params)
-             (get-in params [:params :params])
-             params)]
-    {:status 200
-     :body {:entry (run-query (hsql/format {:select [:resource]
-                                            :from [:patient]
-                                            :where [:= :id id]}))}}))
-
-(defn patient-create [{body :body :as request}]
-  (let [parsed-body (json/parse-string (slurp body))
-        body (-> parsed-body
-                 (assoc :resourceType "Patient")
-                 (cond->
-                   (not (:id parsed-body))
-                   (assoc :id (str (java.util.UUID/randomUUID))))
-                 json/generate-string
-                 u/remove-nils)
-        query {:select [(hsql/call :fhirbase_create (hsql/raw (str "'" (str/replace body #"'" "") "'")))]}]
-    {:status 201
-     :body (-> query
-               hsql/format
-               run-query)}))
-
-(defn patient-update [{body :body {params :params} :params :as request}]
-  (let [body (walk/keywordize-keys (json/parse-string (slurp body)))
-        resource (assoc (u/deep-merge (:resource (first (get-in (walk/keywordize-keys (patient-by-id params)) [:body :entry]))) body) :id params)
-        [{query-result :fhirbase_create}] (run-query (hsql/format {:select [(hsql/call :fhirbase_create
-                                                                  (hsql/raw (str "'" (-> resource
-                                                                                         json/generate-string
-                                                                                         (str/replace #"'" "")) "'")))]}))]
-    {:status 200 :body query-result}))
-

@@ -30,3 +30,9 @@
     (if (some identity vs)
       (reduce #(rec-merge %1 %2) v vs)
       v)))
+
+(defn wrap-apostrophes [s]
+  (str "'" s "'"))
+
+
+

@@ -2,8 +2,24 @@
   (:require [re-frame.core :as rf]
             [route-map.core :as route-map]
             [chrono.core :as ch]
+            [chrono.now :as now]
             [clojure.string :as str]
             [ui.routes :as routes]))
+
+(def iso-fmt  [:year "-" :month "-" :day "T" :hour ":" :min ":" :sec])
+(def iso-date [:year "-" :month "-" :day])
+
+(defn day-ago []
+  (ch/format (ch/- (now/local) {:day 1}) iso-date))
+
+(defn day-ago-with-time []
+  (ch/format (ch/- (now/local) {:day 1}) iso-fmt))
+
+(defn tomorrow-date []
+  (ch/format (ch/+ (now/local) {:day 1}) iso-date))
+
+(defn tomorrow-date-with-time []
+  (ch/format (ch/+ (now/local) {:day 1}) iso-fmt))
 
 (defn vec-search [value coll]
   (first (filter (fn [el]

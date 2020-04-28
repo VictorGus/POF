@@ -6,6 +6,7 @@
             [ui.basic-components.toggle :as toggle]
             [ui.styles :as styles]
             [ui.pages :as pages]
+            [ui.helper :as h]
             [ui.audit.logs.form :as form]
             [ui.audit.logs.model :as model]))
 
@@ -44,17 +45,17 @@
      [basic-form/form-input [form/form-path :user]]]
     [:div.cold-md-3.mr-2
      [:label.text-muted "From"]
-     [:input.form-control {:type "datetime-local"
-                           :on-change #(println (-> % .-target .-value))}]]
+     [basic-form/form-datetime-input [form/form-path :gte]
+      (h/day-ago-with-time)]]
     [:div.cold-md-3.mr-3
      [:label.text-muted "To"]
-     [:input.form-control {:type "datetime-local"
-                           :on-change #(println (-> % .-target .-value))}]]
-
-    [:div.cold-md-3
-     [:div
-      [:label.text-muted "Enable auto update"]]
-     [toggle/check-toggle]]]])
+     [basic-form/form-datetime-input [form/form-path :lte]
+      (h/tomorrow-date-with-time)]]
+    [:div.pl-3.pt-3
+     [:div.cold-md-3
+      [:div
+       [:label.text-muted "Enable auto update"]]
+      [toggle/check-toggle]]]]])
 
 (defn input-form []
   (let [show-form? (r/atom false)

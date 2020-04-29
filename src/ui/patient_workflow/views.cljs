@@ -82,7 +82,6 @@
                                           (str/trim)
                                           (str/split #"\s*,| |[+]\s*"))))]
     (mapv (fn [w]
-            (print "word: " w)
             (mapv (fn [el]
                     (aset el
                           "innerHTML"

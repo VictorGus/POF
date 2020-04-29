@@ -83,7 +83,7 @@
   (fn [data]
     [:div#search-input-wrapper input-style
      [:div.container
-      [:iframe {:src "http://localhost:3000/d-solo/gOEtOzeZz/requests?orgId=1&theme=light&panelId=2&refresh=1m"
+      [:iframe {:src "http://localhost:3000/d-solo/jXNZW7eZz/requests?orgId=1&theme=light&panelId=2&refresh=1m"
                 :height "250"
                 :width "100%"
                 :frameBorder "0"}]

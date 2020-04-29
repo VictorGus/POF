@@ -95,56 +95,60 @@
 
 (defn patient-grid []
   (let [page-data (rf/subscribe [:patients/index])]
-    (fn []
-      [:div.patient-grid
-       {:on-mouse-move #(highlight (:q @page-data))}
-       (when (empty? (:data @page-data))
-         [:div.container.text-center.pt-3
-          [:span
-           [:i.fa.fa-frown-o.fa-2x {:aria-hidden "true"}]
-           [:span.not-found " Nothing is found"]]])
-       (when (vector? (:data @page-data))
-         (for [item (:data @page-data)]
-           [:a.patient-record
-            {:href (str "/#/patient/" (:id item))}
-            [:div.icon
-             [:img {:src (cond
-                           (= (:gender item) "male")
-                           "male.svg"
-                           (= (:gender item) "female")
-                           "female.svg")}]]
-            [:div.patient-info
-             [:div
-              [:b.patient-name (pt-name-to-string item)]
-              [:span.text-muted.pl-2 (:birthdate item)]
-              [:div
-               [:span.text-muted
-                "Line:"]
-               [:span.patient-address-value (:line item)]
-               [:span.text-muted
-                "City:"]
-               [:span.patient-address-value (:city item)]
-               [:span.text-muted
-                "State:"]
-               [:span.patient-address-value (:st item)]
-               [:span.text-muted
-                "Country:"]
-               [:span.patient-address-value (:country item)]]]]
-            [:div.right-wrapper
-             [:div.right-item
-              [:span.text-muted
-               "Social Security Number:"]
-              [:span.patient-right-value (get-in item [:ids :SB])]
-              ]
-             [:div.right-item
-              [:span.text-muted
-               "Driver License:"]
-              [:span.patient-right-value (get-in item [:ids :DL])]]
-             [:div.right-item
-              [:span.text-muted
-               "Phone:"]
-              [:span.patient-right-value (:phone item)]]]])
-         )])))
+    (r/create-class
+     {:component-did-mount
+      (fn [_]
+        (highlight (:q @page-data)))
+      :reagent-render
+      (fn []
+        [:div.patient-grid
+         (when (empty? (:data @page-data))
+           [:div.container.text-center.pt-3
+            [:span
+             [:i.fa.fa-frown-o.fa-2x {:aria-hidden "true"}]
+             [:span.not-found " Nothing is found"]]])
+         (when (vector? (:data @page-data))
+           (for [item (:data @page-data)]
+             [:a.patient-record
+              {:href (str "/#/patient/" (:id item))}
+              [:div.icon
+               [:img {:src (cond
+                             (= (:gender item) "male")
+                             "male.svg"
+                             (= (:gender item) "female")
+                             "female.svg")}]]
+              [:div.patient-info
+               [:div
+                [:b.patient-name (pt-name-to-string item)]
+                [:span.text-muted.pl-2 (:birthdate item)]
+                [:div
+                 [:span.text-muted
+                  "Line:"]
+                 [:span.patient-address-value (:line item)]
+                 [:span.text-muted
+                  "City:"]
+                 [:span.patient-address-value (:city item)]
+                 [:span.text-muted
+                  "State:"]
+                 [:span.patient-address-value (:st item)]
+                 [:span.text-muted
+                  "Country:"]
+                 [:span.patient-address-value (:country item)]]]]
+              [:div.right-wrapper
+               [:div.right-item
+                [:span.text-muted
+                 "Social Security Number:"]
+                [:span.patient-right-value (get-in item [:ids :SB])]
+                ]
+               [:div.right-item
+                [:span.text-muted
+                 "Driver License:"]
+                [:span.patient-right-value (get-in item [:ids :DL])]]
+               [:div.right-item
+                [:span.text-muted
+                 "Phone:"]
+                [:span.patient-right-value (:phone item)]]]])
+           )])})))
 
 (defn search-input []
   (let [sort-order (r/atom false)

@@ -16,7 +16,7 @@
     {:padding-top "15px"
      :padding-left "35px"}]
    [:.not-found {:font-size "22px"}]
-   [:.filter-form {:z-index "999"
+   [:.filter-form {:z-index "10"
                    :background-color "white"}]
    [:.grid-table
     [:th {:padding "4px 16px"
@@ -26,6 +26,15 @@
           :text-overflow "ellipsis"
           :padding "8px 16px"
           :max-width "310px"}]]))
+
+(def form-style
+  (styles/style
+   [:.refresh-btn {:position "absolute"
+                   :top "9px"
+                   :z-index "999"
+                   :outline "none"
+                   :right "24px"}
+    [:&:hover {:background-color "#fafafa" :cursor "pointer" :border-radius "25px"}]]))
 
 (defn filter-form [close-fn]
   [:div.container.border.border-top-0.rounded.filter-form
@@ -61,21 +70,23 @@
   (let [show-form? (r/atom false)
         close-fn #(reset! show-form? false)]
     (fn []
-      [:div.row
-       {:styles "height: 48px;"}
+      [:div.row form-style
        [:div.subform.col-md-12
-        {:tab-index 0
-         :on-focus #(reset! show-form? true)
-         :on-blur close-fn}
-        [b/Input
-         {:type "text"
-          :styles "height: 48px;"
-          :placeholder "Search..."
-          :on-change (fn [e]
-                       (let [v (-> e .-target .-value)]
-                         (js/setTimeout (fn []
-                                          (println v))
-                                        700)))}]
+        [:i.fa.fa-retweet.refresh-btn
+         {:on-click #(rf/dispatch [::model/eval-form])}]
+        [:div
+         {:tab-index 0
+          :on-focus #(reset! show-form? true)
+          :on-blur close-fn}
+         [b/Input
+          {:type "text"
+           :styles "height: 48px; position: relative;"
+           :placeholder "Search..."
+           :on-change (fn [e]
+                        (let [v (-> e .-target .-value)]
+                          (js/setTimeout (fn []
+                                           (println v))
+                                         700)))}]]
         (when @show-form?
           [filter-form close-fn])]])))
 

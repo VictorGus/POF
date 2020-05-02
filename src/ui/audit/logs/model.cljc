@@ -1,8 +1,9 @@
 (ns ui.audit.logs.model
   (:require [re-frame.core :as rf]
+            [ui.audit.logs.form :as form]
             [chrono.core :as ch]))
 
-(def almost-iso-fmt [:year "-" :month "-" :day "T" :hour ":" :min ":" :sec])
+(def almost-iso-fmt [:year "-" :month "-" :day " " :hour ":" :min ":" :sec])
 
 (def logs ::logs)
 
@@ -21,6 +22,17 @@
 (defn humanize-ts [req]
   (update req :ts #(-> % ch/parse (ch/+ {:hour 3}) (ch/format almost-iso-fmt))))
 
+(rf/reg-event-fx
+ ::send-request
+ (fn [_ _]
+   {:dispatch [::send-data]}))
+
+(rf/reg-event-fx
+ ::send-data
+ (fn [{db :db} _]
+   (let [form-values (get db form/form-path)]
+     {:xhr/fetch {:uri "Logs"
+                  :body (-> form-values)}})))
 (rf/reg-event-fx
  logs
  (fn [{db :db} [pid phase params]]

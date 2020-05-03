@@ -69,7 +69,8 @@
                  (cond->
                      (not (:id parsed-body))
                    (assoc :id (or id (str (java.util.UUID/randomUUID))))))
-        query {:select [(hsql/call :fhirbase_create (hsql/raw (str "'" (str/replace (-> body json/generate-string u/remove-nils) #"'" "") "'")))]}]
+        query {:select [(hsql/call :fhirbase_create (hsql/raw (str "'" (str/replace (-> body u/remove-nils json/generate-string) #"'" "") "'")))]}]
+    (println (hsql/format query))
     (cond
       (and
        (not skip-validation)

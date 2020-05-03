@@ -19,6 +19,7 @@
          nilenso/honeysql-postgres   {:mvn/version "0.2.6"}
          route-map                   {:mvn/version "0.0.7-RC4"}
          chrono                      {:local/root "src/chrono"}
+         json-schema                 {:mvn/version "0.2.0-RC11"}
          cheshire                    {:mvn/version "5.9.0"}}
 
  :aliases

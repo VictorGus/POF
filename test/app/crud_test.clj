@@ -15,7 +15,7 @@
 (deftest crud-create
   (testing "Patient crud create test"
     (with-redefs [db/run-query db/run-test-query]
-      (sut/r-create {:body {:name {:given ["Test"] :family "Test"}}} "pt-1")
+      (sut/r-create {:body {:name {:given ["Test"] :family "Test"}}} "pt-1" true)
       (matcho/match
        {:resource {:name {:given ["Test"]
                           :family "Test"}
@@ -27,7 +27,7 @@
 (deftest crud-delete
   (testing "Patient crud create test"
     (with-redefs [db/run-query db/run-test-query]
-      (sut/r-create {:body {:name {:given ["Test"] :family "Test"}}} "pt-1")
+      (sut/r-create {:body {:name {:given ["Test"] :family "Test"}}} "pt-1" true)
       (sut/r-delete "pt-1")
       (matcho/match
        nil
@@ -38,7 +38,7 @@
 (deftest crud-read
   (testing "Patient crud create test"
     (with-redefs [db/run-query db/run-test-query]
-      (sut/r-create {:body {:name {:given ["Test"] :family "Test"}}} "pt-1")
+      (sut/r-create {:body {:name {:given ["Test"] :family "Test"}}} "pt-1" true)
       (matcho/match
        {:resource {:name {:given ["Test"]
                           :family "Test"}

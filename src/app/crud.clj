@@ -3,6 +3,7 @@
             [honeysql.core :as hsql]
             [clojure.string :as str]
             [cheshire.core :as json]
+            [app.validator :as validator]
             [clojure.walk :as walk]
             [honeysql.core :as hsql]
             [honeysql.helpers :refer :all]
@@ -29,7 +30,7 @@
     {:status 200
      :body "ok"}))
 
-(defn r-update [{body :body {params :params} :params :as request}]
+(defn r-update [{body :body {params :params} :params :as request} & [skip-validation]]
   (let [body  (cond-> body
                 (not (map? body))
                 (-> slurp json/parse-string walk/keywordize-keys))
@@ -38,28 +39,45 @@
                                           (get-in [:body :entry])
                                           first
                                           :resource) body) :id (or params (:id body)))
-        [{query-result :fhirbase_create}] (-> {:select [(hsql/call :fhirbase_create
-                                                                   (hsql/raw (str "'" (-> resource
-                                                                                          json/generate-string
-                                                                                          (str/replace #"'" "")) "'")))]}
+        query    {:select [(hsql/call :fhirbase_create
+                                      (hsql/raw (str "'" (-> resource
+                                                             json/generate-string
+                                                             (str/replace #"'" "")) "'")))]}
+        [{query-result :fhirbase_create}] (-> query
                                               hsql/format
                                               run-query)]
-    {:status 200 :body query-result}))
+    (cond
+      (and
+       (not skip-validation)
+       (not-empty (:errors (validator/validate-resource resource))))
+      {:status 404
+       :body (validator/validate-resource resource)}
+      :else
+      {:status 200 :body (:fhirbase_create (first (-> query
+                                                      hsql/format
+                                                      run-query)))})))
 
-(defn r-create [{body :body :as request} & [id]]
+(defn r-create [{body :body :as request} & [id skip-validation]]
   (let [parsed-body  (cond-> body
                        (not (map? body))
                        (-> slurp json/parse-string))
         body (-> parsed-body
-                 (assoc :resourceType "Patient")
+                 walk/keywordize-keys
+                 (cond->
+                     (not (:resourceType parsed-body))
+                   (assoc :resourceType "Patient"))
                  (cond->
                      (not (:id parsed-body))
-                   (assoc :id (or id (str (java.util.UUID/randomUUID)))))
-                 json/generate-string
-                 u/remove-nils)
-        query {:select [(hsql/call :fhirbase_create (hsql/raw (str "'" (str/replace body #"'" "") "'")))]}
-        [{result :fhirbase_create}] (-> query
-                                        hsql/format
-                                        run-query)]
-    {:status 201
-     :body result}))
+                   (assoc :id (or id (str (java.util.UUID/randomUUID))))))
+        query {:select [(hsql/call :fhirbase_create (hsql/raw (str "'" (str/replace (-> body json/generate-string u/remove-nils) #"'" "") "'")))]}]
+    (cond
+      (and
+       (not skip-validation)
+       (not-empty (:errors (validator/validate-resource body))))
+      {:status 404
+       :body (validator/validate-resource body)}
+      :else
+      {:status 201
+       :body (:fhirbase_create (first (-> query
+                                          hsql/format
+                                          run-query)))})))

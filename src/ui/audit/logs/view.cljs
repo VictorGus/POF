@@ -55,11 +55,11 @@
     [:div.cold-md-3.mr-2
      [:label.text-muted "From"]
      [basic-form/form-datetime-input [form/form-path :gte]
-      (h/day-ago-with-time)]]
+      #_(h/day-ago-with-time)]]
     [:div.cold-md-3.mr-3
      [:label.text-muted "To"]
      [basic-form/form-datetime-input [form/form-path :lte]
-      (h/tomorrow-date-with-time)]]
+      #_(h/tomorrow-date-with-time)]]
     [:div.pl-3.pt-3
      [:div.cold-md-3
       [:div
@@ -71,10 +71,10 @@
         close-fn #(reset! show-form? false)]
     (fn []
       [:div.row form-style
-       [:div.subform.col-md-12
+       [:div.col-md-12
         [:i.fa.fa-retweet.refresh-btn
-         {:on-click #(rf/dispatch [::model/eval-form])}]
-        [:div
+         {:on-click #(rf/dispatch [::model/send-req])}]
+        [:div.subform
          {:tab-index 0
           :on-focus #(reset! show-form? true)
           :on-blur close-fn}
@@ -85,10 +85,9 @@
            :on-change (fn [e]
                         (let [v (-> e .-target .-value)]
                           (js/setTimeout (fn []
-                                           (println v))
-                                         700)))}]]
-        (when @show-form?
-          [filter-form close-fn])]])))
+                                           (println v)) 700)))}]
+         (when @show-form?
+           [filter-form close-fn])]]])))
 
 (defn logs-grid [data]
   (fn [data]

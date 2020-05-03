@@ -51,7 +51,7 @@
 
 (defn form-date-input [path & [value]]
   (let [v (r/atom value)
-        db-value @(rf/subscribe [::model/form-values path])]
+        db-value (rf/subscribe [::model/form-values path])]
     (r/create-class
      {:component-did-mount
       (fn [this]
@@ -61,7 +61,7 @@
       :reagent-render
       (fn [_ _]
         [:input.form-control {:type "date"
-                              :value (or db-value @v)
+                              :value (or @v @db-value)
                               :on-change #(do
                                             (reset! v (.-value (.-target %)))
                                             (rf/dispatch [::model/form-set-value {:path path
@@ -69,12 +69,12 @@
 
 (defn form-datetime-input [path & [value]]
   (let [v (r/atom value)
-        db-value (rf/subscribe [::form-values path])]
+        db-value (rf/subscribe [::model/form-values path])]
     (r/create-class
      {:component-did-mount
       (fn [this]
         (rf/dispatch [::model/form-set-value {:path path
-                                              :value (or value db-value)}]))
+                                              :value (or value @db-value)}]))
       :reagent-render
       (fn [_ _]
         [:input.form-control {:type "datetime-local"

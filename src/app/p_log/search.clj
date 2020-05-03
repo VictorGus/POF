@@ -6,14 +6,9 @@
             [cheshire.core :as json]))
 
 (defn time-range [{:keys [gte lte]}]
-  (let [iso-fmt [:year "-" :month "-" :day "T"]
-        gte (when gte
-              (ch/format (ch/- (select-keys (ch/parse gte) iso-fmt) {:day 1}) iso-fmt))
-        lte (when lte
-              (ch/format (ch/+ (select-keys (ch/parse lte) iso-fmt) {:day 1}) iso-fmt))]
-    {:range {:ts {:format "strict_date_optional_time"
-                  :gte (or gte "now-1d/d")
-                  :lte (or lte "now")}}}))
+  {:range {:ts {:format "strict_date_optional_time"
+                :gte (or gte "now-1d/d")
+                :lte (or lte "now")}}})
 
 (defn query-string [{:keys [search]}]
   (when search
@@ -33,7 +28,7 @@
      {:must (remove nil? [tr qs act])
       :must_not [{:match_phrase {:l_uri "/Logs/"}}]}}))
 
-(defn logs-search [{{{:keys [params]} :body params :params headers :headers} :request}]
+(defn logs-search [{params :params headers :headers :as req}]
   (if-let [host (get-in m/manifest [:config :elastic :host])]
     (let [query (mk-es-request params)
           size  (or (:size params) 100)

@@ -7,8 +7,6 @@
 
 (def logs ::logs)
 
-(ch/format (ch/parse "2020-04-27T18:48:26.465Z") almost-iso-fmt)
-
 (defn humanize-action [req]
   (let [action-map {"get"    "Viewing "
                     "post"   "Creating "
@@ -23,16 +21,24 @@
   (update req :ts #(-> % ch/parse (ch/+ {:hour 3}) (ch/format almost-iso-fmt))))
 
 (rf/reg-event-fx
- ::send-request
- (fn [_ _]
-   {:dispatch [::send-data]}))
+ ::send-req
+ (fn [{db :db} _]
+   (let [form-values (get db form/form-path)]
+     {:dispatch [::send-data form-values]})))
 
 (rf/reg-event-fx
  ::send-data
- (fn [{db :db} _]
-   (let [form-values (get db form/form-path)]
-     {:xhr/fetch {:uri "Logs"
-                  :body (-> form-values)}})))
+ (fn [{db :db} [_ form-values]]
+   {:xhr/fetch {:uri "/Logs/"
+                :params form-values
+                :req-id logs
+                :success {:event ::save-results}}}))
+
+(rf/reg-event-fx
+ ::save-results
+ (fn [{db :db} [_ data]]
+   {:db (assoc db logs data)}))
+
 (rf/reg-event-fx
  logs
  (fn [{db :db} [pid phase params]]

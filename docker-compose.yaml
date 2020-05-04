@@ -5,9 +5,9 @@ services:
     container_name: pof 
     ports:
       - "${PGPORT}:5432"
-      volumes:
-        - "./pgdata:/var/lib/postgresql/data"
-        environment:
+    volumes:
+      - "./pgdata:/var/lib/postgresql/data"
+    environment:
           POSTGRES_USER:     "${PGUSER}"
           POSTGRES_PASSWORD: "${PGPASSWORD}"
           POSTGRES_DB:       "${PGDATABASE}"

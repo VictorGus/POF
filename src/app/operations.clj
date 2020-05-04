@@ -82,9 +82,11 @@
      :body {:patient patient-info
             :encounter encounter-info}}))
 
-(defn bulk-import [bundle]
+(defn bulk-import [{bundle :body :as request}]
   (let [parsed-bundle (map #(json/parse-string % true)
-                           (str/split bundle #"\n"))]
+                           (-> bundle
+                               slurp
+                               (str/split #"\n")))]
     (doseq [item parsed-bundle]
       (fb/fhirbase-create item))
     {:status 201

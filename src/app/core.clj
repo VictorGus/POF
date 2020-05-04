@@ -24,7 +24,8 @@
                          :PUT    crud/r-update
                          :DELETE crud/r-delete
                          "ehr"   {:GET ops/patient-ehr}}}
-   "Logs"    {:GET l/logs-search}})
+   "Logs"    {:GET  l/logs-search}
+   "Bulk"    {:POST ops/bulk-import}})
 
 (defn params-to-keyword [params]
   (reduce-kv (fn [acc k v]

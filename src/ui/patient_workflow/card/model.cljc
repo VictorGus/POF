@@ -135,5 +135,6 @@
  edit
  :<- [:pages/data   edit]
  :<- [:xhr/response edit]
- (fn [[page {resp :data}] [pid]]
-   (merge page {:data resp})))
+ :<- [:xhr/response index-card]
+ (fn [[page {resp :data} {ehr :data}] [pid]]
+   (merge page {:data (or ehr resp)})))

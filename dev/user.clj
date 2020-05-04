@@ -23,8 +23,6 @@
 
 (def handler (-> initial-handler mk-handler (wrap-defaults site-defaults)))
 
-(handler {})
-
 (def figwheel-options
   {:id "app"
    :options {:main 'ui.dev

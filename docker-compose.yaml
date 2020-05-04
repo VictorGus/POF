@@ -1,13 +1,13 @@
 version: '3.1'
 services:
-  db:
+  fhir-db:
     image: "${PGIMAGE}"   
     container_name: pof 
     ports:
       - "${PGPORT}:5432"
-    volumes:
-      - "./pgdata:/var/lib/postgresql/data"
-    environment:
-      POSTGRES_USER:     "${PGUSER}"
-      POSTGRES_PASSWORD: "${PGPASSWORD}"
-      POSTGRES_DB:       "${PGDATABASE}"
+      volumes:
+        - "./pgdata:/var/lib/postgresql/data"
+        environment:
+          POSTGRES_USER:     "${PGUSER}"
+          POSTGRES_PASSWORD: "${PGPASSWORD}"
+          POSTGRES_DB:       "${PGDATABASE}"

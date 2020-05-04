@@ -6,6 +6,7 @@ services:
     ports:
       - "${PGPORT}:5432"
     volumes:
+      - "./init:/docker-entrypoint-initdb.d"
       - "./pgdata:/var/lib/postgresql/data"
     environment:
      POSTGRES_USER:     "${PGUSER}"

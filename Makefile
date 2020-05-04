@@ -30,6 +30,8 @@ data-set:
 # Postgres
 postgres-up:
 	docker-compose up -d
+	docker exec -it pof psql -U postgres -c "CREATE EXTENSION jsquery"
+	docker exec -it pof psql -U postgres -c "SELECT 'CREATE DATABASE testbase' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'testbase')"
 postgres-down:
 	docker-compose down
 postgres-fhir:

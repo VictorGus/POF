@@ -20,7 +20,6 @@ run-jar:
 	java -jar app.jar
 
 test:
-	docker exec -it pof psql -U postgres -c "SELECT 'CREATE DATABASE testbase' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'testbase')"
 	clojure -A:test:runner
 
 data-set:
@@ -31,8 +30,6 @@ data-set:
 # Postgres
 postgres-up:
 	docker-compose up -d
-	sleep 5
-	docker exec -it pof psql -U postgres -c "CREATE EXTENSION IF NOT EXISTS jsquery"
 postgres-down:
 	docker-compose down
 postgres-fhir:

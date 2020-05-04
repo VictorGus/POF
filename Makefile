@@ -13,14 +13,14 @@ repl:
 	clj -A:dev:ui:test:nrepl
 
 build:
-	clj -A:build
+	clojure -A:build
 	mv target/app-1.0.0-SNAPSHOT-standalone.jar app.jar
 
 run-jar:
 	java -jar app.jar
 
 test:
-	clj -A:test:runner
+	clojure -A:test:runner
 
 data-set:
 	wget https://github.com/fhirbase/fhirbase/raw/master/demo/bundle.ndjson.gzip

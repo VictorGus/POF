@@ -25,4 +25,4 @@ script:
   - make test
 
 after_script:
-  - make postgres-up
+  - make postgres-down

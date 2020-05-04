@@ -8,6 +8,6 @@ services:
     volumes:
       - "./pgdata:/var/lib/postgresql/data"
     environment:
-          POSTGRES_USER:     "${PGUSER}"
-          POSTGRES_PASSWORD: "${PGPASSWORD}"
-          POSTGRES_DB:       "${PGDATABASE}"
+     POSTGRES_USER:     "${PGUSER}"
+     POSTGRES_PASSWORD: "${PGPASSWORD}"
+     POSTGRES_DB:       "${PGDATABASE}"

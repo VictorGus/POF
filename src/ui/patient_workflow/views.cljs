@@ -75,21 +75,22 @@
   (str (:given item) " " (:family item)))
 
 (defn highlight [q]
-  (let [sel (into [] (array-seq (.querySelectorAll js/document ".patient-name, .pl-2, .patient-right-value")))
-        q (into [] (remove str/blank? (-> q
-                                          (str/replace #"(%20)" " ")
-                                          (str/replace #"[`~!@#$%^&*()_|\=?;:'\".<>\{\}\[\]\\\/]" "")
-                                          (str/trim)
-                                          (str/split #"\s*,| |[+]\s*"))))]
-    (mapv (fn [w]
-            (mapv (fn [el]
-                    (aset el
-                          "innerHTML"
-                          (str/replace (aget el "innerHTML")
-                                       (re-pattern (str "(?i)(" w ")(?!([^<]+)?>)(?!([^&]+)?;)"))
-                                       #(str "<span class=\"marker\">" (first %) "</span>"))))
-                  sel))
-         q)))
+  (when q
+    (let [sel (into [] (array-seq (.querySelectorAll js/document ".patient-name, .pl-2, .patient-right-value")))
+          q (into [] (remove str/blank? (-> q
+                                            (str/replace #"(%20)" " ")
+                                            (str/replace #"[`~!@#$%^&*()_|\=?;:'\".<>\{\}\[\]\\\/]" "")
+                                            (str/trim)
+                                            (str/split #"\s*,| |[+]\s*"))))]
+      (mapv (fn [w]
+              (mapv (fn [el]
+                      (aset el
+                            "innerHTML"
+                            (str/replace (aget el "innerHTML")
+                                         (re-pattern (str "(?i)(" w ")(?!([^<]+)?>)(?!([^&]+)?;)"))
+                                         #(str "<span class=\"marker\">" (first %) "</span>"))))
+                    sel))
+            q))))
 
 
 (defn patient-grid []

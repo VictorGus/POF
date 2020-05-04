@@ -1,6 +1,6 @@
 version: '3.1'
 services:
-  fhir-db:
+  db:
     image: "${PGIMAGE}"   
     container_name: pof 
     ports:

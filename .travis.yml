@@ -20,7 +20,6 @@ install:
 
 before_script:
   - make postgres-up
-  - make postgres-fhir
 
 script:
   - make test

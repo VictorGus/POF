@@ -1,4 +1,5 @@
 ## Getting started
+[![Build Status](https://travis-ci.org/VictorGus/POF.svg?branch=master)](https://travis-ci.org/VictorGus/POF)
 Pull docker image and run container out of it
 ```bash
 make postgres-up

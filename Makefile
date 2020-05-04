@@ -33,7 +33,7 @@ postgres-up:
 postgres-down:
 	docker-compose down
 postgres-fhir:
-	docker exec pof /fhirbase --host localhost -p 5432 -d fhirbase -U postgres -W postgres --fhir=3.3.0 init
+	docker exec pof /fhirbase --host $(PGHOST) -p 5432 -d $(PGDATABASE) -U $(PGUSER) -W $(PGPASSWORD) --fhir=3.3.0 init
 logs-up:
 	docker-compose -f docker-compose.log.yaml up -d
 logs-down:

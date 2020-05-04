@@ -3,9 +3,11 @@
             [clojure.string :as str]
             [cheshire.core :as json]
             [clojure.walk :as walk]
+            [clojure.java.io :as io]
             [honeysql.helpers :refer :all]
             [honeysql-postgres.format :refer :all]
             [app.utils :as u]
+            [app.fhirbase-ops :as fb]
             [app.dbcore :refer [run-query]]))
 
 (defn patient-search-query [params]
@@ -79,3 +81,11 @@
     {:status 200
      :body {:patient patient-info
             :encounter encounter-info}}))
+
+(defn bulk-import [bundle]
+  (let [parsed-bundle (map #(json/parse-string % true)
+                           (str/split bundle #"\n"))]
+    (doseq [item parsed-bundle]
+      (fb/fhirbase-create item))
+    {:status 201
+     :body (str "Created " (count parsed-bundle) " resources")}))

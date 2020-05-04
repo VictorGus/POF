@@ -6,6 +6,7 @@
             [app.validator :as validator]
             [clojure.walk :as walk]
             [honeysql.core :as hsql]
+            [app.fhirbase-ops :as fb]
             [honeysql.helpers :refer :all]
             [honeysql-postgres.format :refer :all]
             [app.utils :as u]))
@@ -38,24 +39,15 @@
                                           walk/keywordize-keys
                                           (get-in [:body :entry])
                                           first
-                                          :resource) body) :id (or params (:id body)))
-        query    {:select [(hsql/call :fhirbase_create
-                                      (hsql/raw (str "'" (-> resource
-                                                             json/generate-string
-                                                             (str/replace #"'" "")) "'")))]}
-        [{query-result :fhirbase_create}] (-> query
-                                              hsql/format
-                                              run-query)]
-    (cond
-      (and
-       (not skip-validation)
-       (not-empty (:errors (validator/validate-resource resource))))
+                                          :resource) body)
+                        :id (or params (:id body))
+                        :resourceType "Patient")
+        result (fb/fhirbase-update resource skip-validation)]
+    (if-let [errors (:errors result)]
       {:status 404
-       :body (validator/validate-resource resource)}
-      :else
-      {:status 200 :body (:fhirbase_create (first (-> query
-                                                      hsql/format
-                                                      run-query)))})))
+       :body errors}
+      {:status 200
+       :body result})))
 
 (defn r-create [{body :body :as request} & [id skip-validation]]
   (let [parsed-body  (cond-> body
@@ -69,16 +61,9 @@
                  (cond->
                      (not (:id parsed-body))
                    (assoc :id (or id (str (java.util.UUID/randomUUID))))))
-        query {:select [(hsql/call :fhirbase_create (hsql/raw (str "'" (str/replace (-> body u/remove-nils json/generate-string) #"'" "") "'")))]}]
-    (println (hsql/format query))
-    (cond
-      (and
-       (not skip-validation)
-       (not-empty (:errors (validator/validate-resource body))))
+        result (fb/fhirbase-create body skip-validation)]
+    (if-let [errors (:errors result)]
       {:status 404
-       :body (validator/validate-resource body)}
-      :else
-      {:status 201
-       :body (:fhirbase_create (first (-> query
-                                          hsql/format
-                                          run-query)))})))
+       :body errors}
+      {:status 200
+       :body result})))

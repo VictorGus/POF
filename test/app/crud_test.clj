@@ -51,8 +51,8 @@
 (deftest crud-update
   (testing "Patient crud create test"
     (with-redefs [db/run-query db/run-test-query]
-      (sut/r-create {:body {:name {:given ["Test"] :family "Test"} :resourceType "Patient"}} "pt-1")
-      (sut/r-update {:body {:name {:given ["Test1"] :family "Test1"} :resourceType "Patient" :id "pt-1"}})
+      (sut/r-create {:body {:name {:given ["Test"] :family "Test"} :resourceType "Patient"}} "pt-1" true)
+      (sut/r-update {:body {:name {:given ["Test1"] :family "Test1"} :resourceType "Patient" :id "pt-1"}} true)
       (matcho/match
        {:resource {:name {:given ["Test1"]
                           :family "Test1"}

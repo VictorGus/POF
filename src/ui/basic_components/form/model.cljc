@@ -17,6 +17,11 @@
    {:db (assoc-in db path value)}))
 
 (rf/reg-event-fx
+ ::form-reset-value
+ (fn [{db :db} [_ path]]
+   {:db (assoc-in db path nil)}))
+
+(rf/reg-event-fx
  ::remove-item
  (fn [{db :db} [_ path]]
    {:db (update-in db (butlast path) dissoc (last path))}))

@@ -4,6 +4,7 @@
             [baking-soda.core :as b]
             [ui.basic-components.form.view :as basic-form]
             [ui.basic-components.toggle :as toggle]
+            [ui.basic-components.form.model :as basic-form-model]
             [ui.styles :as styles]
             [ui.pages :as pages]
             [ui.helper :as h]
@@ -29,6 +30,11 @@
 
 (def form-style
   (styles/style
+   [:.reset-icon {:cursor "pointer"
+                  :display "none"
+                  :padding-left "4px"}]
+   [:.filter-item:hover
+    [:.reset-icon {:display "inline-block"}]]
    [:.refresh-btn {:position "absolute"
                    :top "9px"
                    :z-index "999"
@@ -39,8 +45,10 @@
 (defn filter-form [close-fn]
   [:div.container.border.border-top-0.rounded.filter-form
    [:div.row.p-3
-    [:div.col-md-2
+    [:div.col-md-2.filter-item
      [:label.text-muted "Action"]
+     [:i.fa.fa-times.reset-icon
+      {:on-click #(rf/dispatch [::basic-form-model/form-reset-value [form/form-path :action]])}]
      [basic-form/form-select [{:display "View"
                                :value "get"}
                               {:display "Create"
@@ -49,9 +57,12 @@
                                :value "put"}
                               {:display "Delete"
                                :value "delete"}] [form/form-path :action]]]
-    [:div.col-md-2
+    [:div.col-md-2.filter-item
      [:label.text-muted "User"]
-     [basic-form/form-input [form/form-path :user]]]
+     [:i.fa.fa-times.reset-icon
+      {:on-click #(rf/dispatch [::basic-form-model/form-reset-value [form/form-path :user]])}]
+     [basic-form/combobox-input [{:display "User1"
+                                  :value "User1"}] [form/form-path :user]]]
     [:div.cold-md-3.mr-2
      [:label.text-muted "From"]
      [basic-form/form-datetime-input [form/form-path :gte]

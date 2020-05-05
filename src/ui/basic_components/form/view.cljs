@@ -16,8 +16,6 @@
                                                   :value (or value @db-value)}]))))
       :reagent-render
       (fn [_ _ _]
-        (println @db-value)
-        (println selected)
         [:select#use-input.form-control.selector
          {:type "text"
           :on-change #(rf/dispatch [::model/form-set-value {:path path

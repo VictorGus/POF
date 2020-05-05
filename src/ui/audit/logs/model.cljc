@@ -30,7 +30,7 @@
  ::send-data
  (fn [{db :db} [_ form-values]]
    {:xhr/fetch {:uri "/Logs/"
-                :params form-values
+                :params (into {} (filter second form-values))
                 :req-id logs
                 :success {:event ::save-results}}}))
 

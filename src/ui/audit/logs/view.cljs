@@ -78,14 +78,7 @@
          {:tab-index 0
           :on-focus #(reset! show-form? true)
           :on-blur close-fn}
-         [b/Input
-          {:type "text"
-           :styles "height: 48px; position: relative;"
-           :placeholder "Search..."
-           :on-change (fn [e]
-                        (let [v (-> e .-target .-value)]
-                          (js/setTimeout (fn []
-                                           (println v)) 700)))}]
+         [basic-form/form-input [form/form-path :search] "Search..."]
          (when @show-form?
            [filter-form close-fn])]]])))
 

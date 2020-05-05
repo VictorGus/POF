@@ -11,7 +11,7 @@
                 :lte (or lte "now")}}})
 
 (defn query-string [{:keys [search]}]
-  (when search
+  (when (and search (not (clojure.string/blank? search)))
     {:query_string {:query search
                     :allow_leading_wildcard false
                     :default_operator "AND"}}))

@@ -5,6 +5,7 @@
             [ui.pages :as pages]
             [ui.helper :as helper]
             [ui.zframes.redirect :as redirect]
+            [ui.zframes.flash :as flash]
             [clojure.string :as str]
             [baking-soda.core :as b]
             [ui.patient-workflow.model :as model]
@@ -196,4 +197,5 @@
 (pages/reg-subs-page
  model/index
  (fn [db params]
+   [flash/flashes]
    [search-input]))

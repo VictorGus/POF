@@ -454,7 +454,7 @@
        [:button.btn.btn-outline-primary.mt-3.mb-2.mr-2
         {:on-click #(do
                       (rf/dispatch [::model/apply-changes "POST" "/Patient"])
-                      #_(js/setTimeout (fn []
+                      (js/setTimeout (fn []
                                        (rf/dispatch [::redirect/redirect
                                                      {:uri (helper/make-back-href (.-href (.-location js/window)))}])) 600))}
         "Create"]

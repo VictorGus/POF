@@ -22,7 +22,6 @@
                      target?))
                  (cond-> coll (map? coll) vals))))
 
-(vec-search 3 [{:a 2 :b 4} {:a 1 :b 6}])
 
 (defn deep-merge [v & vs]
   (letfn [(rec-merge [v1 v2]

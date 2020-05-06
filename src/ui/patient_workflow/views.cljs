@@ -70,7 +70,9 @@
      [:.patient-record:hover
       {:background-color "#e6f2ff"}]]]
    [:.not-found {:font-size "22px"}]
-   [:.marker {:background-color "#bff"}]))
+   [:.marker {:background-color "#bff"}]
+   [:.flashes {:position "fixed" :top "20px" :right "20px" :max-width "500px" :z-index 200}
+    [:ul {:padding-left "20px"}]]))
 
 (defn pt-name-to-string [item]
   (str (:given item) " " (:family item)))
@@ -157,45 +159,46 @@
         loading-status (rf/subscribe [::model/loading-status])
         dropdown-open? (r/atom false)]
     (fn []
-      [:div#search-input-wrapper input-style
-       [b/Container
-        [b/Row
-         {:styles "height: 48px;"}
-         [b/Col
-          {:class "col-md-10"}
-          [b/Input
-           {:type "text"
-            :styles "height: 48px;"
-            :aria-describedby "inputGroup-sizing-sm"
-            :placeholder "Search..."
-            :on-change (fn [e]
-                         (let [v (-> e .-target .-value)]
-                           (js/setTimeout (fn []
-                                            (rf/dispatch [::redirect/set-params {:q v}]))
-                                          700)))}]]
-         [b/Button {:id "search-btn"
-                    :color "outline-primary"
-                    :on-click #(rf/dispatch [::redirect/redirect
-                                            {:uri (helper/make-href (.-host (.-location js/window)) "patients/create")}])} "+ Create"]
-         [b/Dropdown {:isOpen @dropdown-open?
-                      :on-mouse-over #(reset! dropdown-open? true)
-                      :toggle #(swap! dropdown-open? not)
-                      :on-mouse-out  #(reset! dropdown-open? false)}
-          [b/DropdownToggle {:caret true
-                             :color "outline-primary"} "Sort"]
-          [b/DropdownMenu
-           [b/DropdownItem {:on-click #(do
-                                         (swap! sort-order not)
-                                         (rf/dispatch [::model/sort-patients (:data @page-data) @sort-order]))}
-            "by birthDate"]
-           [b/DropdownItem "by name"]]]]
-        (when @loading-status
-          [spinner])
-        (when-not @loading-status
-          [patient-grid])]])))
+      [:<> 
+       [flash/flashes]
+       [:div#search-input-wrapper input-style
+        [b/Container
+         [b/Row
+          {:styles "height: 48px;"}
+          [b/Col
+           {:class "col-md-10"}
+           [b/Input
+            {:type "text"
+             :styles "height: 48px;"
+             :aria-describedby "inputGroup-sizing-sm"
+             :placeholder "Search..."
+             :on-change (fn [e]
+                          (let [v (-> e .-target .-value)]
+                            (js/setTimeout (fn []
+                                             (rf/dispatch [::redirect/set-params {:q v}]))
+                                           700)))}]]
+          [b/Button {:id "search-btn"
+                     :color "outline-primary"
+                     :on-click #(rf/dispatch [::redirect/redirect
+                                              {:uri (helper/make-href (.-host (.-location js/window)) "patients/create")}])} "+ Create"]
+          [b/Dropdown {:isOpen @dropdown-open?
+                       :on-mouse-over #(reset! dropdown-open? true)
+                       :toggle #(swap! dropdown-open? not)
+                       :on-mouse-out  #(reset! dropdown-open? false)}
+           [b/DropdownToggle {:caret true
+                              :color "outline-primary"} "Sort"]
+           [b/DropdownMenu
+            [b/DropdownItem {:on-click #(do
+                                          (swap! sort-order not)
+                                          (rf/dispatch [::model/sort-patients (:data @page-data) @sort-order]))}
+             "by birthDate"]
+            [b/DropdownItem "by name"]]]]
+         (when @loading-status
+           [spinner])
+         (when-not @loading-status
+           [patient-grid])]]])))
 
 (pages/reg-subs-page
  model/index
  (fn [db params]
-   [flash/flashes]
    [search-input]))

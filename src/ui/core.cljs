@@ -3,6 +3,7 @@
             [re-frame.core :as rf]
             [ui.zframes.xhr]
             [ui.zframes.redirect]
+            [ui.zframes.flash :as flash]
             [ui.routes :as routes]
             [ui.pages :as pages]
             [ui.patient-workflow.views]

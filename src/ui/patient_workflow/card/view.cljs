@@ -41,6 +41,7 @@
                            :margin-bottom "0px"
                            :font-size "16px"}]]
      [:.patient-title-wrapper {:display "flex" :align-items "center"}
+      [:.delete-button {:position "absolute" :right "30px" :top 0 :cursor "pointer"}]
       [:.edit-button  {:position "absolute" :right 0 :top 0 :cursor "pointer"}]]
      [:.icon
       {:height "65px"
@@ -97,7 +98,9 @@
               :style {:margin-bottom "0px"}} (:birthdate (first (:patient data)))]]
         [:p.edit-button.mt-2.mr-2 [:i.fas.fa-edit {:style {:color "#0069d9"}
                                                    :on-click #(rf/dispatch [::redirect/redirect
-                                                                            {:uri (helper/make-href (.-href (.-location js/window)) "edit")}])}]]]
+                                                                            {:uri (helper/make-href (.-href (.-location js/window)) "edit")}])}]]
+        [:p.delete-button.mt-2.mr-2 [:i.fas.fa-trash-alt {:style {:color "#0069d9"}
+                                                          :on-click #(rf/dispatch [::model/delete-patient])}]]]
        [:br]
        [:div.card
         [:div.card-header.info-header "Administrative info"]

@@ -119,6 +119,13 @@
              [] identifiers))
 
 (rf/reg-event-fx
+ ::delete-patient
+ (fn [{db :db} _]
+   {:xhr/fetch {:uri (str "/Patient/" (get-in db [:route-map/current-route :params :uid]))
+                :method "DELETE"}
+    :ui.zframes.redirect/redirect {:uri "/patients"}}))
+
+(rf/reg-event-fx
  ::send-data
  (fn [{db :db} [pid method uri redirect-url]]
    (let [form-values (get db form/form-path)]

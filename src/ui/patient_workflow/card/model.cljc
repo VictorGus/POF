@@ -88,9 +88,9 @@
 
 (rf/reg-event-fx
  ::apply-changes
- (fn [{db :db} [_ method uri]]
+ (fn [{db :db} [_ {:keys [method uri redirect-url]}]]
    {:dispatch-later [{:ms 0   :dispatch [::form/eval]}
-                     {:ms 300 :dispatch [::send-data (or method "PUT") uri]}]}))
+                     {:ms 300 :dispatch [::send-data (or method "PUT") uri redirect-url]}]}))
 
 (defn normalize-identifiers [identifiers]
   (reduce-kv (fn [acc k v]
@@ -120,16 +120,24 @@
 
 (rf/reg-event-fx
  ::send-data
- (fn [{db :db} [_ method uri]]
+ (fn [{db :db} [pid method uri redirect-url]]
    (let [form-values (get db form/form-path)]
-     {:xhr/fetch {:uri    (or uri (str "/Patient/" (get-in db [:route-map/current-route :params :uid])))
-                  :method method
-                  :body (-> form-values
-                            (update :identifier normalize-identifiers)
-                            (update-in [:name 0 :given] (comp vec vals))
-                            (update-in [:address] (partial map #(update % :line (comp vec vals)))))}
-      :dispatch-n [[:flash/success {:msg "Successfully saved"}]
-                   [::form/init]]})))
+     (cond
+       (not-empty (filter second
+                          (get-in db [form/form-path :identifier])))
+
+       (-> {}
+        (assoc :xhr/fetch {:uri    (or uri (str "/Patient/" (get-in db [:route-map/current-route :params :uid])))
+                           :method method
+                           :body (-> form-values
+                                     (update :identifier normalize-identifiers)
+                                     (update-in [:name 0 :given] (comp vec vals))
+                                     (update-in [:address] (partial map #(update % :line (comp vec vals)))))})
+        (assoc :dispatch-n [[:flash/success {:msg "Successfully saved"}]
+                            [::form/init]]
+               :ui.zframes.redirect/redirect {:uri redirect-url}))
+       :else
+       (assoc {} :dispatch-n [[:flash/danger {:msg "All identifiers must be supplied"}]])))))
 
 (rf/reg-sub
  edit

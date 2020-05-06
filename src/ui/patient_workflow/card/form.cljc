@@ -18,7 +18,8 @@
                 :country    {:type "string"}
                 :state      {:type "string"}
                 :postalCode {:type "string"}}
-   :identifier {:type "collection"}})
+   :identifier {:type "collection"
+                :validation nil?}})
 
 (rf/reg-event-fx
  ::init

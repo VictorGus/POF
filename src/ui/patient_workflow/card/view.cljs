@@ -168,7 +168,7 @@
     [flash/flashes]]))
 
 (defn patient-edit-workflow [data]
-  [:div#patient-card-wrapper card-style
+  [:div#patient-card-wrapper card-style 
    [:div.row
     [:div#patient-card.col-md-6.offset-md-3
      [:div.card
@@ -304,8 +304,8 @@
            (:value (helper/vec-search "MR" (:identifier (first (:patient data)))))]]]]]]
      [:button.btn.btn-outline-primary.mt-3.mb-2.mr-2
       {:on-click #(do
-                    (rf/dispatch [::model/apply-changes])
-                    (js/setTimeout (fn []
+                    (rf/dispatch [::model/apply-changes {:redirect-url (helper/make-back-href (.-href (.-location js/window)))}])
+                    #_(js/setTimeout (fn []
                                      (rf/dispatch [::redirect/redirect
                                                    {:uri (helper/make-back-href (.-href (.-location js/window)))}])) 600))}
       "Save"]
@@ -453,8 +453,10 @@
              (:value (helper/vec-search "MR" []))]]]]]]
        [:button.btn.btn-outline-primary.mt-3.mb-2.mr-2
         {:on-click #(do
-                      (rf/dispatch [::model/apply-changes "POST" "/Patient"])
-                      (js/setTimeout (fn []
+                      (rf/dispatch [::model/apply-changes {:method "POST"
+                                                           :uri "/Patient"
+                                                           :redirect-url (helper/make-back-href (.-href (.-location js/window)))}])
+                      #_(js/setTimeout (fn []
                                        (rf/dispatch [::redirect/redirect
                                                      {:uri (helper/make-back-href (.-href (.-location js/window)))}])) 600))}
         "Create"]

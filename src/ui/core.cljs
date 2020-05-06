@@ -2,6 +2,7 @@
   (:require [reagent.core :as r]
             [re-frame.core :as rf]
             [ui.zframes.xhr]
+            [ui.zframes.redirect]
             [ui.routes :as routes]
             [ui.pages :as pages]
             [ui.patient-workflow.views]

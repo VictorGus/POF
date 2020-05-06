@@ -6,6 +6,7 @@
             [ui.zframes.flash :as flash]
             [ui.routes :as routes]
             [ui.pages :as pages]
+            [ui.layout :as layout]
             [ui.patient-workflow.views]
             [ui.patient-workflow.card.view]
             [ui.audit.logs.view]))
@@ -27,9 +28,10 @@
     (fn []
       (let [page (get @pages/pages (:match @route))
             params (:params @route)]
-        (if page
-          [page params]
-          [not-found-page])))))
+        [layout/layout
+         (if page
+           [page params]
+           [not-found-page])]))))
 
 (defn mount-root []
   (rf/dispatch-sync [::initialize])

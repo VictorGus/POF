@@ -6,7 +6,6 @@
             [ui.helper :as helper]
             [clojure.string :as str]
             [ui.zframes.redirect :as redirect]
-            [ui.zframes.flash :as flash]
             [ui.basic-components.info-input :refer [info-input]]
             [ui.basic-components.form.view :as basic-form]
             [ui.patient-workflow.card.form :as form]
@@ -167,8 +166,7 @@
        [:a {:href "#"} "Patients"]]
       [:li.breadcrumb-item.active
        (:uid params)]]]
-    [patient-card data]
-    [flash/flashes]]))
+    [patient-card data]]))
 
 (defn patient-edit-workflow [data]
   [:div#patient-card-wrapper card-style 
@@ -478,5 +476,4 @@
        [:a {:href "#"} "Patients"]]
       [:li.breadcrumb-item.active
        "Create"]]]
-    [patient-create-workflow]
-    [flash/flashes]]))
+    [patient-create-workflow]]))

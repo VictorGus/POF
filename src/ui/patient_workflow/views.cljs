@@ -5,7 +5,6 @@
             [ui.pages :as pages]
             [ui.helper :as helper]
             [ui.zframes.redirect :as redirect]
-            [ui.zframes.flash :as flash]
             [clojure.string :as str]
             [baking-soda.core :as b]
             [ui.patient-workflow.model :as model]
@@ -70,9 +69,7 @@
      [:.patient-record:hover
       {:background-color "#e6f2ff"}]]]
    [:.not-found {:font-size "22px"}]
-   [:.marker {:background-color "#bff"}]
-   [:.flashes {:position "fixed" :top "20px" :right "20px" :max-width "500px" :z-index 200}
-    [:ul {:padding-left "20px"}]]))
+   [:.marker {:background-color "#bff"}]))
 
 (defn pt-name-to-string [item]
   (str (:given item) " " (:family item)))
@@ -159,8 +156,7 @@
         loading-status (rf/subscribe [::model/loading-status])
         dropdown-open? (r/atom false)]
     (fn []
-      [:<> 
-       [flash/flashes]
+      [:<>
        [:div#search-input-wrapper input-style
         [b/Container
          [b/Row

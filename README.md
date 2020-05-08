@@ -19,3 +19,7 @@ For logs
 ```bash
 make logs-up
 ```
+For fhirbase ui
+```bash
+make fhirbase-ui
+```

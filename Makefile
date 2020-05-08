@@ -32,9 +32,12 @@ postgres-up:
 	docker-compose up -d
 postgres-down:
 	docker-compose down
-postgres-fhir:
-	docker exec pof fhirbase -d $(PGDATABASE) -U $(PGUSER) -W $(PGPASSWORD) --fhir=3.3.0 init
+#Logs
 logs-up:
 	docker-compose -f docker-compose.log.yaml up -d
 logs-down:
 	docker-compose -f docker-compose.log.yaml down
+#fhirbase
+fhirbase-ui:
+	# docker exec -u root sh -c echo 'PGDATABASE=$(PGDATABASE)' > /root/.bashrc
+	docker exec -d pof fhirbase web

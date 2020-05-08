@@ -5,6 +5,7 @@ services:
     container_name: pof 
     ports:
       - "${PGPORT}:5432"
+      - "8080:3000"
     volumes:
       - "./init:/docker-entrypoint-initdb.d"
       - "./pgdata:/var/lib/postgresql/data"
@@ -12,3 +13,4 @@ services:
      POSTGRES_USER:     "${PGUSER}"
      POSTGRES_PASSWORD: "${PGPASSWORD}"
      POSTGRES_DB:       "${PGDATABASE}"
+     # PGDATABASE:        "${PGDATABASE}"

@@ -6,6 +6,11 @@
 (def index ::login)
 
 (rf/reg-event-fx
+ ::authorize
+ (fn [{db :db} [pid]]
+   ))
+
+(rf/reg-event-fx
  index
  (fn [{db :db} [pid phase params]]
    {}))

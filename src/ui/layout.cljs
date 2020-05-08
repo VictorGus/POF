@@ -9,6 +9,6 @@
     [:ul {:padding-left "20px"}]]))
 
 (defn layout [page]
-  [:div layout-style
+  [:div.h-100 layout-style
    [flash/flashes]
    page])

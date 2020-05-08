@@ -74,6 +74,25 @@
                                             (rf/dispatch [::model/form-set-value {:path path
                                                                                   :value (.-value (.-target %))}]))}])})))
 
+(defn form-password [path & [placeholder value]]
+  (let [v (r/atom value)
+        db-value (rf/subscribe [::model/form-values path])]
+    (r/create-class
+     {:component-did-mount
+      (fn [this]
+        (when-not (nil? value)
+          (rf/dispatch [::model/form-set-value {:path path
+                                                :value (or value @db-value)}])))
+      :reagent-render
+      (fn [_ _]
+        [:input.form-control {:type "password"
+                              :placeholder placeholder
+                              :value (or @v @db-value)
+                              :on-change #(do
+                                            (reset! v (.-value (.-target %)))
+                                            (rf/dispatch [::model/form-set-value {:path path
+                                                                                  :value (.-value (.-target %))}]))}])})))
+
 (defn form-date-input [path & [value]]
   (let [v (r/atom value)
         db-value (rf/subscribe [::model/form-values path])]

@@ -12,5 +12,5 @@ services:
     environment:
      POSTGRES_USER:     "${PGUSER}"
      POSTGRES_PASSWORD: "${PGPASSWORD}"
-     # POSTGRES_DB:       "${PGDATABASE}"
-     PGDATABASE:        "${PGDATABASE}"
+     POSTGRES_DB:       "${PGDATABASE}"
+     #PGDATABASE:        "${PGDATABASE}"

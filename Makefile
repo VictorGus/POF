@@ -39,5 +39,4 @@ logs-down:
 	docker-compose -f docker-compose.log.yaml down
 #fhirbase
 fhirbase-ui:
-	# docker exec -u root sh -c echo 'PGDATABASE=$(PGDATABASE)' > /root/.bashrc
 	docker exec -d pof fhirbase web

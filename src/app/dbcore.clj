@@ -24,3 +24,9 @@
 
 (defn truncate-test [t]
   (jdbc/execute! (get-in m/test-app [:config :db]) (str "truncate " t)))
+
+(defn run-exec [query]
+  (jdbc/execute! @pool-configuration query))
+
+(defn run-test-exec [query]
+  (jdbc/execute! (get-in m/test-app [:config :db]) query))

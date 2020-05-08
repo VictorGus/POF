@@ -4,6 +4,7 @@
             [cheshire.core :as json]
             [app.p-log.search :as l]
             [app.operations :as ops]
+            [app.migrations :as migrations]
             [app.crud :as crud]
             [app.p-log.core :as plog]
             [app.p-log.es-appender :as es]
@@ -81,6 +82,7 @@
     (reset! state nil)))
 
 (defn start-server []
+  (go (migrations/create-users))
   (reset! state (server/run-server app {:port 9090})))
 
 (defn restart-server [] (stop-server) (start-server))

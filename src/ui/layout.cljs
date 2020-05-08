@@ -10,6 +10,5 @@
 
 (defn layout [page]
   [:div layout-style
-
    [flash/flashes]
    page])

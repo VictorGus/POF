@@ -9,6 +9,7 @@
             [ui.layout :as layout]
             [ui.patient-workflow.views]
             [ui.patient-workflow.card.view]
+            [ui.login.view]
             [ui.audit.logs.view]))
 
 (rf/reg-event-fx

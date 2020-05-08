@@ -5,7 +5,8 @@
                          "create" {:. :ui.patient-workflow.card.model/create}}
              "patient" {[:uid] {:. :ui.patient-workflow.card.model/index-card
                                 "edit" {:. :ui.patient-workflow.card.model/edit}}}
-             "audit"   {"logs" {:. :ui.audit.logs.model/logs}}})
+             "audit"   {"logs" {:. :ui.audit.logs.model/logs}}
+             "login"   {:. :ui.login.model/login}})
 
 (defn route-index* [route pth]
   (merge

@@ -4,7 +4,7 @@
             [cheshire.core :as json]
             [app.p-log.search :as l]
             [app.operations :as ops]
-            [app.migrations :as migrations]
+            [app.action :as action]
             [app.crud :as crud]
             [app.p-log.core :as plog]
             [app.p-log.es-appender :as es]
@@ -26,7 +26,8 @@
                          :DELETE crud/r-delete
                          "ehr"   {:GET ops/patient-ehr}}}
    "Logs"    {:GET  l/logs-search}
-   "Bulk"    {:POST ops/bulk-import}})
+   "Bulk"    {:POST ops/bulk-import}
+   "Login"   {:POST action/log-in}})
 
 (defn params-to-keyword [params]
   (reduce-kv (fn [acc k v]
@@ -82,7 +83,7 @@
     (reset! state nil)))
 
 (defn start-server []
-  (go (migrations/create-users))
+  (go (action/create-users))
   (reset! state (server/run-server app {:port 9090})))
 
 (defn restart-server [] (stop-server) (start-server))

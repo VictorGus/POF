@@ -11,7 +11,7 @@
                           :required [:identifier]}}
    :users [{:name     "admin"
             :role     "root"
-            :password "YWRtaW4K"
+            :password "YWRtaW4=" ;;For some reason it must be Base64 encoded
             :email    "test@test.com"}]})
 
 (def test-app

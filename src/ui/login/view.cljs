@@ -32,5 +32,5 @@
         [basic-form/form-password [form/form-path :password]
          "Enter password"]
         [:button.btn.btn-outline-primary.btn-block.mt-3.mb-2
-         {:on-click #(rf/dispatch [::model/authorize])}
+         {:on-click #(rf/dispatch [::model/sign-in])}
          "Sign in"]]]]]]))

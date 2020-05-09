@@ -16,7 +16,13 @@
                    :params {:login (get-in db [form/form-path :login])
                             :password encoded}
                    :method "POST"
+                   :success {:event ::success-redirect}
                    :req-id index}})))
+
+(rf/reg-event-fx
+ ::success-redirect
+ (fn [{db :db} _]
+   {:ui.zframes.redirect/redirect {:url (get db :sign-in-redirect)}}))
 
 (rf/reg-event-fx
  index

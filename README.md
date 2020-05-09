@@ -7,10 +7,6 @@ Pull docker image and run container out of it
 ```bash
 make up
 ```
-Init fhirbase
-```bash
-make fhirbase-init
-```
 Import data set
 ```bash
 make data-set

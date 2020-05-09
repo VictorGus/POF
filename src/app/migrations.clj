@@ -2,7 +2,8 @@
   (:require [app.dbcore :refer [run-query]]
             [honeysql.core :as hsql]
             [app.fhirbase-ops :as fb]
-            [app.manifest :as m]))
+            [app.manifest :as m])
+  (:import java.util.Base64))
 
 (defn create-users []
   (let [users (get m/manifest :users)]

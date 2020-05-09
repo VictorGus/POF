@@ -5,7 +5,7 @@ PGHOST     ?= localhost
 PGUSER     ?= postgres
 PGDATABASE ?= fhirbase
 PGPASSWORD ?= postgres
-PGIMAGE    ?= victor13533/fhirbase-on-postgrespro
+PGIMAGE    ?= victor13533/fhirbase-on-postgrespro:latest
 
 GF_SECURITY_ALLOW_EMBEDDING = true
 
@@ -41,7 +41,5 @@ logs-up:
 logs-down:
 	docker-compose -f docker-compose.log.yaml down
 #fhirbase
-fhirbase-init:
-	./tools/fhirbase --host ${PGHOST} -p ${PGPORT} -d ${PGDATABASE} -U ${PGUSER} -W ${PGPASSWORD} --fhir=3.3.0 init
 fhirbase-ui:
 	docker exec -d pof fhirbase web

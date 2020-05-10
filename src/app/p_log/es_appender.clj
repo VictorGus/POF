@@ -16,7 +16,7 @@
      (fn [l]
        (let [line (str "{\"index\": {\"_index\": \"" (str/lower-case index) "\"}}\n"
                        (json/generate-string l) "\n")]
-         (when-not (#{"/Logs/"} (:l_uri l))
+         (when-not (#{"/Logs/" "/Users/search"} (:l_uri l))
            (swap! batch str line))
          (swap! i inc)
          (when (or (> (- (System/currentTimeMillis) @start-time) batch-timeout)

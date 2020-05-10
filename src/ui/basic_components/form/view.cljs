@@ -28,8 +28,8 @@
 
 (defn combobox-input [path & [{:keys [items on-click selected]}]]
   (let [db-value (rf/subscribe [::model/form-values path])
-        selected (or selected @db-value)]
-    (println "ITEMS" items)
+        selected (or selected @db-value)
+        v (r/atom "")]
     (r/create-class
      {:component-did-mount
       (fn [this]
@@ -42,10 +42,15 @@
       (fn [_ _ _]
         [:<>
          [:input.custom-select {:list "combobox"
-                                :value @db-value
+                                :value (or @v (->> items
+                                                   (filter #(= (:value %) @db-value))
+                                                   first
+                                                   :display))
                                 :on-click on-click
-                                :on-change #(rf/dispatch [::model/form-set-value {:path path
-                                                                                  :value (.-value (.-target %))}])}]
+                                :on-change #(do
+                                              (reset! v (.-value (.-target %)))
+                                              (rf/dispatch [::model/form-set-value {:path path
+                                                                                    :value (.-value (.-target %))}]))}]
          [:datalist
           {:type "text"
            :id "combobox"

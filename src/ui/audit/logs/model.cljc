@@ -47,7 +47,8 @@
      {}
      (or (= :params phase) (= :init phase))
      {:xhr/fetch {:uri "/Logs/"
-                  :req-id logs}})))
+                  :req-id logs}
+      :dispatch [::form/search-user]})))
 
 (rf/reg-sub
  logs

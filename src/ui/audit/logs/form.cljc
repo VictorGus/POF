@@ -2,6 +2,7 @@
   (:require [re-frame.core :as rf]))
 
 (def form-path ::logs)
+(def path ::logs-filter)
 
 (rf/reg-event-fx
  ::search-user
@@ -12,11 +13,11 @@
 (rf/reg-sub
  ::users
  (fn [db _]
-   (get-in db [form-path :user :items])))
+   (get-in db [path :user :items])))
 
 (rf/reg-event-fx
  ::users-loaded
  (fn [{db :db} [_ {data :data}]]
-   {:db (assoc-in db [form-path :user :items] (map (fn [el]
-                                                     {:display (:name (:resource el))
-                                                      :value (:id el)}) data))}))
+   {:db (assoc-in db [path :user :items] (mapv (fn [el]
+                                                 {:display (:name (:resource el))
+                                                  :value (:id el)}) data))}))

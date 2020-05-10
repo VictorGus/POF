@@ -64,8 +64,7 @@
          [:label.text-muted "User"]
          [:i.fa.fa-times.reset-icon
           {:on-click #(rf/dispatch [::basic-form-model/form-reset-value [form/form-path :user]])}]
-         [basic-form/combobox-input [form/form-path :user] {:items users
-                                                            :on-click #(rf/dispatch [::form/search-user])}]]
+         [basic-form/combobox-input [form/form-path :user] {:items users}]]
         [:div.cold-md-3.mr-2
          [:label.text-muted "From"]
          [basic-form/form-datetime-input [form/form-path :gte]

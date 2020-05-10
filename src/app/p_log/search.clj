@@ -20,12 +20,17 @@
   (when action
     {:term {:l_m action}}))
 
+(defn user [{:keys [user]}]
+  (when user
+    {:match {:l_uid user}}))
+
 (defn mk-es-request [params]
   (let [tr (time-range params)
         qs (query-string params)
-        act (method params)]
+        act (method params)
+        user (user params)]
     {:bool
-     {:must (remove nil? [tr qs act])
+     {:must (remove nil? [tr qs act user])
       :must_not [{:match_phrase {:l_uri "/Logs/"}}]}}))
 
 (defn logs-search [{params :params headers :headers :as req}]

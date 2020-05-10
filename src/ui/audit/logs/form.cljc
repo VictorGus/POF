@@ -2,7 +2,7 @@
   (:require [re-frame.core :as rf]))
 
 (def form-path ::logs)
-(def path ::logs-filter)
+(def filter ::logs-filter)
 
 (rf/reg-event-fx
  ::search-user

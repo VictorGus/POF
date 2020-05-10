@@ -27,23 +27,25 @@
             display])])})))
 
 (defn combobox-input [path & [{:keys [items on-click selected]}]]
-  (let [db-value (rf/subscribe [::model/form-values path])
-        selected (or selected @db-value)
+  (let [db-value @(rf/subscribe [::model/form-values path])
+        selected (or selected db-value)
         v (r/atom "")]
     (r/create-class
      {:component-did-mount
       (fn [this]
         (let [path  (last (butlast (aget (.-props this) "argv")))
-              value (last (aget (.-props this) "argv"))]
+              value (cond-> (last (aget (.-props this) "argv"))
+                      (map? (last (aget (.-props this) "argv")))
+                      (-> (get [:items]) first :value))]
           (when-not (nil? value)
             (rf/dispatch [::model/form-set-value {:path path
-                                                  :value (or value @db-value)}]))))
+                                                  :value (or value db-value)}]))))
       :reagent-render
       (fn [_ _ _]
         [:<>
          [:input.custom-select {:list "combobox"
                                 :value (or @v (->> items
-                                                   (filter #(= (:value %) @db-value))
+                                                   (filter #(= (:value %) db-value))
                                                    first
                                                    :display))
                                 :on-click on-click
@@ -57,8 +59,8 @@
            :on-change #(rf/dispatch [::model/form-set-value {:path path
                                                              :value (.-value (.-target %))}])}
           (for [{:keys [value display] :as item} items]
-            [:option.selector-item (cond-> {:value (or value @db-value)}
-                                     (= selected (or value @db-value))
+            [:option.selector-item (cond-> {:value (or value db-value)}
+                                     (= selected (or value db-value))
                                      (assoc :selected "selected"))
              display])]])})))
 

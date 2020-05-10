@@ -19,6 +19,7 @@
         {:color "black"
          :display "block"
          :position "relative"
+         :text-decoration "none"
          :cursor "pointer"
          :width "66px"
          :margin-bottom "10px"

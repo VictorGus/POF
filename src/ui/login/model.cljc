@@ -22,7 +22,7 @@
 (rf/reg-event-fx
  ::success-redirect
  (fn [{db :db} [_ {{:keys [jwt]} :data}]]
-   {:ui.zframes.cookies/set {:key  :jwt
+   {:ui.zframes.cookies/set {:key   :jwt
                              :value jwt}
     :ui.zframes.redirect/redirect-with-refresh {:url (get db :sign-in-redirect)}}))
 

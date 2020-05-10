@@ -6,7 +6,8 @@
             [clj-time.core :refer [now plus days minutes]]
             [cheshire.core :as json]
             [app.fhirbase-ops :as fb]
-            [app.manifest :as m])
+            [app.manifest :as m]
+            [clojure.walk :as walk])
   (:import java.util.Base64
            java.security.MessageDigest))
 
@@ -43,8 +44,8 @@
                                                                 [:= (hsql/raw "resource->>'password'") (String. (.decode (Base64/getDecoder) password))]]}
                                                        hsql/format
                                                        run-query-first)
-            jwt-body  {:iss "cHV0aW4tdm9y" :sub id :exp (plus (now) (days 1)) :iat (now)}
-            token     (-> jwt-body jwt (sign :HS256 secret) to-str)]
+            claim  {:iss "cHV0aW4tdm9y" :sub id :exp (plus (now) (days 1)) :iat (now)}
+            token     (-> claim jwt (sign :HS256 secret) to-str)]
         (if matched-user
           {:status 200
            :body {:message "Ok"
@@ -54,3 +55,10 @@
       :else
       {:status 401
        :body {:message "Access denied"}})))
+
+(defn decode-jwt [token]
+  (-> token str->jwt :claims))
+
+(defn get-users [req]
+  {:status 200
+   :body (json/generate-string (-> {:select [:id :resource] :from [:public_user]} hsql/format run-query))})

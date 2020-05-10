@@ -11,6 +11,8 @@
             [ui.audit.logs.form :as form]
             [ui.audit.logs.model :as model]))
 
+(def grafana-dashboard "r31KImgMz")
+
 (def input-style
   (styles/style
    [:#search-input-wrapper
@@ -43,39 +45,40 @@
     [:&:hover {:background-color "#fafafa" :cursor "pointer" :border-radius "25px"}]]))
 
 (defn filter-form [close-fn]
-  [:div.container.border.border-top-0.rounded.filter-form
-   [:div.row.p-3
-    [:div.col-md-2.filter-item
-     [:label.text-muted "Action"]
-     [:i.fa.fa-times.reset-icon
-      {:on-click #(rf/dispatch [::basic-form-model/form-reset-value [form/form-path :action]])}]
-     [basic-form/form-select [{:display "View"
-                               :value "get"}
-                              {:display "Create"
-                               :value "post"}
-                              {:display "Update"
-                               :value "put"}
-                              {:display "Delete"
-                               :value "delete"}] [form/form-path :action]]]
-    [:div.col-md-2.filter-item
-     [:label.text-muted "User"]
-     [:i.fa.fa-times.reset-icon
-      {:on-click #(rf/dispatch [::basic-form-model/form-reset-value [form/form-path :user]])}]
-     [basic-form/combobox-input [{:display "User1"
-                                  :value "User1"}] [form/form-path :user]]]
-    [:div.cold-md-3.mr-2
-     [:label.text-muted "From"]
-     [basic-form/form-datetime-input [form/form-path :gte]
-      #_(h/day-ago-with-time)]]
-    [:div.cold-md-3.mr-3
-     [:label.text-muted "To"]
-     [basic-form/form-datetime-input [form/form-path :lte]
-      #_(h/tomorrow-date-with-time)]]
-    [:div.pl-3.pt-3
-     [:div.cold-md-3
-      [:div
-       [:label.text-muted "Enable auto update"]]
-      [toggle/check-toggle]]]]])
+  (let [users @(rf/subscribe [::form/users])]
+      [:div.container.border.border-top-0.rounded.filter-form
+       [:div.row.p-3
+        [:div.col-md-2.filter-item
+         [:label.text-muted "Action"]
+         [:i.fa.fa-times.reset-icon
+          {:on-click #(rf/dispatch [::basic-form-model/form-reset-value [form/form-path :action]])}]
+         [basic-form/form-select [{:display "View"
+                                   :value "get"}
+                                  {:display "Create"
+                                   :value "post"}
+                                  {:display "Update"
+                                   :value "put"}
+                                  {:display "Delete"
+                                   :value "delete"}] [form/form-path :action]]]
+        [:div.col-md-2.filter-item
+         [:label.text-muted "User"]
+         [:i.fa.fa-times.reset-icon
+          {:on-click #(rf/dispatch [::basic-form-model/form-reset-value [form/form-path :user]])}]
+         [basic-form/combobox-input [form/form-path :user] {:items users
+                                                            :on-click #(rf/dispatch [::form/search-user])}]]
+        [:div.cold-md-3.mr-2
+         [:label.text-muted "From"]
+         [basic-form/form-datetime-input [form/form-path :gte]
+          #_(h/day-ago-with-time)]]
+        [:div.cold-md-3.mr-3
+         [:label.text-muted "To"]
+         [basic-form/form-datetime-input [form/form-path :lte]
+          #_(h/tomorrow-date-with-time)]]
+        [:div.pl-3.pt-3
+         [:div.cold-md-3
+          [:div
+           [:label.text-muted "Enable auto update"]]
+          [toggle/check-toggle]]]]]))
 
 (defn input-form []
   (let [show-form? (r/atom false)
@@ -97,7 +100,7 @@
   (fn [data]
     [:div#search-input-wrapper input-style
      [:div.container
-      [:iframe {:src "http://localhost:3000/d-solo/jXNZW7eZz/requests?orgId=1&theme=light&panelId=2&refresh=1m"
+      [:iframe {:src (str "http://localhost:3000/d-solo/" grafana-dashboard "/requests?orgId=1&theme=light&panelId=2&refresh=1m")
                 :height "250"
                 :width "100%"
                 :frameBorder "0"}]
@@ -113,6 +116,7 @@
                               [:i.fa.fa-sort.ml-1 {:aria-hidden "true"
                                                    :style {:cursor "pointer"}
                                                    :on-click #(println "TODO")}]]]
+         [:th {:scope "col"} "User"]
          [:th {:scope "col"} "Display"]
          [:th {:scope "col"} [:span "Duration"
                               [:i.fa.fa-sort.ml-1 {:aria-hidden "true"
@@ -125,6 +129,7 @@
                   [:span.badge.badge-success (:st item)]
                   [:span.badge.badge-danger (:st item)])]
            [:td (:ts item)]
+           [:td (:l_uname item)]
            [:td (str (:l_m item) "patient " (:l_body item))]
            [:td (str (:d item) " ms")]])]]]]))
 

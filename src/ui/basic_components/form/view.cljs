@@ -26,9 +26,10 @@
                                     (assoc :selected "selected"))
             display])])})))
 
-(defn combobox-input [items path & [selected]]
+(defn combobox-input [path & [{:keys [items on-click selected]}]]
   (let [db-value (rf/subscribe [::model/form-values path])
         selected (or selected @db-value)]
+    (println "ITEMS" items)
     (r/create-class
      {:component-did-mount
       (fn [this]
@@ -42,6 +43,7 @@
         [:<>
          [:input.custom-select {:list "combobox"
                                 :value @db-value
+                                :on-click on-click
                                 :on-change #(rf/dispatch [::model/form-set-value {:path path
                                                                                   :value (.-value (.-target %))}])}]
          [:datalist

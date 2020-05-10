@@ -22,6 +22,8 @@ services:
     links:
       - "elasticsearch:elasticsearch"
     image: grafana/grafana:latest
+    volumes:
+      - ./grafana-storage:/var/lib/grafana
     ports:
       - "3000:3000"
     environment:

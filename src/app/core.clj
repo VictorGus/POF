@@ -27,6 +27,7 @@
                          "ehr"   {:GET ops/patient-ehr}}}
    "Logs"    {:GET  l/logs-search}
    "Bulk"    {:POST ops/bulk-import}
+   "Users"   {"search"  {:GET action/get-users}}
    "Login"   {:POST action/log-in}})
 
 (defn params-to-keyword [params]
@@ -104,5 +105,6 @@
   (restart-server)
   (es/es-appender {:es-url (get-in m/manifest [:config :elastic :host])
                    :batch-size 2})
+
 
   )

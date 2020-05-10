@@ -30,3 +30,12 @@
 
 (defn run-test-exec [query]
   (jdbc/execute! (get-in m/test-app [:config :db]) query))
+
+(defn read-query [{:keys [resourceType id]}]
+  (-> {:select [:resource]
+       :from  [(keyword resourceType)]
+       :where [:= :id id]}
+      hsql/format
+      run-query-first
+      :resource
+      clojure.walk/keywordize-keys))

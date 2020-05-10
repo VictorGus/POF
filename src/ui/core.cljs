@@ -2,8 +2,9 @@
   (:require [reagent.core :as r]
             [re-frame.core :as rf]
             [ui.zframes.xhr]
-            [ui.zframes.redirect]
+            [ui.zframes.redirect :as redirect]
             [ui.zframes.flash :as flash]
+            [ui.zframes.cookies :as cookies]
             [ui.routes :as routes]
             [ui.pages :as pages]
             [ui.layout :as layout]
@@ -17,13 +18,12 @@
  [(rf/inject-cofx :window-location)]
  (fn [{location :location db :db} _]
    {:db (cond-> (-> db
-                    (assoc-in [:xhr :config :base-url] "http://localhost:9090" )
+                    (assoc-in [:xhr :config :base-url] "http://localhost:9090")
                     (assoc :route-map/routes routes/routes))
-          (= (:href location)
-             "/login")
-          (assoc :sign-in-redirect "/")
-          :always
-          (assoc :sign-in-redirect (:hash location)))
+          (not= (:href location) "/login")
+          (assoc :sign-in-redirect (:hash location))
+          (cookies/get-cookie :jwt)
+          (assoc-in [:xhr :config :token] (cookies/get-cookie :jwt)))
     :route-map/start {}}))
 
 (defn not-found-page []
@@ -34,10 +34,19 @@
     (fn []
       (let [page (get @pages/pages (:match @route))
             params (:params @route)]
-        [layout/layout
-         (if page
-           [page params]
-           [not-found-page])]))))
+        (cond
+          (and (not (= (:match @route)
+                       :ui.login.model/login)) (cookies/get-cookie :jwt))
+          [layout/layout
+           (if page
+             [page params]
+             [not-found-page])]
+
+          (= (:match @route) :ui.login.model/login)
+          [(get @pages/pages :ui.login.model/login) params]
+
+          (not (cookies/get-cookie :jwt))
+          (redirect/redirect "/login"))))))
 
 (defn mount-root []
   (rf/dispatch-sync [::initialize])

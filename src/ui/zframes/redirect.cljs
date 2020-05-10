@@ -13,12 +13,24 @@
 (defn redirect [url]
   (set! (.-hash (.-location js/window)) url))
 
+(defn redirect-with-refresh [url]
+  (set! (.-hash (.-location js/window)) url)
+  (.reload js/location))
+
 (rf/reg-fx
  ::redirect
  (fn [opts]
    (redirect (str (:uri opts)
                   (when-let [params (:params opts)]
                     (window-location/gen-query-string params))))))
+
+(rf/reg-fx
+ ::redirect-with-refresh
+ (fn [opts]
+   (redirect-with-refresh (str (:uri opts)
+                               (when-let [params (:params opts)]
+                                 (window-location/gen-query-string params))))))
+
 (rf/reg-event-fx
  ::redirect
  (fn [fx [_ opts]]

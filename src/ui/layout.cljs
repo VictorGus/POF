@@ -1,5 +1,6 @@
 (ns ui.layout
   (:require [reagent.core :as r]
+            [re-frame.core :as rf]
             [ui.styles :as styles]
             [garden.units :refer [px]]
             [ui.zframes.flash :as flash]))
@@ -18,6 +19,7 @@
         {:color "black"
          :display "block"
          :position "relative"
+         :cursor "pointer"
          :width "66px"
          :margin-bottom "10px"
          :opacity "0.4"}
@@ -47,12 +49,13 @@
    [:a.menu-item {:href "#/audit/logs"}
     [:i.fas.fa-chart-line]
     [:div.label "Monitor"]]
-   ])
+   [:a.menu-item {:on-click #(rf/dispatch [:ui.login.model/sign-out])}
+    [:i.fas.fa-sign-out-alt]
+    [:div.label "Sign-out"]]])
 
 (defn layout [page]
   [:div.h-100 layout-style
    [flash/flashes]
    [:div#layout
     [menu]
-    [:div#content page]]
-   ])
+    [:div#content page]]])

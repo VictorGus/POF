@@ -1,4 +1,4 @@
-(ns zframes.cookies
+(ns ui.zframes.cookies
   (:refer-clojure :exclude [get set!])
   (:require [goog.net.cookies :as gcookies]
             [re-frame.core :as rf]

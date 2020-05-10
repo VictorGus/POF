@@ -13,16 +13,24 @@
    (let [encoded #?(:clj  (String. (.encodeToString (Base64/getEncoder) (get-in db [form/form-path :password])))
                     :cljs (js/btoa (get-in db [form/form-path :password])))]
      {:xhr/fetch  {:uri"/Login/"
-                   :params {:login (get-in db [form/form-path :login])
-                            :password encoded}
+                   :body {:login (get-in db [form/form-path :login])
+                          :password encoded}
                    :method "POST"
                    :success {:event ::success-redirect}
                    :req-id index}})))
 
 (rf/reg-event-fx
  ::success-redirect
+ (fn [{db :db} [_ {{:keys [jwt]} :data}]]
+   {:ui.zframes.cookies/set {:key  :jwt
+                             :value jwt}
+    :ui.zframes.redirect/redirect-with-refresh {:url (get db :sign-in-redirect)}}))
+
+(rf/reg-event-fx
+ ::sign-out
  (fn [{db :db} _]
-   {:ui.zframes.redirect/redirect {:url (get db :sign-in-redirect)}}))
+   {:ui.zframes.cookies/remove :jwt
+    :ui.zframes.redirect/redirect-with-refresh {:url "/login"}}))
 
 (rf/reg-event-fx
  index

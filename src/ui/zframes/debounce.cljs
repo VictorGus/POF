@@ -1,4 +1,4 @@
-(ns zframes.debounce
+(ns ui.zframes.debounce
   (:require [re-frame.core :as rf]))
 
 (defonce debounce-events (atom {}))

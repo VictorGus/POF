@@ -1,4 +1,4 @@
-(ns zframes.storage
+(ns ui.zframes.storage
   (:require [re-frame.core :as rf]))
 
 (defn keywordize [x]

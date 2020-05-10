@@ -60,11 +60,23 @@
              "Access-Control-Expose-Headers" "Location, Content-Location, Category, Content-Type, X-total-count"})))
 
 (defn mk-handler [dispatch]
-  (fn [req]
+  (fn [{headers :headers uri :uri :as req}]
     (let [req-time (System/currentTimeMillis)]
       (if (= :options (:request-method req))
         (preflight req)
-        (let [resp (dispatch req)]
+        (let [token (some-> (:authorization (clojure.walk/keywordize-keys headers))
+                            (clojure.string/replace #"Bearer " ""))
+              resp  (try
+                      (cond
+                        (#{"/Login/"} uri)
+                        (dispatch req)
+                        :else
+                        (if (action/verify-token token)
+                          (dispatch req)
+                          {:status 401
+                           :body {:message "Access denied"}}))
+                      (catch Exception e {:status 401
+                                          :body {:message "Access denied"}}))]
           (go (plog/log req resp (- (System/currentTimeMillis) req-time)))
           (-> resp (allow req)))))))
 

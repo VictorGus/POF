@@ -29,7 +29,7 @@
 (defn combobox-input [path & [{:keys [items on-click selected]}]]
   (let [db-value @(rf/subscribe [::model/form-values path])
         selected (or selected db-value)
-        v (r/atom "")]
+        v (r/atom nil)]
     (r/create-class
      {:component-did-mount
       (fn [this]

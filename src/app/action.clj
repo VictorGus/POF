@@ -73,6 +73,7 @@
 
 (defn basic-auth [cred]
   (let [[login password] (str/split (String. (.decode (Base64/getDecoder) cred)) #":")]
+    (println "GOVNAEDI")
     (-> {:select [:*]
          :from [:client]
          :where [:and

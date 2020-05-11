@@ -94,13 +94,13 @@
                                                 :value (or value @db-value)}])))
       :reagent-render
       (fn [_ _]
-        [:input.form-control {:type "password"
-                              :placeholder placeholder
-                              :value (or @v @db-value)
-                              :on-change #(do
-                                            (reset! v (.-value (.-target %)))
-                                            (rf/dispatch [::model/form-set-value {:path path
-                                                                                  :value (.-value (.-target %))}]))}])})))
+        [:input#password-form.form-control {:type "password"
+                                            :placeholder placeholder
+                                            :value (or @v @db-value)
+                                            :on-change #(do
+                                                          (reset! v (.-value (.-target %)))
+                                                          (rf/dispatch [::model/form-set-value {:path path
+                                                                                                :value (.-value (.-target %))}]))}])})))
 
 (defn form-date-input [path & [value]]
   (let [v (r/atom value)

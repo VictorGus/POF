@@ -7,7 +7,8 @@
             [cheshire.core :as json]
             [app.fhirbase-ops :as fb]
             [app.manifest :as m]
-            [clojure.walk :as walk])
+            [clojure.walk :as walk]
+            [clojure.string :as str])
   (:import java.util.Base64
            java.security.MessageDigest))
 
@@ -22,6 +23,17 @@
                         run-query))
         (fb/fhirbase-create (merge user {:resourceType "public_user"
                                          :password (String. (.decode (Base64/getDecoder) (:password user)))}))))))
+
+(defn create-clients []
+  (let [clients (get m/manifest :clients)]
+    (doseq [client clients]
+      (when (empty? (-> {:select [:resource]
+                         :from [:client]
+                         :where [:= (hsql/raw "resource->>'name'")
+                                 (:name client)]}
+                        hsql/format
+                        run-query))
+        (fb/fhirbase-create (merge client {:resourceType "client"}))))))
 
 (defn sha256 [string]
   (let [digest (.digest (MessageDigest/getInstance "SHA-256") (.getBytes string "UTF-8"))]
@@ -58,6 +70,16 @@
 
 (defn decode-jwt [token]
   (-> token str->jwt :claims))
+
+(defn basic-auth [cred]
+  (let [[login password] (str/split (String. (.decode (Base64/getDecoder) cred)) #":")]
+    (-> {:select [:*]
+         :from [:client]
+         :where [:and
+                 [:= (hsql/raw "resource->>'name'") login]
+                 [:= (hsql/raw "resource->>'password'") password]]}
+        hsql/format
+        run-query-first)))
 
 (defn get-users [req]
   {:status 200

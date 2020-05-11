@@ -110,8 +110,8 @@
             [:tr
              [:th {:scope "col"} [:span "Status"]]
              [:th {:scope "col"} [:span "TS"]]
-             [:th {:scope "col"} "User"]
-             [:th {:scope "col"} "Display"]
+             [:th {:scope "col"} [:span "User"]]
+             [:th {:scope "col"} [:span "Display"]]
              [:th {:scope "col"} [:span "Duration"]]]]
            [:tbody
             (for [item data]

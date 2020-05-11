@@ -71,11 +71,11 @@
                       (cond
                         (#{"/Login/"} uri)
                         (dispatch req)
+                        (action/verify-token token)
+                        (dispatch req)
                         :else
-                        (if (action/verify-token token)
-                          (dispatch req)
-                          {:status 401
-                           :body {:message "Access denied"}}))
+                        {:status 401
+                         :body {:message "Access denied"}})
                       (catch Exception e {:status 401
                                           :body {:message "Access denied"}}))]
           (go (plog/log req resp (- (System/currentTimeMillis) req-time)))
@@ -97,6 +97,7 @@
 
 (defn start-server []
   (go (action/create-users))
+  (go (action/create-clients))
   (reset! state (server/run-server app {:port 9090})))
 
 (defn restart-server [] (stop-server) (start-server))

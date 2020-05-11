@@ -24,13 +24,13 @@
  (fn [{db :db} [_ {{:keys [jwt]} :data}]]
    {:ui.zframes.cookies/set {:key   :jwt
                              :value jwt}
-    :ui.zframes.redirect/redirect-with-refresh {:url (get db :sign-in-redirect)}}))
+    :ui.zframes.redirect/redirect-with-refresh {}}))
 
 (rf/reg-event-fx
  ::sign-out
  (fn [{db :db} _]
    {:ui.zframes.cookies/remove :jwt
-    :ui.zframes.redirect/redirect-with-refresh {:url "/login"}}))
+    :ui.zframes.redirect/redirect-with-refresh {:uri "/login"}}))
 
 (rf/reg-event-fx
  index

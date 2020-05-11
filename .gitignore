@@ -9,6 +9,7 @@ build.dev
 /target/
 /checkouts/
 /esdata/
+/grafana-storage/
 .lein-deps-sum
 .lein-repl-history
 .lein-plugins/

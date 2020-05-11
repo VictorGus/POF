@@ -75,7 +75,7 @@
        :body {:message "Access denied"}})))
 
 (defn decode-jwt [token]
-  (-> token str->jwt :claims))
+  (some-> token str->jwt :claims))
 
 (defn basic-auth [cred]
   (let [[login password] (str/split (String. (.decode (Base64/getDecoder) cred)) #":")]

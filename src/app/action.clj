@@ -42,7 +42,9 @@
 (def secret (sha256 "cHV0aW4tdm9y"))
 
 (defn verify-token [token]
-  (-> token str->jwt (verify secret)))
+  (try
+    (some-> token str->jwt (verify secret))
+    (catch Exception e false)))
 
 (defn log-in [{body :body :as req}]
   (let [body (slurp body)

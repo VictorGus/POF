@@ -76,19 +76,16 @@
                                               (clojure.string/includes?  "Bearer"))
                                   (action/verify-token token))
               resp
-              (try
-                (cond
-                  (#{"/Login/"} uri)
-                  (dispatch req)
-                  token-authorized?
-                  (dispatch req)
-                  basic-authorized?
-                  (dispatch req)
-                  :else
-                  {:status 401
-                   :body {:message "Access denied"}})
-                (catch Exception e {:status 401
-                                    :body {:message "Access denied"}}))]
+              (cond
+                (#{"/Login/"} uri)
+                (dispatch req)
+                token-authorized?
+                (dispatch req)
+                basic-authorized?
+                (dispatch req)
+                :else
+                {:status 401
+                 :body {:message "Access denied"}})]
           (go (plog/log req resp (- (System/currentTimeMillis) req-time)))
           (-> resp (allow req)))))))
 

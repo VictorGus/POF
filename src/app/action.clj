@@ -47,8 +47,12 @@
     (catch Exception e false)))
 
 (defn log-in [{body :body :as req}]
-  (let [body (slurp body)
-        {:keys [login password]} (-> body (json/parse-string true))]
+  (let [body (if (map? body)
+               body
+               (slurp body))
+        {:keys [login password]} (cond-> body
+                                   (string? body)
+                                   (json/parse-string true))]
     (cond
       (and login password)
       (let [{:keys [id resource] :as matched-user} (-> {:select [:resource :id]

@@ -22,6 +22,10 @@
 (defn run-test-query [query]
   (jdbc/query (get-in m/test-app [:config :db]) query))
 
+
+(defn run-test-query-first [query]
+  (first (jdbc/query (get-in m/test-app [:config :db]) query)))
+
 (defn truncate-test [t]
   (jdbc/execute! (get-in m/test-app [:config :db]) (str "truncate " t)))
 

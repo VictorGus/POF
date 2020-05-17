@@ -133,18 +133,23 @@
        (not-empty (filter second
                           (get-in db [form/form-path :identifier])))
 
-       (-> {}
-        (assoc :xhr/fetch {:uri    (or uri (str "/Patient/" (get-in db [:route-map/current-route :params :uid])))
-                           :method method
-                           :body (-> form-values
-                                     (update :identifier normalize-identifiers)
-                                     (update-in [:name 0 :given] (comp vec vals))
-                                     (update-in [:address] (partial map #(update % :line (comp vec vals)))))})
-        (assoc :dispatch-n [[:flash/success {:msg "Successfully saved"}]
-                            [::form/init]]
-               :ui.zframes.redirect/redirect {:uri redirect-url}))
+       {:xhr/fetch {:uri    (or uri (str "/Patient/" (get-in db [:route-map/current-route :params :uid])))
+                    :method method
+                    :success {:event ::after-save
+                              :params {:redirect-url redirect-url}}
+                    :body (-> form-values
+                              (update :identifier normalize-identifiers)
+                              (update-in [:name 0 :given] (comp vec vals))
+                              (update-in [:address] (partial map #(update % :line (comp vec vals)))))}}
        :else
        (assoc {} :dispatch-n [[:flash/danger {:msg "All identifiers must be supplied"}]])))))
+
+(rf/reg-event-fx
+ ::after-save
+ (fn [{db :db} [_ {{{{:keys [redirect-url]} :params} :success} :request}]]
+   {:dispatch-later [{:ms 0 :dispatch [:flash/success {:msg "Successfully saved"}]}
+                     {:ms 300 :dispatch [::form/init]}]
+    :ui.zframes.redirect/redirect {:uri redirect-url}}))
 
 (rf/reg-sub
  edit

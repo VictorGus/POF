@@ -11,7 +11,7 @@
             [ui.audit.logs.form :as form]
             [ui.audit.logs.model :as model]))
 
-(def grafana-dashboard "r31KImgMz")
+(def grafana-dashboard "l1guqSgGk")
 
 (def input-style
   (styles/style
